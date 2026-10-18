@@ -16,7 +16,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "size": "size-limit",
-    "e2e": "playwright test",
+    "e2e": "playwright test --project=e2e",
     "bench": "playwright test --project=bench",
     "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm build && pnpm size"
   },

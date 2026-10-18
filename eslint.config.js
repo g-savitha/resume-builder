@@ -22,6 +22,8 @@ export default tseslint.config(
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       'no-console': 'error',
+      // Normalized records are id-keyed maps by design; deleting a key from a fresh copy is the idiom.
+      '@typescript-eslint/no-dynamic-delete': 'off',
     },
   },
   {

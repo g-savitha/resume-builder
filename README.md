@@ -2,7 +2,7 @@
 
 Write your resume once, then theme it for every company you apply to. Name the company (or paste its URL), and the app derives a theme from its logo colors, with WCAG AA contrast enforced at derivation. The preview is the PDF: export prints the same DOM.
 
-Status: milestone 1 (core model and editor) in progress. The design lives in [`docs/design/`](docs/design/).
+Status: **milestone 1** (core model and editor). The themed, paginated preview and PDF export arrive in milestone 3; logo-derived palettes in milestone 4. The design lives in [`docs/design/`](docs/design/); deviations from it are listed in [`docs/design/deviations.md`](docs/design/deviations.md).
 
 ## Principles
 
@@ -24,6 +24,39 @@ pnpm bench        # Playwright typing-latency benchmark
 ```
 
 Playwright uses `CHROME_PATH` or `/usr/bin/google-chrome` when present; otherwise run `pnpm exec playwright install chromium` once.
+
+## Add a section kind
+
+Create one folder. The folder name is the kind; nothing else to edit.
+
+```ts
+// src/sections/publications/section.ts
+import { defineSection, entry, f } from '../kit';
+
+export default defineSection({
+  defaultLabel: 'Publications',
+  defaultIcon: 'fileText',
+  cardinality: 'many',
+  shape: 'entries',
+  item: { title: f.text('Title', { required: true }), venue: f.text('Venue'), dates: f.dateRange('Date'), url: f.url('Link') },
+  project: (it) => entry({ title: it.title, subtitle: it.venue, dates: it.dates, url: it.url }),
+});
+```
+
+The registry (`import.meta.glob`) picks it up, the editor generates its form from the field specs, and `sections/registry.test.ts` checks it.
+
+## Modules
+
+| Module | Owns |
+| --- | --- |
+| `domain/` | Resume model, the `Command` union, pure idempotent `applyCommand`, `resolveView`, boundary parsers |
+| `sections/` | One folder per section kind, discovered by glob; field specs and projections to the 4 content shapes |
+| `icons/` | The single Lucide-backed icon registry (`IconName` is derived from it) |
+| `store/` | Zustand store behind per-field selector hooks; the only writer of documents |
+| `storage/` | IndexedDB persistence: versioned records, valibot parsing, debounced idle autosave that skips unchanged revisions |
+| `brand/` | Brand profiles (milestone 1: the name-hash fallback only) |
+| `editor/` | The light builder UI: generated forms, accessible reorder (dnd-kit keyboard sensor + Move up/down), hide/show per variant |
+| `app/` | Composition root and first-run sample content |
 
 ## Layout
 

@@ -10,6 +10,7 @@
     "skipLibCheck": true,
     "noEmit": true,
     "allowJs": true,
+    "allowImportingTsExtensions": true,
     "checkJs": false,
     "types": ["node"]
   },
