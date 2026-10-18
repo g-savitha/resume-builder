@@ -1,0 +1,10 @@
+flowchart TB
+  Q["Company name / URL / logo upload"] --> LB["lookupBrand"]
+  LB -->|"cache hit"| BP["BrandProfile"]
+  LB -->|"miss"| EF["Edge function /api/brand"] --> W["Palette Web Worker"] --> BP
+  BP -->|"snapshot pinned"| V["Variant (per company)"]
+  C["Resume content (Zustand)"] --> RV["resolveView: project to 4 shapes"]
+  V --> RT["resolveTheme: ThemeBase + derivePalette"] --> AP["AccessiblePalette (ContrastSafe colors)"]
+  RV --> L["layoutDocument: measure + paginate incrementally"]
+  AP --> L --> P["PagedLayout"]
+  P --> PV["ResumePreview"] --> PDF["Browser print to PDF"]

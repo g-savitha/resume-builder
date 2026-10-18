@@ -23,7 +23,8 @@ export default defineConfig({
     { name: 'bench', testMatch: /.*\.bench\.ts/, use: { viewport: { width: 1440, height: 900 }, launchOptions } },
   ],
   webServer: {
-    command: `pnpm exec vite preview --port ${port} --strictPort --host 127.0.0.1`,
+    // Always serve a fresh production build: the benchmark and size claims are about what ships.
+    command: `pnpm exec vite build --logLevel warn && pnpm exec vite preview --port ${port} --strictPort --host 127.0.0.1`,
     url: `http://127.0.0.1:${port}`,
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,

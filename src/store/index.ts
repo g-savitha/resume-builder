@@ -1,0 +1,25 @@
+// store: live editor state (Zustand, normalized). The only writer of documents.
+export { createEditorStore, type EditorStore, type SaveState } from './store';
+export {
+  EditorStoreProvider,
+  useActiveResumeId,
+  useActiveVariantId,
+  useActiveVariantSummary,
+  useAnnounce,
+  useAnnouncement,
+  useDispatch,
+  useGetDocument,
+  useIsHidden,
+  useItemExists,
+  useItemField,
+  useResumeList,
+  useResumeName,
+  useSaveState,
+  useSection,
+  useSectionOrder,
+  useVariant,
+  useVariantOrder,
+  useVariantView,
+  type ActiveVariantSummary,
+  type VariantRef,
+} from './hooks';
