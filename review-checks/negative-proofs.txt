@@ -1,0 +1,17 @@
+# feat/review-checks: negative proofs
+
+## tsc, app config (src/domain/__neg.ts: missing return path + code after return)
+src/domain/__neg.ts(1,31): error TS7030: Not all code paths return a value.
+src/domain/__neg.ts(8,3): error TS7027: Unreachable code detected.
+
+## tsc, node config (e2e/__neg.ts: typo'd side-effect import + unused param)
+e2e/__neg.ts(1,8): error TS2882: Cannot find module or type declarations for side-effect import of './nope-missing'.
+e2e/__neg.ts(2,24): error TS6133: 'a' is declared but its value is never read.
+
+## eslint on src/domain/ids.ts with the reason removed
+
+/workspace/resume-builder/src/domain/ids.ts
+  4:1  error  eslint-disable needs a reason: append ` -- <why the rule is wrong here>`, or fix the code so the rule passes  disable-reason/require-reason
+
+✖ 1 problem (1 error, 0 warnings)
+
