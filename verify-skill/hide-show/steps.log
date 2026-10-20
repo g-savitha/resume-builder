@@ -1,0 +1,4 @@
+PASS open the builder; the Microsoft variant is active and shows Projects
+PASS "Hide Projects in Microsoft": pressed, marked "hidden here", gone from the echo
+PASS switch to the General variant: Projects is still visible there
+VERIFIED hide-show. Evidence: /workspace/resume-builder/e2e/.artifacts/verify/2026-10-20T16-38-36-346Z-hide-show

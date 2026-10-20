@@ -1,0 +1,62 @@
+- article "Content echo (read-only)":
+  - paragraph: Savitha Gollamudi
+  - paragraph: Lead Full Stack Engineer
+  - list:
+    - listitem: savitha@example.com
+    - listitem: Hyderabad, India
+    - listitem: linkedin.com/in/example
+    - listitem: github.com/example
+  - heading "Summary" [level=3]
+  - paragraph:
+    - text: "Full stack engineer who ships product end to end:"
+    - strong: React and TypeScript
+    - text: front ends, Node.js and Python services, and the data layers underneath. Leads small teams and turns ambiguous requirements into predictable releases.
+  - heading "Experience" [level=3]
+  - paragraph:
+    - strong: Staff Frontend Engineer
+    - text: · Example Company A · Hyderabad, India Dec 2023 – Present
+  - list:
+    - listitem: "Example: leads a squad of engineers building customer-facing React/TypeScript dashboards on Node.js services."
+    - listitem: "Example: defined API contracts and review standards; introduced typed end-to-end services."
+    - listitem: "Example: set up performance budgets and caching for the slowest read paths."
+  - paragraph: React · TypeScript · Node.js
+  - paragraph:
+    - strong: Senior Software Engineer
+    - text: · Example Company B · Hyderabad, India 2021 – 2023
+  - list:
+    - listitem: "Placeholder: owned the web client of a B2B SaaS product (React, Redux Toolkit, TypeScript)."
+    - listitem: "Placeholder: introduced Storybook and visual regression tests for the shared component library."
+  - paragraph: Redux · PostgreSQL
+  - paragraph:
+    - strong: Software Engineer
+    - text: · Example Company C · Bengaluru, India 2017 – 2021
+  - list:
+    - listitem: "Placeholder: built Python and Node.js services backed by MongoDB for an internal platform."
+  - paragraph:
+    - strong: Verification Engineer
+  - heading "Projects" [level=3]
+  - paragraph:
+    - strong: Resume builder
+  - paragraph: One resume, themed per company with contrast-checked palettes.
+  - paragraph: React · Zustand
+  - heading "Skills" [level=3]
+  - paragraph:
+    - strong: "Frontend:"
+    - text: React, Redux, TypeScript
+  - paragraph:
+    - strong: "Backend:"
+    - text: Node.js, Python / FastAPI
+  - paragraph:
+    - strong: "Data:"
+    - text: PostgreSQL, MongoDB, Redis
+  - heading "Certifications" [level=3]
+  - paragraph:
+    - strong: Example cloud developer certification
+    - text: · Placeholder issuer 2024
+  - heading "Education" [level=3]
+  - paragraph:
+    - strong: B.Tech, Computer Science
+    - text: · Example university 2013 – 2017
+  - heading "Volunteering" [level=3]
+  - paragraph:
+    - strong: Untitled

@@ -1,0 +1,18 @@
+- tabpanel "Variants":
+  - region "Variants":
+    - heading "Variants" [level=2]
+    - group "Active variant":
+      - text: Active variant
+      - radio "General 0 hidden · placeholder palette" [checked]
+      - text: General 0 hidden · placeholder palette
+      - button "Delete General variant"
+      - radio "Microsoft 1 hidden · placeholder palette"
+      - text: Microsoft 1 hidden · placeholder palette
+      - button "Delete Microsoft variant"
+  - region "New variant":
+    - heading "New variant" [level=2]
+    - text: Company you’re applying to
+    - textbox "Company you’re applying to":
+      - /placeholder: Microsoft
+    - paragraph: Copies the current variant’s hide/show choices. Logo colors arrive in milestone 4; until then each variant gets a placeholder palette.
+    - button "Create variant" [disabled]

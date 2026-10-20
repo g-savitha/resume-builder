@@ -1,0 +1,75 @@
+$ launch.sh
+Serving http://127.0.0.1:5199 (pid 149165, log /tmp/verify-resume-builder-5199/server.log).
+url=http://127.0.0.1:5199 pid=149165 rev=e254267+dirty
+PASS open the builder; the Sections card and a settled save status appear
+VERIFIED ready. Evidence: /tmp/verify-resume-builder-5199/doctor
+exit 0
+$ launch.sh   # second launch must refuse
+Already running (pid 149165) at http://127.0.0.1:5199. Run doctor.sh, or cleanup.sh first.
+exit 1
+$ doctor.sh
+url=http://127.0.0.1:5199 pid=149165 rev=e254267+dirty
+PASS open the builder; the Sections card and a settled save status appear
+VERIFIED ready. Evidence: /tmp/verify-resume-builder-5199/doctor
+exit 0
+$ node drive.mjs autosave
+PASS open the builder; the save status settles
+PASS edit a role and hide Projects; the status reaches "saved"
+PASS reload: both edits come back from IndexedDB
+VERIFIED autosave. Evidence: /workspace/resume-builder/e2e/.artifacts/verify/2026-10-20T16-38-30-572Z-autosave
+exit 0
+$ node drive.mjs edit-content
+PASS open the builder; Experience is selected in the section editor
+PASS edit the first role; the preview echo shows it
+PASS Add entry: one more entry, opened with focus in its first field
+PASS Add section > Volunteering: it lands last in the list and opens in the editor
+VERIFIED edit-content. Evidence: /workspace/resume-builder/e2e/.artifacts/verify/2026-10-20T16-38-33-300Z-edit-content
+exit 0
+$ node drive.mjs reorder-sections
+PASS open the builder; Experience is 3rd and Projects 4th
+PASS keyboard: Space on "Reorder Projects", ArrowUp, Space moves Projects to position 3
+PASS "Move Experience down" moves it to position 5 and keeps focus on the moved row
+PASS the preview echo follows the new order
+VERIFIED reorder-sections. Evidence: /workspace/resume-builder/e2e/.artifacts/verify/2026-10-20T16-38-34-837Z-reorder-sections
+exit 0
+$ node drive.mjs hide-show
+PASS open the builder; the Microsoft variant is active and shows Projects
+PASS "Hide Projects in Microsoft": pressed, marked "hidden here", gone from the echo
+PASS switch to the General variant: Projects is still visible there
+VERIFIED hide-show. Evidence: /workspace/resume-builder/e2e/.artifacts/verify/2026-10-20T16-38-36-346Z-hide-show
+exit 0
+$ node drive.mjs variants
+PASS open the Variants tab: General and Microsoft are listed, Microsoft is active
+PASS create "Experian": it becomes active in the list and the top-bar select
+PASS delete Experian (two-step confirm): two variants remain
+VERIFIED variants. Evidence: /workspace/resume-builder/e2e/.artifacts/verify/2026-10-20T16-38-37-614Z-variants
+exit 0
+$ cleanup.sh
+Stopped. Evidence kept in /workspace/resume-builder/e2e/.artifacts/verify/.
+exit 0
+$ doctor.sh   # after cleanup must fail
+DOCTOR FAIL: no /tmp/verify-resume-builder-5199/server.pid. Run launch.sh.
+exit 1
+$ pgrep -af "vite --port 5199"
+(none)
+$ find e2e/.artifacts/verify -type f   # evidence survives cleanup
+e2e/.artifacts/verify/2026-10-20T16-38-30-572Z-autosave/report.json
+e2e/.artifacts/verify/2026-10-20T16-38-30-572Z-autosave/restored-after-reload.png
+e2e/.artifacts/verify/2026-10-20T16-38-30-572Z-autosave/saved.png
+e2e/.artifacts/verify/2026-10-20T16-38-30-572Z-autosave/steps.log
+e2e/.artifacts/verify/2026-10-20T16-38-33-300Z-edit-content/edit-content.png
+e2e/.artifacts/verify/2026-10-20T16-38-33-300Z-edit-content/preview-echo.aria.yml
+e2e/.artifacts/verify/2026-10-20T16-38-33-300Z-edit-content/report.json
+e2e/.artifacts/verify/2026-10-20T16-38-33-300Z-edit-content/steps.log
+e2e/.artifacts/verify/2026-10-20T16-38-34-837Z-reorder-sections/reorder-sections.png
+e2e/.artifacts/verify/2026-10-20T16-38-34-837Z-reorder-sections/report.json
+e2e/.artifacts/verify/2026-10-20T16-38-34-837Z-reorder-sections/section-list.aria.yml
+e2e/.artifacts/verify/2026-10-20T16-38-34-837Z-reorder-sections/steps.log
+e2e/.artifacts/verify/2026-10-20T16-38-36-346Z-hide-show/hidden-in-microsoft.png
+e2e/.artifacts/verify/2026-10-20T16-38-36-346Z-hide-show/report.json
+e2e/.artifacts/verify/2026-10-20T16-38-36-346Z-hide-show/steps.log
+e2e/.artifacts/verify/2026-10-20T16-38-36-346Z-hide-show/visible-in-general.png
+e2e/.artifacts/verify/2026-10-20T16-38-37-614Z-variants/report.json
+e2e/.artifacts/verify/2026-10-20T16-38-37-614Z-variants/steps.log
+e2e/.artifacts/verify/2026-10-20T16-38-37-614Z-variants/variant-created.png
+e2e/.artifacts/verify/2026-10-20T16-38-37-614Z-variants/variants-panel.aria.yml

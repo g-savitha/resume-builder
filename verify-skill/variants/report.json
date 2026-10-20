@@ -1,0 +1,25 @@
+{
+  "journey": "variants",
+  "ok": true,
+  "url": "http://127.0.0.1:5199",
+  "rev": "e254267",
+  "at": "2026-10-20T16:38:38.549Z",
+  "steps": [
+    {
+      "title": "open the Variants tab: General and Microsoft are listed, Microsoft is active",
+      "ok": true,
+      "ms": 473
+    },
+    {
+      "title": "create \"Experian\": it becomes active in the list and the top-bar select",
+      "ok": true,
+      "ms": 70
+    },
+    {
+      "title": "delete Experian (two-step confirm): two variants remain",
+      "ok": true,
+      "ms": 80
+    }
+  ],
+  "consoleErrors": []
+}
