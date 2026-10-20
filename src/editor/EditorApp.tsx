@@ -7,7 +7,10 @@ import { EditorScopeContext, type EditorScope } from './context';
 import { PreviewPane } from './preview/PreviewPane';
 import './editor.css';
 
-/** The builder route: top bar, editor panel on the left, preview on the right. */
+/**
+ * The builder route: top bar, editor panel on the left, preview on the right.
+ * `data-app-state` (loading | ready) tells agents and tests when the saved resume has loaded.
+ */
 export function EditorApp() {
   const active = useActiveVariantSummary();
   const scope = useMemo<EditorScope | null>(
@@ -19,14 +22,14 @@ export function EditorApp() {
   }, [scope]);
   if (!scope) {
     return (
-      <div className="app-loading" role="status">
+      <div className="app-loading" role="status" data-app-state="loading">
         Loading your resume…
       </div>
     );
   }
   return (
     <EditorScopeContext value={scope}>
-      <div className="app">
+      <div className="app" data-app-state="ready">
         <TopBar />
         <main className="main">
           <EditorPanel />

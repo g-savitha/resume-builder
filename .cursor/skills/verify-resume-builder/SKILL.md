@@ -43,7 +43,7 @@ node .cursor/skills/verify-resume-builder/scripts/drive.mjs <journey> [--headed]
 
 Driving rules:
 
-- Select by role and accessible name (`getByRole('button', { name: 'Add entry' })`, `getByLabel('Role (required)')`), then `data-testid` (`content-echo`, `live-region`). Use CSS classes only where the feature file says no stable handle exists yet.
+- Select by role and accessible name (`getByRole('button', { name: 'Add entry' })`, `getByLabel('Role (required)')`), then the data hooks listed in `features/README.md`, then `data-testid` (`content-echo`, `live-region`). Never select by CSS class, and wait on a state hook rather than a fixed sleep.
 - Wait for a visible end state with `expect(...)`, never a fixed sleep: the live-region message, the save status `data-state`, the echo text. The one exception is documented in `features/reorder-sections.md`.
 - Prefer the keyboard paths that users rely on (reorder via the drag handle, tabs via arrow keys) over pointer coordinates.
 - The preview pane is a placeholder echo in this milestone. Assert content there, not styling.

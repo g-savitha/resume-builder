@@ -10,7 +10,16 @@ This directory is the maintained source for verifying the builder's user-facing 
 
 ## Driving conventions
 
-- Prefer roles and accessible names, then `data-testid`. Use CSS classes only where a feature's Gotchas say there is no stable handle yet.
+- Prefer roles and accessible names, then the data hooks below, then `data-testid`. Do not select by CSS class.
+- Wait on a state hook, never a fixed sleep:
+
+  | Hook | Where | Values |
+  | --- | --- | --- |
+  | `data-app-state` | app root | `loading`, `ready` (the saved or seeded resume has loaded) |
+  | `data-component="save-status"` + `data-state` | top bar | `idle`, `saving`, `saved`, `error` |
+  | `data-drag-state` | every reorderable list | `idle`, `dragging` (arrow keys move the lifted row) |
+  | `data-row-label` | section and entry rows | the row's current label |
+  | `data-item-body` | entry bodies | the entry id; `hidden` when collapsed |
 - Wait for a visible end state with `expect`: a live-region message (`data-testid="live-region"`, polite), the save status, or the preview echo (`data-testid="content-echo"`).
 - Treat quoted names literally. The curly apostrophe in "Company you’re applying to" is part of the label.
 - Restore nothing by hand: the next drive gets a fresh profile.

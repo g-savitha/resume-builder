@@ -33,6 +33,6 @@ Preconditions:
 ## Gotchas
 
 - Single-instance kinds already present (Profile, Summary, ...) are omitted from "Section types". Pick a kind the seed lacks: Volunteering, Achievements or Custom section.
-- Entry bodies are collapsed except the one you open. Scope field lookups to the open body: `[data-item-body]:not([hidden])`. There is no role-based handle for an entry body yet.
-- Section-list row names have no stable handle beyond `.srow-name .name`.
+- Entry bodies are collapsed except the one you open. Scope field lookups to the open body: `[data-item-body]:not([hidden])`.
+- Section and entry rows carry their current label in `data-row-label`.
 - Rich-text fields ("Highlights", "Summary") take a small text syntax: `- ` bullets, `**bold**`, `*italic*`, `[label](url)`.

@@ -24,7 +24,7 @@ export default async ({ page, step, evidence, expect }) => {
   await step('Add section > Volunteering: it lands last in the list and opens in the editor', async () => {
     await page.getByRole('button', { name: 'Add section' }).click();
     await page.getByRole('list', { name: 'Section types' }).getByRole('button', { name: 'Volunteering' }).click();
-    const names = await page.getByRole('list', { name: 'Sections, in resume order' }).locator('.srow-name .name').allTextContents();
+    const names = await page.getByRole('list', { name: 'Sections, in resume order' }).locator('[data-row-label]').evaluateAll((rows) => rows.map((row) => row.dataset.rowLabel));
     expect(names.at(-1)).toBe('Volunteering');
     await expect(editor.getByRole('heading', { level: 2, name: /^Volunteering/ })).toBeVisible();
   });
