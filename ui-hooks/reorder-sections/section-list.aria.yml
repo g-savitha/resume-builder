@@ -1,0 +1,49 @@
+- list "Sections, in resume order":
+  - listitem:
+    - button "Reorder Profile"
+    - button "Profile"
+    - button "Move Profile up" [disabled]
+    - button "Move Profile down"
+    - button "Hide Profile in Microsoft"
+  - listitem:
+    - button "Reorder Summary"
+    - button "Summary"
+    - button "Move Summary up"
+    - button "Move Summary down"
+    - button "Hide Summary in Microsoft"
+  - listitem:
+    - button "Reorder Projects"
+    - button "Projects"
+    - button "Move Projects up"
+    - button "Move Projects down"
+    - button "Hide Projects in Microsoft"
+  - listitem:
+    - button "Reorder Skills"
+    - button "Skills"
+    - button "Move Skills up"
+    - button "Move Skills down"
+    - button "Hide Skills in Microsoft"
+  - listitem:
+    - button "Reorder Experience"
+    - button "Experience"
+    - button "Move Experience up"
+    - button "Move Experience down"
+    - button "Hide Experience in Microsoft"
+  - listitem:
+    - button "Reorder Certifications"
+    - button "Certifications"
+    - button "Move Certifications up"
+    - button "Move Certifications down"
+    - button "Hide Certifications in Microsoft"
+  - listitem:
+    - button "Reorder Education"
+    - button "Education"
+    - button "Move Education up"
+    - button "Move Education down"
+    - button "Hide Education in Microsoft"
+  - listitem:
+    - button "Reorder Languages"
+    - button "Languages · hidden here"
+    - button "Move Languages up"
+    - button "Move Languages down" [disabled]
+    - button "Hide Languages in Microsoft" [pressed]

@@ -1,0 +1,25 @@
+{
+  "journey": "autosave",
+  "ok": true,
+  "url": "http://127.0.0.1:5199",
+  "rev": "6f23bce",
+  "at": "2026-10-20T16:44:18.814Z",
+  "steps": [
+    {
+      "title": "open the builder; the save status settles",
+      "ok": true,
+      "ms": 415
+    },
+    {
+      "title": "edit a role and hide Projects; the status reaches \"saved\"",
+      "ok": true,
+      "ms": 873
+    },
+    {
+      "title": "reload: both edits come back from IndexedDB",
+      "ok": true,
+      "ms": 189
+    }
+  ],
+  "consoleErrors": []
+}

@@ -1,0 +1,5 @@
+PASS open the builder; Experience is 3rd and Projects 4th
+PASS keyboard: Space on "Reorder Projects", ArrowUp, Space moves Projects to position 3
+PASS "Move Experience down" moves it to position 5 and keeps focus on the moved row
+PASS the preview echo follows the new order
+VERIFIED reorder-sections. Evidence: /workspace/resume-builder/e2e/.artifacts/verify/2026-10-20T16-44-13-006Z-reorder-sections

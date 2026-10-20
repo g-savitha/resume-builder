@@ -1,0 +1,17 @@
+# verify journeys on feat/ui-hooks (c341a59)
+VERIFIED ready. Evidence: /tmp/verify-resume-builder-5199/doctor
+VERIFIED edit-content. Evidence: /workspace/resume-builder/e2e/.artifacts/verify/2026-10-20T16-44-11-494Z-edit-content
+VERIFIED reorder-sections. Evidence: /workspace/resume-builder/e2e/.artifacts/verify/2026-10-20T16-44-13-006Z-reorder-sections
+VERIFIED hide-show. Evidence: /workspace/resume-builder/e2e/.artifacts/verify/2026-10-20T16-44-14-388Z-hide-show
+VERIFIED variants. Evidence: /workspace/resume-builder/e2e/.artifacts/verify/2026-10-20T16-44-15-644Z-variants
+VERIFIED autosave. Evidence: /workspace/resume-builder/e2e/.artifacts/verify/2026-10-20T16-44-16-970Z-autosave
+Stopped. Evidence kept in /workspace/resume-builder/e2e/.artifacts/verify/.
+
+# real hook: keyboard reorder e2e x40
+  ✓  38 [e2e] › e2e/editor.spec.ts:22:3 › builder (milestone 1) › reorders sections with the keyboard (dnd-kit keyboard sensor) and announces politely (700ms)
+
+  40 passed (16.6s)
+
+# mutant (data-drag-state set synchronously on pick-up) x40
+  19 failed
+  21 passed (39.5s)
