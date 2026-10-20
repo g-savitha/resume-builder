@@ -30,7 +30,8 @@ describe('rich text format', () => {
         expect(formatRichText(parseRichText(once))).toBe(once);
         expect(parseRichText(once)).toEqual(parseRichText(s));
       }),
-      { numRuns: 1000 },
+      // '*:****' came from CI (seed 2120115317): an italic run holding '*' was written back as a different run.
+      { numRuns: 1000, examples: [['*:****']] },
     );
   });
 });

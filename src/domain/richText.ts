@@ -50,7 +50,8 @@ export function isRichTextEmpty(value: RichText): boolean {
 
 /* ── inline ── */
 
-const TOKEN = /\*\*(.+?)\*\*|\*(.+?)\*|\[([^\]]+)\]\(([^)\s]+)\)/g;
+// Marked text never contains '*': the format has no escapes, so a run like *:** could not be written back.
+const TOKEN = /\*\*([^*]+?)\*\*|\*([^*]+?)\*|\[([^\]]+)\]\(([^)\s]+)\)/g;
 
 function run(text: string, marks: readonly Mark[]): TextRun {
   return marks.length ? { t: 'text', text, marks } : { t: 'text', text };
