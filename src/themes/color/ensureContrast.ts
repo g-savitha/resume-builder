@@ -1,8 +1,8 @@
 // The only minter of ContrastSafe. Internal to themes/color: not exported from its index.ts.
 import type { Oklch } from '@/domain';
-import { normalize, toHex } from './oklch';
+import { lightnessRamp, normalize, toHex } from './oklch';
 import type { ContrastLevel, ContrastSafe } from './types';
-import { contrastRatio, MIN_RATIO } from './wcag';
+import { contrastRatio, luminanceOfRgb8, MIN_RATIO, ratioOfLuminances, relativeLuminance } from './wcag';
 
 const BLACK = '#000000';
 const WHITE = '#ffffff';
@@ -16,7 +16,10 @@ const STEPS = 24;
  */
 export function solveLightness(fg: Oklch, bgHex: string, target: number): Oklch {
   const start = normalize(fg);
-  const passes = (l: number) => contrastRatio(toHex({ ...start, l }), bgHex) >= target;
+  const bgY = relativeLuminance(bgHex);
+  // Hot loop: compares luminances of the exact 8-bit channels, without formatting and re-parsing hex.
+  const at = lightnessRamp(start);
+  const passes = (l: number) => ratioOfLuminances(luminanceOfRgb8(at(l)), bgY) >= target;
   if (passes(start.l)) return start;
   let best: Oklch | undefined;
   for (const end of [0, 1]) {

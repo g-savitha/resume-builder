@@ -6,6 +6,12 @@ import { hexToOklch } from './oklch';
 import { SURFACE_FOREGROUNDS, type AccessiblePalette, type ForegroundRole, type SurfaceName } from './types';
 import { contrastRatio, MIN_RATIO } from './wcag';
 
+/**
+ * The 10k-palette property is CPU-bound by design (~240k contrast solves): its runtime scales with the runner,
+ * and GitHub's runners are about 2x slower than a dev box. ~1.3 s locally; this budget catches a hang, not
+ * ordinary runner variance.
+ */
+const TEN_K_TIMEOUT_MS = 20_000;
 const SURFACES: readonly SurfaceName[] = ['page', 'raised', 'sunken', 'accent'];
 const ROLES = Object.keys(SURFACE_FOREGROUNDS) as ForegroundRole[];
 const DEFAULT_ROLES: RoleChoice = { ground: 'ground', accent: 'most-chromatic', boost: 0 };
@@ -23,9 +29,18 @@ function pairs(p: AccessiblePalette) {
   );
 }
 
+/** Pairs below their level, plus the accent fill if it is under 3:1 on the page. Empty when accessible. */
+function failures(p: AccessiblePalette): string[] {
+  const failing = pairs(p)
+    .filter(({ ratio, min }) => ratio < min)
+    .map(({ surface, fg, ratio }) => `${surface}.${fg} ${ratio.toFixed(2)}:1`);
+  const fill = contrastRatio(p.surfaces.accent.bg, p.surfaces.page.bg);
+  return fill < 3 ? [...failing, `accent fill vs page ${fill.toFixed(2)}:1`] : failing;
+}
+
+// One assertion per palette: 25 expect() calls × 10k runs cost as much as the solver itself.
 function expectAccessible(p: AccessiblePalette) {
-  for (const { surface, fg, ratio, min } of pairs(p)) expect(ratio, `${surface}.${fg}`).toBeGreaterThanOrEqual(min);
-  expect(contrastRatio(p.surfaces.accent.bg, p.surfaces.page.bg), 'accent fill vs page').toBeGreaterThanOrEqual(3);
+  expect(failures(p)).toEqual([]);
 }
 
 const oklch = fc.record({
@@ -57,7 +72,7 @@ describe('derivePalette', () => {
       }),
       { numRuns: 10_000 },
     );
-  });
+  }, TEN_K_TIMEOUT_MS);
 
   it('reports the true ratio of every pair', () => {
     fc.assert(

@@ -10,6 +10,11 @@ const oklch = fc.record({
   c: fc.double({ min: 0, max: 0.37, noNaN: true }),
   h: fc.double({ min: 0, max: 359.99, noNaN: true }),
 });
+/** Brand colors as a logo yields them: in-gamut sRGB with a visible hue. */
+const brandColor = fc
+  .integer({ min: 0, max: 0xffffff })
+  .map((n) => hexToOklch(`#${n.toString(16).padStart(6, '0')}`))
+  .filter((c) => c.c > 0.08);
 const level = fc.constantFrom<ContrastLevel>('AA-text', 'AA-ui');
 const hueDistance = (a: number, b: number) => Math.abs(((a - b + 540) % 360) - 180);
 
@@ -34,8 +39,10 @@ describe('ensureContrast', () => {
   });
 
   it('keeps the brand hue when the adjusted color still has visible chroma', () => {
+    // Drawn from real sRGB brand colors: random out-of-gamut OKLCH mostly ends near-gray after gamut mapping,
+    // which made fast-check discard ~94% of cases and the test slow.
     fc.assert(
-      fc.property(oklch, oklch, level, (fg, bg, lvl) => {
+      fc.property(brandColor, oklch, level, (fg, bg, lvl) => {
         const out = hexToOklch(ensureContrast(fg, bg, lvl));
         fc.pre(out.c > 0.05);
         expect(hueDistance(out.h, fg.h)).toBeLessThan(3);
