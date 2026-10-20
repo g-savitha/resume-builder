@@ -1,0 +1,14 @@
+# chore/lint-e2e-sleeps: evidence
+
+## eslint on a spec with page.waitForTimeout(150)
+
+/workspace/resume-builder/e2e/__neg.spec.ts
+  3:9  error  Fixed sleeps make e2e flaky. Wait for the end state instead: await expect(locator).toHaveAttribute(...) / toBeVisible() / toContainText(), or expect.poll(). State hooks (data-app-state, save-status data-state, data-drag-state, data-row-label) are listed in .cursor/skills/verify-resume-builder/features/README.md  no-restricted-syntax
+
+✖ 1 problem (1 error, 0 warnings)
+
+
+## pnpm bench x3 after replacing the 300 ms post-typing wait with expect.poll
+bench 1:   1 passed (18.3s)
+bench 2:   1 passed (18.3s)
+bench 3:   1 passed (18.3s)
