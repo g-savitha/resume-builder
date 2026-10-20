@@ -72,6 +72,7 @@ async function measureTyping(page: Page): Promise<{ frame: Stats; eventTiming: {
   const role = page.getByLabel('Role (required)').first();
   await role.click();
   await role.press('End');
+  // eslint-disable-next-line no-restricted-syntax -- a quiet window before measuring, not a wait for state
   await page.waitForTimeout(200);
   await page.evaluate(() => {
     const w = window as unknown as { __lat: number[]; __evt: number[] };
@@ -80,7 +81,8 @@ async function measureTyping(page: Page): Promise<{ frame: Stats; eventTiming: {
   });
   const text = 'abcdefghijklmnopqrstuvwxyz '.repeat(Math.ceil(KEYSTROKES / 27)).slice(0, KEYSTROKES);
   await page.keyboard.type(text, { delay: 30 });
-  await page.waitForTimeout(300);
+  // Every keystroke's next-frame latency has been recorded.
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __lat: number[] }).__lat.length)).toBe(text.length);
   const { lat, evt } = await page.evaluate(() => {
     const w = window as unknown as { __lat: number[]; __evt: number[] };
     return { lat: w.__lat, evt: w.__evt };

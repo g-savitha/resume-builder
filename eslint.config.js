@@ -79,6 +79,20 @@ export default tseslint.config(
     languageOptions: { globals: { ...globals.node } },
   },
   {
+    // See docs/checks.md: e2e waits for a state, never for a fixed time.
+    files: ['e2e/**/*.ts'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "CallExpression[callee.property.name='waitForTimeout']",
+          message:
+            "Fixed sleeps make e2e flaky. Wait for the end state instead: await expect(locator).toHaveAttribute(...) / toBeVisible() / toContainText(), or expect.poll(). State hooks (data-app-state, save-status data-state, data-drag-state, data-row-label) are listed in .cursor/skills/verify-resume-builder/features/README.md.",
+        },
+      ],
+    },
+  },
+  {
     files: ['e2e/**/*.ts', '*.config.ts', 'scripts/**/*.ts'],
     languageOptions: { globals: { ...globals.node } },
     rules: { 'no-console': 'off' },
