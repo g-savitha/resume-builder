@@ -4,10 +4,16 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import globals from 'globals';
 import boundaries from './scripts/eslint/module-boundaries.js';
+import disableReason from './scripts/eslint/disable-reason.js';
 
 export default tseslint.config(
   { ignores: ['dist', 'coverage', 'playwright-report', 'test-results', 'docs', 'e2e/.artifacts'] },
   js.configs.recommended,
+  {
+    // See docs/checks.md. Every escape hatch says why; ts-expect-error descriptions come from ban-ts-comment.
+    plugins: { 'disable-reason': disableReason },
+    rules: { 'disable-reason/require-reason': 'error' },
+  },
   {
     files: ['**/*.{ts,tsx}'],
     extends: [...tseslint.configs.strictTypeChecked, ...tseslint.configs.stylisticTypeChecked],
@@ -46,7 +52,7 @@ export default tseslint.config(
         {
           selector:
             ':matches(TSAsExpression, TSTypeAssertion) > TSTypeReference > Identifier[name=/^(ContrastSafe|Surface|AccessiblePalette)$/]',
-          message: 'Contrast-safe types are minted only by themes/color (ensureContrast, derivePalette). Do not cast to them.',
+          message: 'Contrast-safe types are minted only by themes/color. Do not cast: get the value from ensureContrast() or derivePalette() (via @/themes).',
         },
       ],
     },

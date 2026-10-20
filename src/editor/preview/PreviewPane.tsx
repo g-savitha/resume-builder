@@ -20,8 +20,7 @@ export function PreviewPane() {
         </h2>
         <span>Unstyled content echo of the {variantLabel} variant. The themed, paginated preview arrives in milestone 3.</span>
       </div>
-      {/* Scrollable regions must be keyboard-reachable (axe scrollable-region-focusable, WCAG 2.1.1). */}
-      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- scrollable regions must be keyboard-reachable (axe scrollable-region-focusable, WCAG 2.1.1) */}
       <div className="stage" tabIndex={0} role="region" aria-label="Preview, scrollable">
         <article className="echo" aria-label="Content echo (read-only)" data-testid="content-echo">
           {view?.sections.map(({ section, items }) => <EchoSection key={section.id} section={section} items={items} />)}
