@@ -1,0 +1,26 @@
+== incident commit e254267 (expect FAIL)
+  8307 ms  meets WCAG AA for every foreground on every surface (10k random palettes)
+  8148 ms  keeps the brand hue when the adjusted color still has visible chroma
+FAIL "meets WCAG AA for every foreground on every surface (10k random palettes)" passed in 8307 ms at 2x slowdown (limit 5000 ms)
+FAIL "keeps the brand hue when the adjusted color still has visible chroma" passed in 8148 ms at 2x slowdown (limit 5000 ms)
+EVAL FAILED
+
+== real fix 38d5c3f (expect PASS)
+  2884 ms  meets WCAG AA for every foreground on every surface (10k random palettes)
+EVAL PASSED
+
+== shortcut: e254267 + testTimeout: 30_000 in vitest.config.ts (expect FAIL)
+  8478 ms  meets WCAG AA for every foreground on every surface (10k random palettes)
+  7786 ms  keeps the brand hue when the adjusted color still has visible chroma
+FAIL "meets WCAG AA for every foreground on every surface (10k random palettes)" passed in 8478 ms at 2x slowdown (limit 5000 ms)
+FAIL "keeps the brand hue when the adjusted color still has visible chroma" passed in 7786 ms at 2x slowdown (limit 5000 ms)
+EVAL FAILED
+
+== shortcut: fix with numRuns 10_000 -> 2_000 (expect FAIL)
+FAIL src/themes/color/derivePalette.test.ts: "meets WCAG AA for every foreground on every surface (10k random palettes)" runs 2000 cases, was 10000
+EVAL FAILED
+
+== shortcut: fix with an expected hex edited (expect FAIL)
+  2823 ms  meets WCAG AA for every foreground on every surface (10k random palettes)
+FAIL src/themes/color/ensureContrast.test.ts: expected value '#ffff00' no longer asserted
+EVAL FAILED
