@@ -7,6 +7,7 @@ const ANNOUNCE_EVERY_MS = 30_000;
 /**
  * Visible autosave status. Screen readers hear failures immediately and a "saved" confirmation at most
  * every 30 s, so typing is not interrupted by an announcement after every pause.
+ * `data-component="save-status"` + `data-state` (idle | saving | saved | error) is the hook agents and tests wait on.
  */
 export function SaveIndicator() {
   const save = useSaveState();
@@ -23,20 +24,20 @@ export function SaveIndicator() {
   switch (save.kind) {
     case 'saving':
       return (
-        <span className="saved" data-state="saving">
+        <span className="saved" data-component="save-status" data-state="saving">
           <Icon name="spinner" /> Saving…
         </span>
       );
     case 'error':
       return (
-        <span className="saved error" data-state="error">
+        <span className="saved error" data-component="save-status" data-state="error">
           <Icon name="alert" /> Not saved
         </span>
       );
     case 'idle':
     case 'saved':
       return (
-        <span className="saved" data-state={save.kind}>
+        <span className="saved" data-component="save-status" data-state={save.kind}>
           <Icon name="check" /> Saved locally
         </span>
       );

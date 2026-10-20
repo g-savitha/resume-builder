@@ -29,6 +29,7 @@ Preconditions:
 
 ## Gotchas
 
-- dnd-kit binds its arrow-key listener on the tick after pick-up. An ArrowUp sent right after the "Picked up" message can be lost. The journey waits 150 ms there, the only fixed wait in the map, because no visible state marks "listening" yet.
+- dnd-kit binds its arrow-key listener a tick after pick-up, so an ArrowUp sent right after "Picked up" can be lost. Wait for the list's `data-drag-state="dragging"`; it is set only once the keys are live, and returns to `idle` on drop or cancel.
+- Read the order from `[data-row-label]` on each row, in DOM order.
 - A move announces with the list's new positions. Assert the message, then the order. The order alone does not prove the keyboard path ran.
 - The first row's "Move up" and the last row's "Move down" are disabled.

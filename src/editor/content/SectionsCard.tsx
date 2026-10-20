@@ -65,7 +65,7 @@ function SectionRow({
   const def = sectionDef(section.kind);
   const kindLabel = def?.defaultLabel ?? section.kind;
   return (
-    <div className={`srow${selected ? ' active' : ''}${hidden ? ' hidden' : ''}`}>
+    <div className={`srow${selected ? ' active' : ''}${hidden ? ' hidden' : ''}`} data-row-label={label}>
       <DragHandle controls={controls} label={label} />
       {def?.defaultIcon ? (
         <span className="srow-icon">

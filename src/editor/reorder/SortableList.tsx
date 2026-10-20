@@ -13,7 +13,7 @@ import {
 } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useCallback, useMemo, useRef, type CSSProperties, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { useAnnounce } from '@/store';
 import { attr, focusSoon } from '../a11y/focus';
 import { useReducedMotion } from '../a11y/useReducedMotion';
@@ -87,10 +87,32 @@ export function SortableList<Id extends string>({ ids, listLabel, scope, labelOf
   // dnd-kit reports "over" on every collision update (including over itself right after pick-up);
   // announce only when the target position actually changes.
   const lastOver = useRef<UniqueIdentifier | null>(null);
+
+  // `data-drag-state` on the list is a hook for agents and tests: "dragging" means the arrow keys now move
+  // the lifted item. dnd-kit's KeyboardSensor binds its keydown listener in a setTimeout queued right after
+  // onDragStart returns; a timer queued from inside that timer is guaranteed to run after it.
+  const [dragState, setDragState] = useState<'idle' | 'dragging'>('idle');
+  const readyTimer = useRef<number | undefined>(undefined);
+  const setDragging = useCallback((dragging: boolean) => {
+    window.clearTimeout(readyTimer.current);
+    if (!dragging) {
+      setDragState('idle');
+      return;
+    }
+    readyTimer.current = window.setTimeout(() => {
+      readyTimer.current = window.setTimeout(() => {
+        setDragState('dragging');
+      });
+    });
+  }, []);
+  useEffect(() => () => {
+    window.clearTimeout(readyTimer.current);
+  }, []);
   const handlers = useMemo(
     () => ({
       onDragStart: ({ active }: DragStartEvent) => {
         lastOver.current = active.id;
+        setDragging(true);
         announce(`Picked up ${label(active.id)}, position ${indexOf(active.id) + 1} of ${count}.`);
       },
       onDragOver: ({ active, over }: DragOverEvent) => {
@@ -99,6 +121,7 @@ export function SortableList<Id extends string>({ ids, listLabel, scope, labelOf
         announce(`${label(active.id)} is over position ${indexOf(over.id) + 1} of ${count}.`);
       },
       onDragEnd: ({ active, over }: DragEndEvent) => {
+        setDragging(false);
         const id = ids.find((x) => x === active.id);
         const to = over ? indexOf(over.id) : -1;
         if (id === undefined || to < 0 || to === indexOf(active.id)) {
@@ -109,10 +132,11 @@ export function SortableList<Id extends string>({ ids, listLabel, scope, labelOf
         announce(`Moved ${label(active.id)} to position ${to + 1} of ${count}.`);
       },
       onDragCancel: ({ active }: { active: { id: UniqueIdentifier } }) => {
+        setDragging(false);
         announce(`Reorder cancelled. ${label(active.id)} stays at position ${indexOf(active.id) + 1} of ${count}.`);
       },
     }),
-    [announce, count, ids, indexOf, label, onMove],
+    [announce, count, ids, indexOf, label, onMove, setDragging],
   );
 
   return (
@@ -123,7 +147,7 @@ export function SortableList<Id extends string>({ ids, listLabel, scope, labelOf
       {...handlers}
     >
       <SortableContext items={ids as Id[]} strategy={verticalListSortingStrategy}>
-        <ul className={className} aria-label={listLabel}>
+        <ul className={className} aria-label={listLabel} data-drag-state={dragState}>
           {ids.map((id, index) => (
             <SortableRow key={id} id={id} scope={scope} index={index} count={count} move={move} renderRow={renderRow} />
           ))}

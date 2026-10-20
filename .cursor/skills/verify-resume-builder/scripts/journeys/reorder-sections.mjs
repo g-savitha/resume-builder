@@ -2,7 +2,7 @@
 export default async ({ page, step, evidence, expect }) => {
   const list = page.getByRole('list', { name: 'Sections, in resume order' });
   const live = page.getByTestId('live-region');
-  const order = () => list.locator('.srow-name .name').allTextContents();
+  const order = () => list.locator('[data-row-label]').evaluateAll((rows) => rows.map((row) => row.dataset.rowLabel));
 
   await step('open the builder; Experience is 3rd and Projects 4th', async () => {
     await page.goto('/');
@@ -13,11 +13,12 @@ export default async ({ page, step, evidence, expect }) => {
     await list.getByRole('button', { name: 'Reorder Projects' }).focus();
     await page.keyboard.press('Space');
     await expect(live).toContainText('Picked up Projects, position 4 of 8.');
-    await page.waitForTimeout(150); // dnd-kit binds its arrow-key listener on the tick after pick-up
+    await expect(list).toHaveAttribute('data-drag-state', 'dragging'); // arrow keys are live now
     await page.keyboard.press('ArrowUp');
     await expect(live).toContainText('Projects is over position 3 of 8.');
     await page.keyboard.press('Space');
     await expect(live).toContainText('Moved Projects to position 3 of 8.');
+    await expect(list).toHaveAttribute('data-drag-state', 'idle');
     expect((await order()).slice(2, 4)).toEqual(['Projects', 'Experience']);
   });
   await step('"Move Experience down" moves it to position 5 and keeps focus on the moved row', async () => {

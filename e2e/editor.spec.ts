@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-import { openEditor, sectionList, sectionOrder, shot } from './helpers';
+import { openEditor, saveStatus, sectionList, sectionOrder, shot } from './helpers';
 
 test.describe('builder (milestone 1)', () => {
   test('main editor renders and matches the light builder chrome', async ({ page }) => {
@@ -20,6 +20,7 @@ test.describe('builder (milestone 1)', () => {
   });
 
   test('reorders sections with the keyboard (dnd-kit keyboard sensor) and announces politely', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' }); // no sort transition, so the screenshot needs no settle wait
     await openEditor(page);
     const before = await sectionOrder(page);
     expect(before.slice(2, 4)).toEqual(['Experience', 'Projects']);
@@ -28,14 +29,14 @@ test.describe('builder (milestone 1)', () => {
     await handle.focus();
     await page.keyboard.press('Space');
     await expect(page.getByTestId('live-region')).toContainText('Picked up Projects, position 4 of 8.');
-    await page.waitForTimeout(150); // dnd-kit binds its key listeners on the next tick after pick-up
+    await expect(sectionList(page)).toHaveAttribute('data-drag-state', 'dragging'); // arrow keys are live
     await page.keyboard.press('ArrowUp');
     await expect(page.getByTestId('live-region')).toContainText('Projects is over position 3 of 8.');
-    await page.waitForTimeout(250); // let the sortable transition settle for the screenshot
     await page.screenshot({ path: shot('reorder-keyboard.png') });
 
     await page.keyboard.press('Space');
     await expect(page.getByTestId('live-region')).toContainText('Moved Projects to position 3 of 8.');
+    await expect(sectionList(page)).toHaveAttribute('data-drag-state', 'idle');
     expect((await sectionOrder(page)).slice(2, 4)).toEqual(['Projects', 'Experience']);
     await expect(handle).toBeFocused();
     const echoHeadings = await page.getByTestId('content-echo').getByRole('heading', { level: 3 }).allTextContents();
@@ -55,7 +56,7 @@ test.describe('builder (milestone 1)', () => {
     const role = page.getByLabel('Role (required)').first();
     await role.fill('Principal Frontend Engineer');
     await sectionList(page).getByRole('button', { name: 'Hide Projects in Microsoft' }).click();
-    await expect(page.locator('.saved[data-state="saved"]')).toBeVisible({ timeout: 5000 });
+    await expect(saveStatus(page)).toHaveAttribute('data-state', 'saved', { timeout: 5000 });
 
     await page.reload();
     await expect(page.getByLabel('Role (required)').first()).toHaveValue('Principal Frontend Engineer');

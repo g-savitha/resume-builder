@@ -28,7 +28,7 @@ export function ItemCard({ section, def, itemId, controls, expanded, onToggle }:
   const title = itemTitle(section, { id: itemId, sectionId: section.id, data: { [titleField]: titleValue } }, controls.index);
   const bodyId = `item-body-${itemId}`;
   return (
-    <div className={`item-card${hidden ? ' hidden' : ''}${controls.isDragging ? ' dragging' : ''}`}>
+    <div className={`item-card${hidden ? ' hidden' : ''}${controls.isDragging ? ' dragging' : ''}`} data-row-label={title}>
       <div className="item-head">
         <DragHandle controls={controls} label={title} />
         <button type="button" className="item-title" aria-expanded={expanded} aria-controls={bodyId} onClick={onToggle}>
