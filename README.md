@@ -2,7 +2,7 @@
 
 Write your resume once, then theme it for every company you apply to. Name the company (or paste its URL), and the app derives a theme from its logo colors, with WCAG AA contrast enforced at derivation. The preview is the PDF: export prints the same DOM.
 
-Status: **milestone 1** (core model and editor). The themed, paginated preview and PDF export arrive in milestone 3; logo-derived palettes in milestone 4. The design lives in [`docs/design/`](docs/design/); deviations from it are listed in [`docs/design/deviations.md`](docs/design/deviations.md).
+Status: **milestone 2** (contrast core). Milestone 1 shipped the core model and editor; milestone 2 adds `derivePalette`, which turns a logo palette into WCAG AA-safe theme colors, property-tested over 10,000 random palettes. The themed, paginated preview and PDF export arrive in milestone 3; logo extraction in milestone 4. The design lives in [`docs/design/`](docs/design/); deviations from it are listed in [`docs/design/deviations.md`](docs/design/deviations.md).
 
 ## Principles
 
@@ -55,6 +55,7 @@ The registry (`import.meta.glob`) picks it up, the editor generates its form fro
 | `store/` | Zustand store behind per-field selector hooks; the only writer of documents |
 | `storage/` | IndexedDB persistence: versioned records, valibot parsing, debounced idle autosave that skips unchanged revisions |
 | `brand/` | Brand profiles (milestone 1: the name-hash fallback only) |
+| `themes/` | Theme as data. Milestone 2: `themes/color`, where `ensureContrast` is the only minter of `ContrastSafe` colors and `derivePalette` the only minter of `AccessiblePalette` |
 | `editor/` | The light builder UI: generated forms, accessible reorder (dnd-kit keyboard sensor + Move up/down), hide/show per variant |
 | `app/` | Composition root and first-run sample content |
 

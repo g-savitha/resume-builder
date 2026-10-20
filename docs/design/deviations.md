@@ -1,8 +1,10 @@
-# Deviations from the design contract (milestone 1)
+# Deviations from the design contract
 
-`docs/design/types.ts` is the contract. Each place where milestone 1 differs from it, or from `module-map.md`, is listed here with the reason. Nothing else was changed on purpose.
+`docs/design/types.ts` is the contract. Each place where an implemented milestone differs from it, or from `module-map.md`, is listed here with the reason. Nothing else was changed on purpose.
 
-## Module placement and arrows
+## Milestone 1
+
+### Module placement and arrows
 
 1. **Brand and theme data types live in `domain/brand.ts`.** `BrandProfile`, `BrandSnapshot`, `LogoPalette`, `Swatch`, `Oklch`, `Domain`, `SwatchPick`, `RoleChoice`, `ThemeBaseRef`, `ArchetypeId`, `DataUrl`, `Brand`, `Result`. The contract files them under `brand/` and `themes/`, but `Variant` (domain) embeds them and domain is the leaf every module imports. `brand/` and `themes/` will re-export them when they grow.
 2. **`CONTACT_ICON` lives in `sections/`, not `icons/`.** `ContactKind` is a domain type; putting the map in `icons/` would make icons import domain while domain imports `IconName` from icons (a cycle). Identity owns contacts, so the map sits with the sections. Domain also exports a runtime `CONTACT_KINDS` list (storage validation, editor select); `ContactKind` is derived from it.
@@ -10,7 +12,7 @@
 4. **dependency-cruiser is replaced by a local ESLint rule** (`scripts/eslint/module-boundaries.js`, rule `boundaries/module-imports`) plus `scripts/eslint/architecture.test.ts` (every `src/` folder declared, each has `index.ts`, graph acyclic). One less dependency, and the rule also enforces package ownership (`lucide-react` only in `icons/`, `zustand` only in `store/`, `idb`/`valibot` only in `storage/`, dnd-kit only in `editor/`). TS `paths` maps `@/*` to `src/*/index.ts`, and the Vite alias does the same, so a deep import does not even resolve.
 5. **The preview placeholder lives in `editor/preview/`**, not `render/ResumePreview`. `render/` starts in milestone 3 with the engine. The placeholder is a plain, read-only echo of the active variant's visible content.
 
-## Signatures
+### Signatures
 
 6. **`startPersistence(options)`** takes `{ store, createInitial, dbName?, debounceMs?, now? }` and resolves to `{ issues, flush(), stop() }` instead of `() => void`. Injecting the store and the first-run document keeps storage free of app knowledge and testable against fake-indexeddb; `flush` serves pagehide and tests; `issues` reports unreadable records (left untouched on disk). Web Locks tab ownership is deferred to milestone 7.
 7. **Store surface.** The contract hooks exist (`useDispatch`, `useItemField`, `useSectionOrder`, `useVariantView`, `useAnnounce`, `useResumeList`). Added: `createEditorStore` (opaque handle) and `EditorStoreProvider`, plus narrow selector hooks the editor needs (`useSection`, `useVariant`, `useVariantOrder`, `useActiveVariantId`, `useActiveVariantSummary`, `useIsHidden`, `useItemExists`, `useResumeName`, `useAnnouncement`, `useSaveState`, `useGetDocument`, `useActiveResumeId`). `useVariantView` returns `null` before load. The Web Lock check on dispatch is milestone 7.
@@ -19,7 +21,7 @@
 10. **Brand helper:** uses the contract's `unique symbol` brand, not the `__brand` string field suggested by the TypeScript skill, to match `types.ts` exactly.
 11. **Added to domain:** `createDocument`, `checkInvariants`, `normalizeDocument` (repairs dangling ids at the storage boundary; property tests use `checkInvariants`), boundary parsers (`parsePartialDate`, `parseSafeUrl`, `parseDataUrl`, `parseDomain`), and the rich-text text format (`parseRichText`, `formatRichText`, `richTextToPlain`).
 
-## Behavior
+### Behavior
 
 12. **`ResumeView.title` is `"<resume name> – <variant label>"`.** Domain does not know which section kind is the identity, so it cannot produce `"Name – Resume – Company"`. Milestone 3's render layer, which knows the projection, will compose the PDF title.
 13. **`variant/create` sets `roles` to strategy defaults** (`ground: 'ground', accent: 'most-chromatic'`) because preset `roleHints` need `themes/` (milestone 3+). It does not auto-select; the editor dispatches `variant/select` next. With `copyFrom`, the new variant copies `customization` and `hidden`.
@@ -29,7 +31,19 @@
 17. **Rich text is edited as a small text syntax** (`- ` bullets, `**bold**`, `*italic*`, `[label](url)`) parsed at the editor boundary into the closed `RichText` AST. No HTML enters the domain; unsafe link targets stay plain text. A WYSIWYG editor can replace the textarea later without touching the domain.
 18. **dnd-kit's built-in live region is assertive and not configurable**, so its announcements are silenced and every reorder message goes through the editor's single polite region.
 
-## Tooling versions
+### Tooling versions
 
 19. **TypeScript 6.0, ESLint 9.** TypeScript 7 is current, but typescript-eslint supports `<6.1` and eslint-plugin-jsx-a11y does not yet declare ESLint 10 support.
 20. **CI workflow lives at `docs/ci/ci.yml`.** The token used to push cannot write `.github/workflows/`. Moving it to `.github/workflows/ci.yml` is a manual step.
+
+## Milestone 2 (contrast core)
+
+21. **No mid-lightness band for the accent fill.** The contract's TODO pushes the accent swatch out of L (0.45, 0.6) before solving it against the page. That changed brand colors that already worked: Experian-like raspberry `#ba2f7d` became `#990062`, and a red `#e50914` on a dark page became `#ec1b1d`, although both carry AA text. The fill is now the logo color, adjusted only if it is below 3:1 against the page. Its foregrounds are solved against it like any other surface, so text on it passes regardless; in that band the text simply lands near black or white.
+22. **No +0.1 safety margin.** Contrast is measured on the exact `#rrggbb` values that render (foreground and background both rounded to 8 bits first), so there is no rounding gap to buffer. A color that already meets its level is returned unchanged; an adjusted one stops at the smallest passing lightness (24-step bisection), so brand colors move only as far as readability needs. The final assert checks the WCAG threshold itself.
+23. **`ensureContrast(fg, bg, level, aim?)`.** The optional `aim` asks for a higher ratio when the background allows it. `RoleChoice.boost = 1` aims for 7:1 on `text` and `heading`. 7:1 is best effort: on a mid-tone background (relative luminance near 0.18) nothing exceeds about 4.58:1. The level's minimum always holds.
+24. **Swatch picks are total.** A numeric pick beyond this palette falls back to the role's default strategy (`ground` for ground, `most-chromatic` for accent and secondary). The `ground` strategy with no ground swatch (a transparent logo) gives a white page; an empty palette gives a white page and a grey accent. Mode is dark when the ground's OKLCH L is below 0.5. `BrandProfile.siteDark` is not consulted: `derivePalette` takes a `LogoPalette` per the contract, and `resolveTheme` (milestone 3) can map the hint onto `roles`.
+25. **Foreground sources.** `text`, `heading` and `muted` start from near-neutrals tinted with the accent hue (no tint when the accent is achromatic, so gray brands stay gray). `accentText` and `icon` start from the accent swatch; `rule` from the secondary swatch, else the accent. On the accent surface, `accentText`/`icon` use the secondary swatch (else the ink pole) and `rule` uses the ink pole.
+26. **How the mint is enforced.** `ensureContrast` is not exported from `themes/color/index.ts`, and a lint rule stops the rest of `themes/` from importing `themes/color/*` directly. Casting to `ContrastSafe`, `Surface` or `AccessiblePalette` is a lint error everywhere except the two minting files (`ensureContrast.ts`, `derivePalette.ts`), since a cast is the only way to forge one. `themes/index.ts` exports only the palette types until `resolveTheme` lands in milestone 3; `derivePalette` is reachable inside `themes/` through `./color`.
+27. **Added types:** `ForegroundRole` (`keyof typeof SURFACE_FOREGROUNDS`) and `ContrastReportEntry` (the report row). Every emitted color is a lowercase `#rrggbb` string.
+28. **Fixture brand palettes live in `testing/`** (`FIXTURE_PALETTES`), so the milestone 6 axe runs can reuse them. They are a test-only minter of `LogoPalette`. No architecture arrow changed: `themes → domain` was already declared.
+
