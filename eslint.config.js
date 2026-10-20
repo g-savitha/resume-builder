@@ -36,6 +36,33 @@ export default tseslint.config(
     },
   },
   {
+    // Graft G1: contrast-safe colors are minted only by ensureContrast, palettes only by derivePalette.
+    // A cast is the only way to forge one, so casting to these types is banned everywhere else.
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: ['src/themes/color/ensureContrast.ts', 'src/themes/color/derivePalette.ts'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            ':matches(TSAsExpression, TSTypeAssertion) > TSTypeReference > Identifier[name=/^(ContrastSafe|Surface|AccessiblePalette)$/]',
+          message: 'Contrast-safe types are minted only by themes/color (ensureContrast, derivePalette). Do not cast to them.',
+        },
+      ],
+    },
+  },
+  {
+    // ensureContrast is private to themes/color: the rest of themes/ imports only its index.ts.
+    files: ['src/themes/**/*.{ts,tsx}'],
+    ignores: ['src/themes/color/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: [{ regex: '(^|/)color/.', message: 'Import themes/color through its index.ts (./color).' }] },
+      ],
+    },
+  },
+  {
     files: ['src/**/*.test.{ts,tsx}', 'src/testing/**'],
     rules: {
       '@typescript-eslint/no-non-null-assertion': 'off',
