@@ -1,0 +1,37 @@
+# test/persistence-await-saves: evidence
+
+## Load: 4x slowdown on core 0 (3 busy loops, vitest pinned) + 16 busy loops across all 8 cores
+new-storage: 40 passed, 0 failed of 40 runs (3+1 x slowdown on core 0 + all 8 cores busy)
+new-full-suite: 15 passed, 0 failed of 15 runs (3+1 x slowdown on core 0 + all 8 cores busy)
+old-storage: 40 passed, 0 failed of 40 runs (4x)  -- old version did not fail under load
+old-storage-8x: 30 passed, 0 failed of 30 runs (8x) -- old version did not fail under load
+
+## Simulated 50 ms event-loop stall right after the edit burst (same patch in both versions)
+== old + 50 ms stall
+run 1 FAIL
+     × debounces: a burst of edits produces one write after the quiet period 76ms
+AssertionError: expected 14 to be 10 // Object.is equality
+run 2 FAIL
+     × debounces: a burst of edits produces one write after the quiet period 76ms
+AssertionError: expected 14 to be 10 // Object.is equality
+run 3 FAIL
+     × debounces: a burst of edits produces one write after the quiet period 76ms
+AssertionError: expected 14 to be 10 // Object.is equality
+run 4 FAIL
+     × debounces: a burst of edits produces one write after the quiet period 79ms
+AssertionError: expected 14 to be 10 // Object.is equality
+run 5 FAIL
+     × debounces: a burst of edits produces one write after the quiet period 77ms
+AssertionError: expected 14 to be 10 // Object.is equality
+== new + 50 ms stall
+run 1 pass
+run 2 pass
+run 3 pass
+run 4 pass
+run 5 pass
+
+## Mutation checks on src/storage/persistence.ts (new tests)
+no debounce restart        -> debounce test fails
+pagehide does not flush    -> pagehide test fails
+no autosave (stop() only)  -> 3 tests fail
+quiet period halved        -> debounce test fails
