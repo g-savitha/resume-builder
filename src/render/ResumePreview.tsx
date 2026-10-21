@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { memo, useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type RefObject } from 'react';
 import type { ResumeView } from '@/domain';
 import { contentBox, pageSize, type LayoutInput, type PageBox, type PagedLayout, type PageSize } from '@/engine';
@@ -99,7 +100,9 @@ export function ResumePreview({ view: liveView, onSettled, fitWidth }: ResumePre
       data-page-count={layout ? String(pageCount) : undefined}
       data-theme-base={theme.base.id}
     >
-      {missing.length ? <MeasureArea blocks={missing} theme={theme} width={width} measureRef={measureRef} /> : null}
+      {/* Portaled to <body>: the pane may be display:none (narrow screens), and nothing can be measured inside that. */}
+      {missing.length ? createPortal(<MeasureArea blocks={missing} theme={theme} width={width} measureRef={measureRef} />, document.body) : null}
+      <style>{`@page { size: ${page === 'A4' ? 'A4' : 'letter'}; margin: 0; }`}</style>
       {layout ? <Pages layout={layout} theme={theme} view={view} scale={fitWidth ? Math.min(1, fitWidth / size.w) : 1} /> : null}
     </div>
   );

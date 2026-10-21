@@ -2,3 +2,4 @@
 // measures them in the DOM, and draws the engine's pages with the primitives.
 export { ResumePreview, type PaginationState, type ResumePreviewProps } from './ResumePreview';
 export { buildFlow, type BlockData, type RenderBlock } from './flow';
+export { printVariant } from './print';

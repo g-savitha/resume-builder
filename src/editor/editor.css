@@ -865,6 +865,34 @@ textarea.input {
   font-variant-numeric: tabular-nums;
 }
 
+/* Printing (Export PDF): only the resume pages. The builder chrome is not printed. */
+@media print {
+  html,
+  body,
+  #root,
+  .app {
+    height: auto;
+    background: none;
+  }
+  .app,
+  .main,
+  .stage {
+    display: block;
+  }
+  .topbar,
+  .editor,
+  .pv-bar {
+    display: none !important;
+  }
+  .preview {
+    display: block !important;
+  }
+  .stage {
+    overflow: visible;
+    padding: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

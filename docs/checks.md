@@ -53,6 +53,8 @@ A bare `/* eslint-disable */` turns off every rule, this one included, and ESLin
 | No axe WCAG 2.2 A/AA violations in the editor, in both the dark and the light builder theme. | `pnpm e2e` (`e2e/editor.spec.ts`) |
 | **New:** no axe WCAG 2.2 A/AA violations in the paginated preview with each implemented archetype (classic, ats-plain), on a resume that spans a page break. | `pnpm e2e` (`e2e/preview.spec.ts`) |
 | **New:** the preview draws every fragment at the engine's planned height and inside its page; a split section repeats its heading as "(continued)". | `pnpm e2e` (`e2e/preview.spec.ts`, `misfitFragments` in `e2e/helpers.ts`) |
+| **New:** Export PDF prints the preview: the PDF has the preview's page count and A4 size, each page's headings on the same PDF page in reading order, Title "<resume> – <variant>", Lang, and tags (MarkInfo + H1/H2). Both archetypes; also from a narrow window with the pane hidden. | `pnpm e2e` (`e2e/export.spec.ts`, via `scripts/pdf-structure.ts`) |
+| Planned release gate (not wired yet): veraPDF PDF/UA-1 validation of an exported PDF. | — |
 | Typing p98 frame < 50 ms on a 3-page resume (the real paginated preview, at least 3 engine pages; unthrottled; the 4× CPU run is recorded, not asserted). | `pnpm bench` (`e2e/typing.bench.ts`) |
 | Property tests finish inside vitest's 5 s default on CI. Never raise `testTimeout` globally. | CI `pnpm test`. See the `ci-only-test-timeouts` skill. |
 

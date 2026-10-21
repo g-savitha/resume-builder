@@ -5,7 +5,7 @@
   "type": "module",
   "packageManager": "pnpm@10.34.6",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.18"
   },
   "scripts": {
     "dev": "vite",
@@ -51,6 +51,7 @@
     "fast-check": "^4.10.2",
     "globals": "^17.13.0",
     "jsdom": "^30.1.3",
+    "pdfjs-dist": "^6.4.299",
     "size-limit": "^14.2.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.71.2",
