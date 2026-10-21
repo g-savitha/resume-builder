@@ -1,0 +1,4 @@
+PASS open the builder; the save status settles
+PASS edit a role and hide Projects; the status reaches "saved"
+PASS reload: both edits come back from IndexedDB
+VERIFIED autosave. Evidence: /workspace/rb-work/e2e/.artifacts/verify/2026-10-21T02-55-55-226Z-autosave

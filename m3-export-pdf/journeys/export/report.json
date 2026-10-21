@@ -1,0 +1,30 @@
+{
+  "journey": "export",
+  "ok": true,
+  "url": "http://127.0.0.1:5211",
+  "rev": "86bd421",
+  "at": "2026-10-21T02:56:02.992Z",
+  "steps": [
+    {
+      "title": "open the builder and grow Experience past one page",
+      "ok": true,
+      "ms": 889
+    },
+    {
+      "title": "Export PDF: the print dialog would open with the PDF title \"My resume – Microsoft\" and lang \"en\"",
+      "ok": true,
+      "ms": 37
+    },
+    {
+      "title": "print to PDF (Chromium, print media): same page count, \"(continued)\" on page 2, tagged, titled",
+      "ok": true,
+      "ms": 162
+    },
+    {
+      "title": "after printing, the builder tab title comes back",
+      "ok": true,
+      "ms": 4
+    }
+  ],
+  "consoleErrors": []
+}

@@ -1,0 +1,5 @@
+PASS open the builder and grow Experience past one page
+PASS Export PDF: the print dialog would open with the PDF title "My resume – Microsoft" and lang "en"
+PASS print to PDF (Chromium, print media): same page count, "(continued)" on page 2, tagged, titled
+PASS after printing, the builder tab title comes back
+VERIFIED export. Evidence: /workspace/rb-work/e2e/.artifacts/verify/2026-10-21T02-56-01-414Z-export

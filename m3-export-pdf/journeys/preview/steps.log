@@ -1,0 +1,5 @@
+PASS open the builder; the preview settles on one classic page
+PASS add four long Experience entries; the section continues on page 2 under "Experience (continued)"
+PASS every fragment is drawn at the height the engine planned, inside its page
+PASS Design tab > ATS plain: the preview redraws in the plain archetype
+VERIFIED preview. Evidence: /workspace/rb-work/e2e/.artifacts/verify/2026-10-21T02-55-59-512Z-preview

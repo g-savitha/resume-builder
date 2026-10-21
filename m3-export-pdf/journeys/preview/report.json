@@ -1,0 +1,30 @@
+{
+  "journey": "preview",
+  "ok": true,
+  "url": "http://127.0.0.1:5211",
+  "rev": "86bd421",
+  "at": "2026-10-21T02:56:01.082Z",
+  "steps": [
+    {
+      "title": "open the builder; the preview settles on one classic page",
+      "ok": true,
+      "ms": 435
+    },
+    {
+      "title": "add four long Experience entries; the section continues on page 2 under \"Experience (continued)\"",
+      "ok": true,
+      "ms": 488
+    },
+    {
+      "title": "every fragment is drawn at the height the engine planned, inside its page",
+      "ok": true,
+      "ms": 21
+    },
+    {
+      "title": "Design tab > ATS plain: the preview redraws in the plain archetype",
+      "ok": true,
+      "ms": 172
+    }
+  ],
+  "consoleErrors": []
+}

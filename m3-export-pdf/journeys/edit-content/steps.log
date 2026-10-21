@@ -1,0 +1,5 @@
+PASS open the builder; Experience is selected in the section editor
+PASS edit the first role; the preview shows it
+PASS Add entry: one more entry, opened with focus in its first field
+PASS Add section > Volunteering: it lands last in the list and opens in the editor
+VERIFIED edit-content. Evidence: /workspace/rb-work/e2e/.artifacts/verify/2026-10-21T02-55-49-718Z-edit-content

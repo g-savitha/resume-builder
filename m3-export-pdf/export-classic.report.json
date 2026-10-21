@@ -1,0 +1,33 @@
+{
+  "pages": [
+    {
+      "widthPt": 594.95996,
+      "heightPt": 841.91998,
+      "text": "Savitha Gollamudi Lead Full Stack Engineer savitha@example.com Hyderabad, India linkedin.com/in/example github.com/examp"
+    },
+    {
+      "widthPt": 594.95996,
+      "heightPt": 841.91998,
+      "text": "EXPERIENCE (CONTINUED) Bullet 5: shipped a measurable improvement to a customer-facing React and TypeScript surface, wit"
+    }
+  ],
+  "title": "My resume – Microsoft",
+  "lang": "en",
+  "marked": true,
+  "roles": [
+    "Art",
+    "Document",
+    "H1",
+    "H2",
+    "H3",
+    "L",
+    "LI",
+    "Lbl",
+    "Link",
+    "NonStruct",
+    "P",
+    "Root",
+    "Strong"
+  ],
+  "problems": []
+}

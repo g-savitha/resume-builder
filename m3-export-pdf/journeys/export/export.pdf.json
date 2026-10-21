@@ -1,0 +1,32 @@
+{
+  "pages": [
+    {
+      "widthPt": 594.95996,
+      "heightPt": 841.91998,
+      "text": "Savitha Gollamudi Lead Full Stack Engineer savitha@example.com Hyderabad, India linkedin.com/in/example github.com/example SUMMARY Full stack engineer who ships product end to end: React and TypeScript front ends, Node.js and Python services, and the data layers underneath. Leads small teams and turns ambiguous requirements into predictable releases. EXPERIENCE Lead Full Stack Engineer Example Company A · Hyderabad, India Dec 2023 – Present Example: leads a squad of engineers building customer-facing React/TypeScript dashboards on Node.js services. Example: defined API contracts and review standards; introduced typed end-to-end services. Example: set up performance budgets and caching for the slowest read paths. React · TypeScript · Node.js Senior Software Engineer Example Company B · Hyderabad, India 2021 – 2023 Placeholder: owned the web client of a B2B SaaS product (React, Redux Toolkit, TypeScript). Placeholder: introduced Storybook and visual regression tests for the shared component library. Redux · PostgreSQL Software Engineer Example Company C · Bengaluru, India 2017 – 2021 Placeholder: built Python and Node.js services backed by MongoDB for an internal platform. Export role 1 Highlight 1: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 2: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 3: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 4: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 5: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 6: shipped a measurable improvement to a customer-facing surface, with tests and docs. Export role 2 Highlight 1: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 2: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 3: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 4: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 5: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 6: shipped a measurable improvement to a customer-facing surface, with tests and docs. Export role 3 Highlight 1: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 2: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 3: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 4: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 5: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    },
+    {
+      "widthPt": 594.95996,
+      "heightPt": 841.91998,
+      "text": "EXPERIENCE (CONTINUED) Highlight 6: shipped a measurable improvement to a customer-facing surface, with tests and docs. Export role 4 Highlight 1: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 2: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 3: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 4: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 5: shipped a measurable improvement to a customer-facing surface, with tests and docs. Highlight 6: shipped a measurable improvement to a customer-facing surface, with tests and docs. PROJECTS Resume builder One resume, themed per company with contrast-checked palettes. React · Zustand SKILLS Frontend: React, Redux, TypeScript Backend: Node.js, Python / FastAPI Data: PostgreSQL, MongoDB, Redis CERTIFICATIONS Example cloud developer certification Placeholder issuer 2024 EDUCATION B.Tech, Computer Science Example university 2013 – 2017"
+    }
+  ],
+  "title": "My resume – Microsoft",
+  "lang": "en",
+  "marked": true,
+  "roles": [
+    "Art",
+    "Document",
+    "H1",
+    "H2",
+    "H3",
+    "L",
+    "LI",
+    "Lbl",
+    "Link",
+    "NonStruct",
+    "P",
+    "Root",
+    "Strong"
+  ]
+}

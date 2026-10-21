@@ -1,0 +1,30 @@
+{
+  "journey": "edit-content",
+  "ok": true,
+  "url": "http://127.0.0.1:5211",
+  "rev": "86bd421",
+  "at": "2026-10-21T02:55:50.914Z",
+  "steps": [
+    {
+      "title": "open the builder; Experience is selected in the section editor",
+      "ok": true,
+      "ms": 442
+    },
+    {
+      "title": "edit the first role; the preview shows it",
+      "ok": true,
+      "ms": 41
+    },
+    {
+      "title": "Add entry: one more entry, opened with focus in its first field",
+      "ok": true,
+      "ms": 296
+    },
+    {
+      "title": "Add section > Volunteering: it lands last in the list and opens in the editor",
+      "ok": true,
+      "ms": 116
+    }
+  ],
+  "consoleErrors": []
+}

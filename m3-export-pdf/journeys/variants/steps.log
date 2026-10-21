@@ -1,0 +1,4 @@
+PASS open the Variants tab: General and Microsoft are listed, Microsoft is active
+PASS create "Experian": it becomes active in the list and the top-bar select
+PASS delete Experian (two-step confirm): two variants remain
+VERIFIED variants. Evidence: /workspace/rb-work/e2e/.artifacts/verify/2026-10-21T02-55-53-922Z-variants
