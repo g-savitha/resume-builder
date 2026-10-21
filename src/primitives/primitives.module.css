@@ -1,0 +1,97 @@
+/*
+ * The resume block kit. Colors come only from the surface variables OnSurface sets (--bg, --fg-<role>); sizes
+ * and spacing from the theme's --rs-* variables (fallbacks keep a block readable without a theme).
+ *
+ * The no-outer-margin rule: nothing here has a margin. Vertical space is padding inside an atom or inside the
+ * section heading (the block's chrome). Margins collapse with whatever is next to them, so an atom's measured
+ * height would depend on its neighbours and pagination would drift from what prints.
+ */
+.block,
+.block :is(h1, h2, h3, p, ul, li) {
+  margin: 0;
+}
+.block {
+  font-family: var(--rs-font, system-ui, sans-serif);
+  font-size: var(--rs-body, 10.5pt);
+  line-height: var(--rs-leading, 1.4);
+  overflow-wrap: anywhere;
+}
+.sectionHead {
+  padding-bottom: var(--rs-head-gap, 4pt);
+  border-bottom: 1px solid var(--fg-rule);
+  margin-bottom: 0;
+}
+.h1,
+.h2,
+.h3 {
+  color: var(--fg-heading);
+  line-height: 1.2;
+}
+.h1 {
+  font-size: var(--rs-name, 22pt);
+}
+.h2 {
+  font-size: var(--rs-h2, 12pt);
+  text-transform: var(--rs-h2-case, none);
+  letter-spacing: var(--rs-h2-tracking, normal);
+}
+.h3 {
+  font-size: var(--rs-h3, 10.5pt);
+  font-weight: 600;
+}
+.text {
+  color: var(--fg-text);
+}
+.muted {
+  color: var(--fg-muted);
+}
+.accentText {
+  color: var(--fg-accentText);
+}
+.link {
+  color: var(--fg-accentText);
+  text-decoration: underline;
+}
+.atom {
+  padding-top: var(--rs-atom-gap, 2pt);
+}
+.entry {
+  padding: 0;
+}
+.entryHead,
+.entryHeadRow {
+  padding-top: var(--rs-item-gap, 6pt);
+}
+.entryHeadRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1em;
+}
+.entryDates {
+  white-space: nowrap;
+}
+.list {
+  padding-left: 1.2em;
+  list-style: disc outside;
+}
+.list > li::marker {
+  color: var(--fg-icon);
+}
+.identity {
+  padding-top: 0;
+}
+.banner {
+  padding: var(--rs-banner-pad, 10pt);
+}
+.headline {
+  font-size: var(--rs-h3, 10.5pt);
+}
+.contacts {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1.2em;
+  padding: 2pt 0 0;
+  list-style: none;
+  font-size: var(--rs-small, 9pt);
+}
