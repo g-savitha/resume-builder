@@ -1,24 +1,84 @@
-/* Builder UI (light). Tokens follow docs/design mockup; resume colors never come from here. */
+/*
+ * Builder UI. Dark by default; a persisted toggle switches to light (<html data-ui-theme>, set before paint in
+ * index.html). Every color below is a token, so the two themes differ only here. Resume colors never come from
+ * here: the paper (the preview page) keeps the light tokens in both themes and the resume theme paints it.
+ */
 :root {
   --font: 'Segoe UI Variable Text', 'Segoe UI', Inter, system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --radius: 10px;
+  --focus: 0 0 0 2px var(--ui-bg), 0 0 0 4px var(--ui-accent);
+}
+
+/* Dark (default): charcoal/slate. */
+:root {
+  --ui-bg: #0f1115;
+  --ui-panel: #16191f;
+  --ui-surface: #1c2027;
+  --ui-line: #2b3039;
+  --ui-line-strong: #434a56;
+  --ui-line-hover: #5a616d;
+  --ui-fg: #e7e9ed;
+  --ui-fg2: #c5cad3;
+  --ui-muted: #a0a7b3;
+  --ui-faint: #8a919d;
+  --ui-icon: #959caa;
+  --ui-icon-disabled: #4a505b;
+  --ui-hover: #222731;
+  --ui-pressed: #2c313b;
+  --ui-strike: #6b7280;
+  --ui-input-disabled: #14171c;
+  --ui-accent: #a5b4fc;
+  --ui-accent-strong: #c7d2fe;
+  --ui-accent-bg: #262a48;
+  --ui-accent-fill: #4f46e5;
+  --ui-accent-fill-hover: #4338ca;
+  --ui-on-accent: #ffffff;
+  --ui-disabled-fill: #33365a;
+  --ui-on-disabled: #a9addb;
+  --ui-focus-glow: rgb(165 180 252 / 0.3);
+  --ui-ok: #4ade80;
+  --ui-danger: #fda29b;
+  --ui-danger-bg: #3a1d1b;
+  --ui-danger-fill: #b42318;
+  --ui-shadow: rgb(0 0 0 / 0.5);
+  --ui-shadow-soft: rgb(0 0 0 / 0.3);
+  color-scheme: dark;
+}
+
+/* Light (toggle), and the paper in either theme. */
+:root[data-ui-theme='light'],
+.paper {
   --ui-bg: #f6f7f9;
   --ui-panel: #ffffff;
+  --ui-surface: #ffffff;
   --ui-line: #e4e6eb;
   --ui-line-strong: #c9cdd4;
+  --ui-line-hover: #aeb3bb;
   --ui-fg: #1f2328;
   --ui-fg2: #3a414b;
   --ui-muted: #5b6370;
   --ui-faint: #6b7280;
   --ui-icon: #6f7682;
+  --ui-icon-disabled: #c4c8cf;
   --ui-hover: #f4f5f7;
+  --ui-pressed: #e9ebef;
+  --ui-strike: #b7bcc4;
+  --ui-input-disabled: #f2f3f5;
   --ui-accent: #4f46e5;
   --ui-accent-strong: #4338ca;
   --ui-accent-bg: #eef0ff;
+  --ui-accent-fill: #4f46e5;
+  --ui-accent-fill-hover: #4338ca;
+  --ui-on-accent: #ffffff;
+  --ui-disabled-fill: #c7c9f5;
+  --ui-on-disabled: #ffffff;
+  --ui-focus-glow: rgb(79 70 229 / 0.22);
   --ui-ok: #0e700e;
   --ui-danger: #b42318;
   --ui-danger-bg: #fef3f2;
-  --focus: 0 0 0 2px #fff, 0 0 0 4px var(--ui-accent);
-  --radius: 10px;
+  --ui-danger-fill: #b42318;
+  --ui-shadow: rgb(16 24 40 / 0.16);
+  --ui-shadow-soft: rgb(16 24 40 / 0.05);
   color-scheme: light;
 }
 
@@ -76,7 +136,7 @@ ul {
 .input:focus-visible {
   outline: none;
   border-color: var(--ui-accent);
-  box-shadow: 0 0 0 3px rgb(79 70 229 / 0.22);
+  box-shadow: 0 0 0 3px var(--ui-focus-glow);
 }
 
 .sr-only {
@@ -135,10 +195,10 @@ ul {
   width: 28px;
   height: 28px;
   border-radius: 7px;
-  background: var(--ui-accent);
+  background: var(--ui-accent-fill);
   display: grid;
   place-items: center;
-  color: #fff;
+  color: var(--ui-on-accent);
 }
 .crumbs {
   display: flex;
@@ -157,7 +217,7 @@ ul {
   appearance: none;
   border: 1px solid var(--ui-line);
   border-radius: 999px;
-  background: #fff;
+  background: var(--ui-surface);
   padding: 4px 28px 4px 10px;
   font-weight: 550;
   color: var(--ui-fg);
@@ -222,29 +282,29 @@ ul {
   gap: 6px;
 }
 .btn-primary {
-  background: var(--ui-accent);
-  color: #fff;
-  box-shadow: 0 1px 2px rgb(79 70 229 / 0.35);
+  background: var(--ui-accent-fill);
+  color: var(--ui-on-accent);
+  box-shadow: 0 1px 2px var(--ui-shadow-soft);
 }
 .btn-primary:hover:not(:disabled) {
-  background: var(--ui-accent-strong);
+  background: var(--ui-accent-fill-hover);
 }
 .btn-primary:disabled {
-  background: #c7c9f5;
-  color: #fff;
+  background: var(--ui-disabled-fill);
+  color: var(--ui-on-disabled);
   box-shadow: none;
 }
 .btn-ghost {
   border: 1px solid var(--ui-line);
-  background: #fff;
+  background: var(--ui-surface);
   color: var(--ui-fg);
 }
 .btn-ghost:hover {
   background: var(--ui-hover);
 }
 .btn-danger {
-  background: var(--ui-danger);
-  color: #fff;
+  background: var(--ui-danger-fill);
+  color: var(--ui-on-accent);
 }
 .btn.danger {
   color: var(--ui-muted);
@@ -283,11 +343,11 @@ ul {
   flex: none;
 }
 .icon-btn:hover:not(:disabled) {
-  background: #e9ebef;
+  background: var(--ui-pressed);
   color: var(--ui-fg);
 }
 .icon-btn:disabled {
-  color: #c4c8cf;
+  color: var(--ui-icon-disabled);
 }
 .icon-btn.danger {
   color: var(--ui-icon);
@@ -356,7 +416,7 @@ ul {
   border: 1px solid var(--ui-line);
   border-radius: var(--radius);
   padding: 12px;
-  background: #fff;
+  background: var(--ui-surface);
 }
 .card-head {
   display: flex;
@@ -415,8 +475,8 @@ ul {
 }
 .is-dragging .srow,
 .is-dragging .item-card {
-  background: #fff;
-  box-shadow: 0 0 0 2px var(--ui-accent), 0 8px 24px rgb(16 24 40 / 0.16);
+  background: var(--ui-surface);
+  box-shadow: 0 0 0 2px var(--ui-accent), 0 8px 24px var(--ui-shadow);
 }
 .srow-icon {
   color: var(--ui-muted);
@@ -448,7 +508,7 @@ ul {
 .item-card.hidden .item-title .name {
   color: var(--ui-muted);
   text-decoration: line-through;
-  text-decoration-color: #b7bcc4;
+  text-decoration-color: var(--ui-strike);
 }
 .move-btns {
   display: inline-flex;
@@ -479,10 +539,10 @@ ul {
   max-height: 320px;
   overflow: auto;
   list-style: none;
-  background: #fff;
+  background: var(--ui-surface);
   border: 1px solid var(--ui-line);
   border-radius: 10px;
-  box-shadow: 0 12px 32px rgb(16 24 40 / 0.16);
+  box-shadow: 0 12px 32px var(--ui-shadow);
   padding: 4px;
 }
 .menu-item {
@@ -542,19 +602,19 @@ ul {
   width: 100%;
   min-height: 34px;
   padding: 6px 10px;
-  border: 1px solid #c9cdd4;
+  border: 1px solid var(--ui-line-strong);
   border-radius: 7px;
-  background: #fff;
+  background: var(--ui-surface);
   font-size: 13px;
 }
 .input::placeholder {
   color: var(--ui-faint);
 }
 .input:hover:not(:disabled):not(:focus) {
-  border-color: #aeb3bb;
+  border-color: var(--ui-line-hover);
 }
 .input:disabled {
-  background: #f2f3f5;
+  background: var(--ui-input-disabled);
   color: var(--ui-muted);
 }
 .input[aria-invalid='true'] {
@@ -638,7 +698,7 @@ textarea.input {
   font: inherit;
   font-weight: 600;
   border: 1px solid var(--ui-line);
-  background: #fff;
+  background: var(--ui-surface);
   border-radius: 7px;
   padding: 5px 10px;
   margin-right: 8px;
@@ -655,7 +715,7 @@ textarea.input {
 .item-card {
   border: 1px solid var(--ui-line);
   border-radius: 9px;
-  background: #fff;
+  background: var(--ui-surface);
 }
 .item-head {
   display: flex;
@@ -762,7 +822,7 @@ textarea.input {
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  background: #fff;
+  background: var(--ui-surface);
   border: 1px solid var(--ui-line);
   border-radius: 999px;
   color: var(--ui-fg);
@@ -786,14 +846,14 @@ textarea.input {
 }
 .echo {
   width: min(100%, 640px);
-  background: #fff;
+  background: var(--ui-surface);
   border: 1px dashed var(--ui-line-strong);
   border-radius: 6px;
   padding: 28px 32px;
   color: var(--ui-fg);
   font-size: 12.5px;
   line-height: 1.5;
-  box-shadow: 0 1px 2px rgb(16 24 40 / 0.05);
+  box-shadow: 0 1px 2px var(--ui-shadow-soft);
 }
 .echo-section + .echo-section {
   margin-top: 14px;

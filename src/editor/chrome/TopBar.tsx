@@ -4,6 +4,7 @@ import { useAnnounce, useDispatch, useResumeName, useVariant, useVariantOrder } 
 import type { VariantId } from '@/domain';
 import { useEditorScope } from '../context';
 import { SaveIndicator } from './SaveIndicator';
+import { useUiTheme } from './uiTheme';
 
 export function TopBar() {
   const { resumeId, variantId } = useEditorScope();
@@ -23,6 +24,7 @@ export function TopBar() {
       </nav>
       <div className="spacer" />
       <SaveIndicator />
+      <ThemeToggle />
       <button type="button" className="btn btn-primary" disabled title="PDF export arrives with the preview engine (milestone 3)">
         <Icon name="download" /> Export PDF
       </button>
@@ -62,4 +64,14 @@ function VariantSelect({ resumeId, activeId }: { readonly resumeId: Parameters<t
 function VariantOption({ resumeId, variantId }: { readonly resumeId: Parameters<typeof useResumeName>[0]; readonly variantId: VariantId }) {
   const variant = useVariant(resumeId, variantId);
   return <option value={variantId}>{variant ? `${variant.label} variant` : 'Variant'}</option>;
+}
+
+/** A toggle button: its name stays "Light theme" and aria-pressed says whether it is on. */
+function ThemeToggle() {
+  const [theme, toggle] = useUiTheme();
+  return (
+    <button type="button" className="btn btn-ghost btn-sm" aria-pressed={theme === 'light'} onClick={toggle}>
+      <Icon name={theme === 'light' ? 'sun' : 'moon'} /> Light theme
+    </button>
+  );
 }

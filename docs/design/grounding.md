@@ -18,7 +18,7 @@ Goal: a builder where the SAME resume content can be rendered in many company th
 - Later: undo/redo, shareable public link, cover letters, AI bullet rewriting, cloud sync/accounts.
 
 ## Constraints and preferences
-- Editor app UI is LIGHT themed for this project (company themes keep their own brand colors, e.g. Netflix stays dark).
+- Editor app UI is LIGHT themed for this project (company themes keep their own brand colors, e.g. Netflix stays dark). **Superseded 2026-10-21 (owner):** the builder UI is DARK by default (charcoal/slate), regardless of `prefers-color-scheme`, with a persisted light toggle. The resume paper stays white / theme-colored.
 - React + TypeScript strongly preferred (her stack); Vite or similar; no backend in v1.
 - Code must be reusable and agent-friendly: adding a new company theme should be one self-contained folder, no hand-synced registries. Adding a new section type should be a localized change.
 - Themes must not reach into editor state or storage; they render from domain data + customization.
@@ -55,4 +55,4 @@ Design implications to address:
 - Accessibility: icons decorative (aria-hidden) when a text label is present; in PDF they must not break reading order or text extraction.
 
 ## CLARIFICATION (owner)
-Light theme applies ONLY to the builder website UI. The resume preview/PDF ALWAYS takes its colors from the target company's logo palette (no fixed light/dark resume). Text on every logo-derived color must be readable: WCAG AA contrast enforced at theme derivation (adjust lightness / pick on-color automatically), never raw brand colors behind text.
+Light theme applies ONLY to the builder website UI (now: dark by default with a light toggle, see Constraints). The resume preview/PDF ALWAYS takes its colors from the target company's logo palette (no fixed light/dark resume). Text on every logo-derived color must be readable: WCAG AA contrast enforced at theme derivation (adjust lightness / pick on-color automatically), never raw brand colors behind text.
