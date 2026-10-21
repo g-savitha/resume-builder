@@ -30,6 +30,6 @@ Preconditions:
 ## Gotchas
 
 - Wait on `data-pagination-state="settled"`, then read `data-page-count`. Reading it while `measuring` gives the previous layout's count (the old pages stay on screen until the new ones are ready).
-- Pages are scaled to fit the pane with CSS `zoom`. Compare geometry as ratios or inside one page, not against raw A4 pixel sizes.
+- Pages are scaled down to fit the pane with a CSS transform (the factor is `data-scale` on the article's parent). Compare geometry as ratios or inside one page, not against raw A4 pixel sizes.
 - Classic uppercases section headings with CSS only. Accessible names and text content keep the typed case ("Experience (continued)").
 - A hidden, off-screen copy of new blocks (`[data-measure]`, `aria-hidden`, `inert`) exists only while measuring. Scope queries to `getByTestId('resume-preview')`.

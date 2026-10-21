@@ -56,3 +56,19 @@ test.describe('resume preview', () => {
     });
   }
 });
+
+test.describe('resume preview in a laptop-width window', () => {
+  test.use({ viewport: { width: 1100, height: 800 } });
+
+  test('scales the pages down to fit without changing how they are laid out', async ({ page }) => {
+    await openEditor(page);
+    await addExperienceEntries(page, 5, 5);
+    expect(await settledPageCount(page)).toBeGreaterThanOrEqual(2);
+    const scale = Number(await page.locator('[data-scale]').getAttribute('data-scale'));
+    expect(scale).toBeLessThan(1);
+    expect(await misfitFragments(page)).toEqual([]);
+    // The scaled pages fit the pane: no horizontal scrolling.
+    const stage = page.getByRole('region', { name: 'Preview, scrollable' });
+    expect(await stage.evaluate((el) => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(0);
+  });
+});

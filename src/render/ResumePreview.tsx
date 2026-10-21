@@ -9,6 +9,8 @@ import { PreviewEngine } from './PreviewEngine';
 import styles from './preview.module.css';
 
 const PX_PER_PT = 96 / 72;
+/** Space between page sheets on screen, in CSS px. */
+const PAGE_GAP = 24;
 const CONTINUED_FRAME: AtomRange = { from: 0, to: 0, continued: true };
 
 export type PaginationState = 'measuring' | 'settled';
@@ -17,7 +19,7 @@ export interface ResumePreviewProps {
   readonly view: ResumeView;
   /** Called with the page count each time pagination settles. */
   readonly onSettled?: (pages: number) => void;
-  /** Scale the pages down (never up) to fit this many CSS pixels across. Measurement is unaffected. */
+  /** Scale the pages down (never up) to fit this many CSS pixels across. A visual transform: layout is unaffected. */
   readonly fitWidth?: number | undefined;
 }
 
@@ -98,7 +100,7 @@ export function ResumePreview({ view: liveView, onSettled, fitWidth }: ResumePre
       data-theme-base={theme.base.id}
     >
       {missing.length ? <MeasureArea blocks={missing} theme={theme} width={width} measureRef={measureRef} /> : null}
-      {layout ? <Pages layout={layout} theme={theme} view={view} zoom={fitWidth ? Math.min(1, fitWidth / size.w) : 1} /> : null}
+      {layout ? <Pages layout={layout} theme={theme} view={view} scale={fitWidth ? Math.min(1, fitWidth / size.w) : 1} /> : null}
     </div>
   );
 }
@@ -128,21 +130,30 @@ function MeasureArea(props: {
   );
 }
 
-function Pages(props: { readonly layout: PagedLayout<RenderBlock>; readonly theme: ResolvedTheme; readonly view: ResumeView; readonly zoom: number }) {
-  const { layout, theme, view, zoom } = props;
+/**
+ * The sheets, scaled down to fit the pane with a transform. A transform scales the drawing without re-laying it
+ * out, so lines wrap exactly as they will print (CSS zoom re-lays text at the smaller size). The outer box takes
+ * the scaled size so the pane scrolls correctly.
+ */
+function Pages(props: { readonly layout: PagedLayout<RenderBlock>; readonly theme: ResolvedTheme; readonly view: ResumeView; readonly scale: number }) {
+  const { layout, theme, view, scale } = props;
   const n = layout.pages.length;
+  const { w, h } = layout.size;
+  const fullHeight = n * h + (n - 1) * PAGE_GAP;
   return (
-    <article
-      className={styles.resume}
-      lang={view.lang}
-      aria-label={`Resume preview, ${String(n)} ${n === 1 ? 'page' : 'pages'}`}
-      data-testid="resume-preview"
-      style={{ ...(theme.cssVars as CSSProperties), zoom }}
-    >
-      {layout.pages.map((p, i) => (
-        <PageView key={i} page={p} number={i + 1} size={layout.size} blocks={layout.blocks} />
-      ))}
-    </article>
+    <div className={styles.fit} style={{ width: w * scale, height: fullHeight * scale }} data-scale={String(scale)}>
+      <article
+        className={styles.resume}
+        lang={view.lang}
+        aria-label={`Resume preview, ${String(n)} ${n === 1 ? 'page' : 'pages'}`}
+        data-testid="resume-preview"
+        style={{ ...(theme.cssVars as CSSProperties), width: w, gap: PAGE_GAP, transform: scale === 1 ? undefined : `scale(${String(scale)})` }}
+      >
+        {layout.pages.map((p, i) => (
+          <PageView key={i} page={p} number={i + 1} size={layout.size} blocks={layout.blocks} />
+        ))}
+      </article>
+    </div>
   );
 }
 

@@ -39,7 +39,7 @@ export default async ({ page, step, evidence, expect }) => {
         const frags = [...sheet.querySelectorAll('[data-fragment-h]')];
         const content = frags[0]?.parentElement;
         if (!content) continue;
-        const scale = sheet.getBoundingClientRect().height / sheet.offsetHeight; // CSS zoom
+        const scale = sheet.getBoundingClientRect().height / sheet.offsetHeight; // fit-to-pane transform
         const limit = content.getBoundingClientRect().bottom;
         for (const f of frags) {
           const drawn = f.firstElementChild.getBoundingClientRect();
