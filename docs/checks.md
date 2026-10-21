@@ -4,6 +4,12 @@ Every rule a reviewer would otherwise have to remember, what enforces it, and wh
 
 If a review comment could have been a check, add the check here instead: a rule, the error message naming the fix, and one line on why. Keep a rule only if it has caught or would catch a real mistake.
 
+## Environment
+
+| Rule | Enforced by | Fix when it fires |
+| --- | --- | --- |
+| **New:** Node ≥ 22 (`package.json` `engines`, `.nvmrc`). | `engine-strict=true` in `.npmrc`: every pnpm command stops with `ERR_PNPM_UNSUPPORTED_ENGINE … Expected version: >=22`. | Put Node 22 first on `PATH` (`nvm use`, or the box's `/workspace/tools/node-v22.*/bin`). Node 20 used to get as far as vitest and then die with `TypeError: Cannot read properties of undefined (reading 'bind')` in undici, which names neither Node nor the fix. |
+
 ## Architecture
 
 | Rule | Enforced by | Fix when it fires |
