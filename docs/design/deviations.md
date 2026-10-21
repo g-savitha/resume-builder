@@ -47,3 +47,12 @@
 27. **Added types:** `ForegroundRole` (`keyof typeof SURFACE_FOREGROUNDS`) and `ContrastReportEntry` (the report row). Every emitted color is a lowercase `#rrggbb` string.
 28. **Fixture brand palettes live in `testing/`** (`FIXTURE_PALETTES`), so the milestone 6 axe runs can reuse them. They are a test-only minter of `LogoPalette`. No architecture arrow changed: `themes → domain` was already declared.
 
+
+## Milestone 3 (engine and preview)
+
+The slice plan is in [m3-plan.md](m3-plan.md).
+
+29. **`layoutDocument` takes flow blocks, not a view and a theme.** Its input is `{ blocks, size, styleHash, rules? }` and it is generic over the block type: `layoutDocument<B extends FlowBlock>(input, measurer, prev?)`. The architecture lets `engine` import only `domain`, so it cannot see `ResolvedTheme` (themes) or project sections (sections). `render/`, which may import both, turns the view and theme into blocks; the engine only paginates. `FlowBlock` is just `{ key, contentHash }`; render extends it with shape, style and surface, and gets its own type back in `PagedLayout<B>.blocks`.
+30. **`Measurer` has no `ready(theme)`.** Waiting for fonts belongs to render's DOM measurer, which knows the theme. The engine interface is only `measure(block, width)`.
+31. **Page model.** `PageBox` has no `index` (a page's number is its array index, so a page object can be reused when pages before it change; see the incremental relayout). `PagedLayout` also records `styleHash` and `rules`, so a later relayout can tell when nothing can be reused. M3 pages have one region, `main`; `header` and `side` arrive with the multi-region archetypes in milestone 5. `pageSize(name, marginsMm)` converts A4/Letter to CSS px at 96 dpi.
+32. **Break rules, as implemented.** A block's top chrome (its heading) is drawn only on its first fragment, and that fragment always holds at least one atom, so a heading never ends a page. A continued fragment has `range.continued` set, so render can mark it (for example "Experience, continued") without the engine knowing. `orphans` and `widows` default to 1. On an empty page, where moving on cannot help, the rules relax in order: first keep-together, orphans and widows, then keep-with-next, then one atom alone (marked `overflow` if it is taller than the page). So a keep-with-next chain taller than a page is split, not clipped.
