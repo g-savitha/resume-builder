@@ -21,7 +21,7 @@ export default async ({ page, step, evidence, expect }) => {
     await expect(page.locator('[data-app-state="ready"]')).toBeVisible();
     await expect(role).toHaveValue('Principal Frontend Engineer');
     await expect(hideProjects).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.getByTestId('content-echo')).toContainText('Principal Frontend Engineer');
+    await expect(page.getByTestId('resume-preview')).toContainText('Principal Frontend Engineer');
   });
   await evidence.shot('restored-after-reload');
 };

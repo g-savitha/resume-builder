@@ -46,4 +46,6 @@ export interface ResolvedTheme {
   readonly customization: Customization;
   /** Set on the page root: surface colors (via primitives' surfaceVar) and the --rs-* type and spacing variables. */
   readonly cssVars: Readonly<Record<`--${string}`, string>>;
+  /** The space between sections, in points (the same value as `--rs-section-gap`); the engine's gapAfter. */
+  readonly sectionGapPt: number;
 }

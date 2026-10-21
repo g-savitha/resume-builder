@@ -1,7 +1,7 @@
 // engine: the page-box model. Pure pagination over measured blocks; no DOM, React or theme.
 // Imported by render/ (and tests) only.
 export { layoutDocument, DEFAULT_RULES } from './layout';
-export { pageSize } from './pageSize';
+export { contentBox, pageSize } from './pageSize';
 export {
   px,
   type AtomRange,

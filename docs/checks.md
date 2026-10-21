@@ -51,7 +51,9 @@ A bare `/* eslint-disable */` turns off every rule, this one included, and ESLin
 | --- | --- |
 | Editor shell ≤ 150 kB gzip JS, ≤ 15 kB CSS. | `pnpm size` (`.size-limit.js`) |
 | No axe WCAG 2.2 A/AA violations in the editor, in both the dark and the light builder theme. | `pnpm e2e` (`e2e/editor.spec.ts`) |
-| Typing p98 frame < 50 ms on a 3-page resume (unthrottled; the 4× CPU run is recorded, not asserted). | `pnpm bench` (`e2e/typing.bench.ts`) |
+| **New:** no axe WCAG 2.2 A/AA violations in the paginated preview with each implemented archetype (classic, ats-plain), on a resume that spans a page break. | `pnpm e2e` (`e2e/preview.spec.ts`) |
+| **New:** the preview draws every fragment at the engine's planned height and inside its page; a split section repeats its heading as "(continued)". | `pnpm e2e` (`e2e/preview.spec.ts`, `misfitFragments` in `e2e/helpers.ts`) |
+| Typing p98 frame < 50 ms on a 3-page resume (the real paginated preview, at least 3 engine pages; unthrottled; the 4× CPU run is recorded, not asserted). | `pnpm bench` (`e2e/typing.bench.ts`) |
 | Property tests finish inside vitest's 5 s default on CI. Never raise `testTimeout` globally. | CI `pnpm test`. See the `ci-only-test-timeouts` skill. |
 
 ## Considered, not added

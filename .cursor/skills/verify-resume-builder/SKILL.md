@@ -5,7 +5,7 @@ description: Launch, drive and prove behavior of the resume builder web app (Vit
 
 # Verify the resume builder
 
-The app is a single-page editor: a Content / Variants / Design tab panel on the left and a read-only preview echo on the right. The builder chrome is dark by default (`html[data-ui-theme]`). Data lives only in the browser (IndexedDB), so there is no backend, auth or database to start. Every drive gets a fresh browser profile, which means the app seeds its sample resume ("My resume", variants General and Microsoft, Microsoft active).
+The app is a single-page editor: a Content / Variants / Design tab panel on the left and the read-only paginated resume preview on the right (the same DOM the PDF will print). The builder chrome is dark by default (`html[data-ui-theme]`). Data lives only in the browser (IndexedDB), so there is no backend, auth or database to start. Every drive gets a fresh browser profile, which means the app seeds its sample resume ("My resume", variants General and Microsoft, Microsoft active).
 
 Read [`features/README.md`](features/README.md) first, then the feature file you are verifying. Helpers live in `scripts/`; run them from the repo root.
 
@@ -35,7 +35,7 @@ Read-only. Checks that our pid is alive, that the port belongs to our process gr
 node .cursor/skills/verify-resume-builder/scripts/drive.mjs <journey> [--headed] [--out <dir>]
 ```
 
-- `<journey>` is a file in `scripts/journeys/` (`edit-content`, `reorder-sections`, `hide-show`, `variants`, `autosave`, `ui-theme`, `ready`) or a path to your own `.mjs`.
+- `<journey>` is a file in `scripts/journeys/` (`edit-content`, `reorder-sections`, `hide-show`, `variants`, `autosave`, `ui-theme`, `preview`, `ready`) or a path to your own `.mjs`.
 - A journey default-exports `async ({ page, step, evidence, expect }) => {}`. `page` is a Playwright page with `baseURL` set (so use `page.goto('/')`), and `expect` is Playwright's auto-retrying `expect`.
 - Wrap each user action and its expected result in `step('what the user does; what they see', fn)`.
 - Any console error or page error fails the run.
@@ -43,10 +43,10 @@ node .cursor/skills/verify-resume-builder/scripts/drive.mjs <journey> [--headed]
 
 Driving rules:
 
-- Select by role and accessible name (`getByRole('button', { name: 'Add entry' })`, `getByLabel('Role (required)')`), then the data hooks listed in `features/README.md`, then `data-testid` (`content-echo`, `live-region`). Never select by CSS class, and wait on a state hook rather than a fixed sleep.
-- Wait for a visible end state with `expect(...)`, never a fixed sleep: the live-region message, the save status `data-state`, the echo text. The one exception is documented in `features/reorder-sections.md`.
+- Select by role and accessible name (`getByRole('button', { name: 'Add entry' })`, `getByLabel('Role (required)')`), then the data hooks listed in `features/README.md`, then `data-testid` (`resume-preview`, `live-region`). Never select by CSS class, and wait on a state hook rather than a fixed sleep.
+- Wait for a visible end state with `expect(...)`, never a fixed sleep: the live-region message, the save status `data-state`, the preview text or `data-pagination-state="settled"`. The one exception is documented in `features/reorder-sections.md`.
 - Prefer the keyboard paths that users rely on (reorder via the drag handle, tabs via arrow keys) over pointer coordinates.
-- The preview pane is a placeholder echo in this milestone. Assert content there, not styling.
+- The preview is paginated: section headings are level 2, entry titles level 3. A section split across pages repeats its heading as "<Heading> (continued)" on the next page, so count headings with an exact-name match. Assert content and the `data-*` hooks there, not pixels.
 
 ## Evidence
 
@@ -59,7 +59,7 @@ Each drive writes to `e2e/.artifacts/verify/<UTC timestamp>-<journey>/` (git-ign
 Proof standards:
 
 - Drive the real user path: real clicks and keys in the real app, never store setters or test-only hooks.
-- Capture the action and the resulting state. For a mutation, also read it back from a second view: the preview echo, another variant, or a reload (persistence lives in IndexedDB).
+- Capture the action and the resulting state. For a mutation, also read it back from a second view: the preview, another variant, or a reload (persistence lives in IndexedDB).
 - Report what you ran and what you saw. That means the command, the `VERIFIED`/`NOT VERIFIED` line, the evidence directory and the screenshots that show the end state. Never "should work".
 - A feature with several entry points (the keyboard drag handle and the Move buttons, say) is verified only for the paths you drove. Say which ones.
 

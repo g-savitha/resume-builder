@@ -19,11 +19,11 @@ Preconditions:
 
 - Doctor passes. Fresh profile: Microsoft is active and Projects is visible.
 
-- **Hide.** Choose "Hide Projects in Microsoft". It has `aria-pressed="true"`, the row's name button reads "Projects · hidden here", and the echo has no level 3 heading "Projects".
-- **Other variant.** Select "General variant" in "Variant (target company)". "Hide Projects in General" has `aria-pressed="false"` and the echo shows "Projects" again.
+- **Hide.** Choose "Hide Projects in Microsoft". It has `aria-pressed="true"`, the row's name button reads "Projects · hidden here", and the preview has no level 2 heading "Projects".
+- **Other variant.** Select "General variant" in "Variant (target company)". "Hide Projects in General" has `aria-pressed="false"` and the preview shows "Projects" again.
 - **Run it.** `node .cursor/skills/verify-resume-builder/scripts/drive.mjs hide-show` saves `hidden-in-microsoft.png` and `visible-in-general.png`.
 
 ## Gotchas
 
 - The eye button's name does not change with state. Assert `aria-pressed`, not the label.
-- Hiding every section shows "Everything is hidden in this variant." in the echo, which is a valid state.
+- Hiding every section leaves one empty page in the preview (`data-page-count="1"`), which is a valid state.

@@ -1,3 +1,4 @@
+import { contentBox } from './pageSize';
 import {
   px,
   type BreakRules,
@@ -13,9 +14,9 @@ import {
 
 export const DEFAULT_RULES: BreakRules = { orphans: 1, widows: 1 };
 
-/** Height of atoms [from, to) of a block, with its top chrome on the first fragment and bottom chrome on the last. */
+/** Height of atoms [from, to) of a block: top chrome (first or continued), the atoms, bottom chrome on the last. */
 function fragmentHeight(m: Measured, from: number, to: number): number {
-  let h = from === 0 ? m.chromeTop : 0;
+  let h: number = from === 0 ? m.chromeTop : m.chromeTopContinued;
   for (let i = from; i < to; i++) h += m.atoms[i]?.h ?? 0;
   return to === m.atoms.length ? h + m.chromeBottom : h;
 }
@@ -151,8 +152,7 @@ export function layoutDocument<B extends FlowBlock>(
 ): PagedLayout<B> {
   const { size, styleHash } = input;
   const rules: BreakRules = { ...DEFAULT_RULES, ...input.rules };
-  const width = px(size.w - 2 * size.marginPx);
-  const height = px(size.h - 2 * size.marginPx);
+  const { w: width, h: height } = contentBox(size);
 
   const blocks = new Map<string, B>();
   for (const block of input.blocks) {

@@ -7,7 +7,7 @@ test.describe('builder (milestone 1)', () => {
     await openEditor(page);
     await expect(page.locator('html')).toHaveAttribute('data-ui-theme', 'dark');
     await expect(page.getByRole('heading', { name: 'Resume builder', level: 1 })).toBeVisible();
-    await expect(page.getByTestId('content-echo')).toContainText('Lead Full Stack Engineer');
+    await expect(page.getByTestId('resume-preview')).toContainText('Lead Full Stack Engineer');
     await page.screenshot({ path: shot('editor.png') });
   });
 
@@ -56,8 +56,8 @@ test.describe('builder (milestone 1)', () => {
     await expect(sectionList(page)).toHaveAttribute('data-drag-state', 'idle');
     expect((await sectionOrder(page)).slice(2, 4)).toEqual(['Projects', 'Experience']);
     await expect(handle).toBeFocused();
-    const echoHeadings = await page.getByTestId('content-echo').getByRole('heading', { level: 3 }).allTextContents();
-    expect(echoHeadings.indexOf('Projects')).toBeLessThan(echoHeadings.indexOf('Experience'));
+    const previewHeadings = await page.getByTestId('resume-preview').getByRole('heading', { level: 2 }).allTextContents();
+    expect(previewHeadings.indexOf('Projects')).toBeLessThan(previewHeadings.indexOf('Experience'));
   });
 
   test('Move up/down buttons keep focus on the moved row', async ({ page }) => {
@@ -77,8 +77,8 @@ test.describe('builder (milestone 1)', () => {
 
     await page.reload();
     await expect(page.getByLabel('Role (required)').first()).toHaveValue('Principal Frontend Engineer');
-    await expect(page.getByTestId('content-echo')).toContainText('Principal Frontend Engineer');
-    await expect(page.getByTestId('content-echo')).not.toContainText('Resume builder');
+    await expect(page.getByTestId('resume-preview')).toContainText('Principal Frontend Engineer');
+    await expect(page.getByTestId('resume-preview')).not.toContainText('Resume builder');
     await expect(sectionList(page).getByRole('button', { name: 'Hide Projects in Microsoft' })).toHaveAttribute('aria-pressed', 'true');
     await page.screenshot({ path: shot('autosave-restored.png') });
   });

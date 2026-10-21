@@ -16,6 +16,7 @@ interface BlockSpec {
   readonly atoms: readonly number[];
   readonly kwn?: readonly number[]; // atom indices that keep with next
   readonly top?: number;
+  readonly contTop?: number; // top chrome on a continued fragment
   readonly bottom?: number;
   readonly gap?: number;
   readonly together?: boolean;
@@ -27,6 +28,7 @@ function block(key: string, s: BlockSpec): TestBlock {
     m: {
       atoms: s.atoms.map((h, i) => ({ h: px(h), keepWithNext: s.kwn?.includes(i) ?? false })),
       chromeTop: px(s.top ?? 0),
+      chromeTopContinued: px(s.contTop ?? 0),
       chromeBottom: px(s.bottom ?? 0),
       gapAfter: px(s.gap ?? 0),
       keepTogether: s.together ?? false,
@@ -62,6 +64,13 @@ describe('layoutDocument', () => {
     expect(first?.range.continued).toBe(false);
     expect(second?.range.continued).toBe(true);
     expect(second?.h).toBe(45); // 40 + bottom chrome, no top chrome
+  });
+
+  it('draws the continued chrome on later fragments and counts it when choosing the break', () => {
+    // Continued heading 15: page 2 holds 15 + 40 + 40 = 95; the third atom needs a third page.
+    const layout = lay([block('a', { top: 10, contTop: 15, atoms: [40, 40, 40, 40, 40] })]);
+    expect(summary(layout)).toEqual([['a[0,2)@0'], ['a[2,4)@0'], ['a[4,5)@0']]);
+    expect(layout.pages[1]?.regions[0]?.fragments[0]?.h).toBe(95);
   });
 
   it('never leaves a heading alone at the bottom of a page', () => {
@@ -144,6 +153,7 @@ describe('layoutDocument properties (random blocks, fake measurer)', () => {
     atoms: fc.array(fc.integer({ min: 1, max: 140 }), { maxLength: 6 }),
     kwn: fc.array(fc.integer({ min: 0, max: 5 }), { maxLength: 3 }),
     top: fc.integer({ min: 0, max: 20 }),
+    contTop: fc.integer({ min: 0, max: 20 }),
     bottom: fc.integer({ min: 0, max: 10 }),
     gap: fc.integer({ min: 0, max: 15 }),
     together: fc.boolean(),

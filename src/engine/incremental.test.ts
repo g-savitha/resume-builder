@@ -34,6 +34,7 @@ function block(key: string, s: Spec, rev = 0): TestBlock {
     m: {
       atoms: s.atoms.map((h, i) => ({ h: px(h), keepWithNext: s.kwn.includes(i) })),
       chromeTop: px(s.top),
+      chromeTopContinued: px(0),
       chromeBottom: px(0),
       gapAfter: px(s.gap),
       keepTogether: s.together,

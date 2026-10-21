@@ -25,8 +25,10 @@ export interface MeasuredAtom {
 /** A block's geometry at one width: its breakable units (atoms) plus the chrome around them. */
 export interface Measured {
   readonly atoms: readonly MeasuredAtom[];
-  /** Above the first atom (section heading, padding). Drawn only on the block's first fragment. */
+  /** Above the first atom (section heading, padding), on the block's first fragment. */
   readonly chromeTop: Px;
+  /** Above the first atom of a continued fragment (e.g. the "Experience (continued)" heading). 0 for none. */
+  readonly chromeTopContinued: Px;
   /** Below the last atom (padding, border). Drawn only on the block's last fragment. */
   readonly chromeBottom: Px;
   /** Space before the next block on the same page. Never carried onto the next page. */
@@ -69,7 +71,7 @@ export interface LayoutInput<B extends FlowBlock> {
 export interface AtomRange {
   readonly from: number;
   readonly to: number;
-  /** The block started on an earlier page (from > 0), so this fragment has no top chrome. */
+  /** The block started on an earlier page (from > 0); this fragment's top chrome is `chromeTopContinued`. */
   readonly continued: boolean;
 }
 

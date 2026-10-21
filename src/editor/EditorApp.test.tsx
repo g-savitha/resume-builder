@@ -18,8 +18,8 @@ function renderEditor() {
   return { ...utils, store, user, doc, ids };
 }
 
-const echo = () => screen.getByTestId('content-echo');
-const echoHeadings = () => within(echo()).getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
+const preview = () => screen.getByTestId('resume-preview');
+const sectionHeadings = () => within(preview()).getAllByRole('heading', { level: 2 }).map((h) => h.textContent);
 const sectionList = () => screen.getByRole('list', { name: 'Sections, in resume order' });
 const liveRegion = () => screen.getByTestId('live-region');
 
@@ -53,19 +53,34 @@ describe('EditorApp', () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 
-  it('shows typed text in the preview echo as you type', async () => {
+  it('switches the active variant’s theme from the Design tab and announces it', async () => {
+    const { user, container } = renderEditor();
+    const previewRoot = () => container.querySelector<HTMLElement>('[data-component="resume-preview"]')!;
+    expect(previewRoot().dataset.themeBase).toBe('classic'); // 'auto' renders as classic
+    await user.click(screen.getByRole('tab', { name: 'Design' }));
+    const picker = screen.getByRole('group', { name: /^Theme for the/ });
+    expect(within(picker).getByRole('radio', { name: /Classic/ })).toBeChecked();
+    await user.click(within(picker).getByRole('radio', { name: /ATS plain/ }));
+    expect(within(picker).getByRole('radio', { name: /ATS plain/ })).toBeChecked();
+    expect(previewRoot().dataset.themeBase).toBe('ats-plain');
+    expect(screen.getByTestId('preview-meta')).toHaveTextContent('ATS plain theme');
+    expect(liveRegion()).toHaveTextContent(/ATS plain theme applied/);
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('shows typed text in the paginated preview as you type', async () => {
     const { user } = renderEditor();
     const role = screen.getAllByLabelText(/^Role/)[0]!;
     await user.clear(role);
     await user.type(role, 'Staff Engineer');
-    expect(within(echo()).getByText('Staff Engineer')).toBeInTheDocument();
+    expect(within(preview()).getByText('Staff Engineer')).toBeInTheDocument();
   });
 
   it('reorders sections with Move down and announces the new position politely', async () => {
     const { user } = renderEditor();
-    expect(echoHeadings()).toEqual(['Experience', 'Skills', 'Summary']);
+    expect(sectionHeadings()).toEqual(['Experience', 'Skills', 'Summary']);
     await user.click(within(sectionList()).getByRole('button', { name: 'Move Experience down' }));
-    expect(echoHeadings()).toEqual(['Skills', 'Experience', 'Summary']);
+    expect(sectionHeadings()).toEqual(['Skills', 'Experience', 'Summary']);
     expect(liveRegion()).toHaveAttribute('aria-live', 'polite');
     expect(liveRegion()).toHaveTextContent('Moved Experience to position 2 of 3.');
   });
@@ -83,18 +98,18 @@ describe('EditorApp', () => {
     const hide = within(sectionList()).getByRole('button', { name: 'Hide Skills in Experian' });
     await user.click(hide);
     expect(hide).toHaveAttribute('aria-pressed', 'true');
-    expect(echoHeadings()).toEqual(['Experience', 'Summary']);
+    expect(sectionHeadings()).toEqual(['Experience', 'Summary']);
     expect(within(sectionList()).getByText(/hidden here/)).toBeInTheDocument();
 
     await user.selectOptions(screen.getByLabelText('Variant (target company)'), 'General variant');
-    expect(echoHeadings()).toEqual(['Experience', 'Skills', 'Summary']);
+    expect(sectionHeadings()).toEqual(['Experience', 'Skills', 'Summary']);
   });
 
   it('hides a single entry in the active variant', async () => {
     const { user } = renderEditor();
-    expect(within(echo()).getByText('Software Engineer')).toBeInTheDocument();
+    expect(within(preview()).getByText('Software Engineer')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Hide Software Engineer in General' }));
-    expect(within(echo()).queryByText('Software Engineer')).not.toBeInTheDocument();
+    expect(within(preview()).queryByText('Software Engineer')).not.toBeInTheDocument();
   });
 
   it('adds a section from the Add section menu and opens its form', async () => {
@@ -103,7 +118,7 @@ describe('EditorApp', () => {
     await user.click(screen.getByRole('button', { name: 'Volunteering' }));
     expect(within(sectionList()).getByRole('button', { name: /^Volunteering/ })).toHaveAttribute('aria-current', 'true');
     expect(screen.getByLabelText(/^Organisation/)).toBeInTheDocument();
-    expect(echoHeadings()).toEqual(['Experience', 'Skills', 'Summary', 'Volunteering']);
+    expect(sectionHeadings()).toEqual(['Experience', 'Skills', 'Summary', 'Volunteering']);
     expect(liveRegion()).toHaveTextContent('Added Volunteering section at the end.');
   });
 
@@ -119,9 +134,9 @@ describe('EditorApp', () => {
   it('deletes a section only after confirmation', async () => {
     const { user } = renderEditor();
     await user.click(screen.getByRole('button', { name: 'Delete Experience section' }));
-    expect(echoHeadings()).toContain('Experience');
+    expect(sectionHeadings()).toContain('Experience');
     await user.click(screen.getByRole('button', { name: 'Delete Experience section' }));
-    expect(echoHeadings()).toEqual(['Skills', 'Summary']);
+    expect(sectionHeadings()).toEqual(['Skills', 'Summary']);
   });
 
   it('turns "- " lines into bullets and keeps the typed text intact', async () => {
@@ -129,7 +144,7 @@ describe('EditorApp', () => {
     const highlights = screen.getAllByLabelText('Highlights')[0]!;
     await user.type(highlights, 'Led the team{enter}- Shipped **v2**');
     expect(highlights).toHaveValue('Led the team\n- Shipped **v2**');
-    const bullet = within(echo()).getByText('v2');
+    const bullet = within(preview()).getByText('v2');
     expect(bullet.tagName).toBe('STRONG');
     expect(bullet.closest('li')).not.toBeNull();
   });
@@ -143,7 +158,7 @@ describe('EditorApp', () => {
     expect(start).toHaveAttribute('aria-invalid', 'true');
     await user.type(start, '0');
     expect(start).not.toHaveAttribute('aria-invalid');
-    expect(within(echo()).getByText(/Oct 2021/)).toBeInTheDocument();
+    expect(within(preview()).getByText(/Oct 2021/)).toBeInTheDocument();
   });
 
   it('supports arrow-key navigation between editor tabs', async () => {
@@ -161,6 +176,6 @@ describe('EditorApp', () => {
     await user.type(screen.getByLabelText('Company you’re applying to'), 'Experian Labs');
     await user.click(screen.getByRole('button', { name: 'Create variant' }));
     expect(screen.getByLabelText('Variant (target company)')).toHaveDisplayValue('Experian Labs variant');
-    expect(echoHeadings()).toEqual(['Experience', 'Summary']);
+    expect(sectionHeadings()).toEqual(['Experience', 'Summary']);
   });
 });

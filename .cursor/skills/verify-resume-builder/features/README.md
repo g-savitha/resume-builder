@@ -21,14 +21,18 @@ This directory is the maintained source for verifying the builder's user-facing 
   | `data-row-label` | section and entry rows | the row's current label |
   | `data-item-body` | entry bodies | the entry id; `hidden` when collapsed |
   | `data-ui-theme` | `<html>` | `dark` (default), `light` (builder chrome only) |
-- Wait for a visible end state with `expect`: a live-region message (`data-testid="live-region"`, polite), the save status, or the preview echo (`data-testid="content-echo"`).
+  | `data-component="resume-preview"` + `data-pagination-state` | preview root | `measuring`, `settled` (every block measured, pages final) |
+  | `data-page-count` | preview root | pages in the current layout |
+  | `data-theme-base` | preview root | the archetype drawn: `classic` (default), `ats-plain` |
+  | `data-page` | each page sheet | 1-based page number |
+- Wait for a visible end state with `expect`: a live-region message (`data-testid="live-region"`, polite), the save status, or the preview (`data-testid="resume-preview"`, settled when `[data-pagination-state="settled"]`).
 - Treat quoted names literally. The curly apostrophe in "Company you’re applying to" is part of the label.
 - Restore nothing by hand: the next drive gets a fresh profile.
 
 ## Proof and skip reporting
 
 - Capture the user action and the resulting state, not only the final screen.
-- Read every mutation back from a second view: the preview echo, another variant, or a reload.
+- Read every mutation back from a second view: the preview, another variant, or a reload.
 - Report the journey, the `VERIFIED` line and the evidence directory. Report an unreachable path with the attempted command and the unmet precondition. Do not report an entry point you skipped as verified through a different one.
 
 ## Feature entry contract
@@ -37,10 +41,11 @@ Each feature file starts with an H1 and one paragraph on the user-visible behavi
 
 ## Features
 
-- [Edit content](./edit-content.md) covers choosing a section, editing fields, adding entries and adding sections, as seen in the preview echo.
+- [Edit content](./edit-content.md) covers choosing a section, editing fields, adding entries and adding sections, as seen in the preview.
 - [Reorder sections](./reorder-sections.md) covers keyboard drag and drop, Move up/down, and the announcements.
 - [Hide and show per variant](./hide-show.md) covers the per-variant eye toggle for sections and entries.
 - [Variants](./variants.md) covers creating, switching and deleting target-company variants.
 - [Autosave and restore](./autosave.md) covers the save status and persistence across a reload.
+- [Resume preview](./preview.md) covers the paginated pages, the "(continued)" heading on a split section, and the Design-tab theme picker.
 - [Builder UI theme](./ui-theme.md) covers the dark default, the "Light theme" toggle and its persistence.
 - [Flows](./flows.md) covers the end-to-end "tailor a resume for a company" journey across features.
