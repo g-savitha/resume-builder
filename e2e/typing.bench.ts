@@ -9,7 +9,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
-import { openEditor } from './helpers';
+import { addExperienceEntries, openEditor, settledPageCount } from './helpers';
 
 const KEYSTROKES = 200;
 const TARGET_P98_MS = 50;
@@ -32,16 +32,8 @@ const stats = (xs: readonly number[]): Stats => {
 
 /** Grows the seeded resume to roughly three pages: 13 experience entries, most with 5 bullets. */
 async function makeThreePageResume(page: Page) {
-  const bullets = Array.from({ length: 5 }, (_, i) => `- Bullet ${i + 1}: shipped a measurable improvement to a customer-facing React and TypeScript surface, with tests and docs.`).join('\n');
-  for (let i = 0; i < 10; i++) {
-    await page.getByRole('button', { name: 'Add entry' }).click();
-    const body = page.locator('[data-item-body]:not([hidden])').last();
-    await body.getByLabel('Role (required)').fill(`Benchmark role ${i + 1}`);
-    await body.getByLabel('Company', { exact: true }).fill('Example Company');
-    await body.getByLabel('Highlights').fill(bullets);
-  }
-  // Collapse nothing: every entry stays mounted so the editor is at its heaviest.
-  await expect(page.getByTestId('content-echo').getByText(/Benchmark role 10/)).toBeVisible();
+  // Every entry stays expanded and mounted so the editor is at its heaviest.
+  await addExperienceEntries(page, 10, 5, 'Benchmark role');
 }
 
 /** Installs the in-page probes once; measureTyping resets their buffers. */
@@ -98,8 +90,8 @@ test('typing latency stays under 50 ms p98 on a ~3-page resume', async ({ page, 
   test.setTimeout(120_000);
   await openEditor(page);
   await makeThreePageResume(page);
-  // Rough size check: the unstyled echo's height in A4 pages at its own width (the real paginated preview is M3).
-  const approxA4Pages = await page.getByTestId('content-echo').evaluate((el) => Math.round((el.scrollHeight / (el.clientWidth * Math.SQRT2)) * 10) / 10);
+  // The real paginated preview's page count (engine pages, A4).
+  const pages = await settledPageCount(page);
   await installProbe(page);
   const unthrottled = await measureTyping(page);
 
@@ -108,12 +100,12 @@ test('typing latency stays under 50 ms p98 on a ~3-page resume', async ({ page, 
   const throttled = await measureTyping(page);
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
 
-  const result = { browserName, approxA4Pages, keystrokes: KEYSTROKES, targetP98Ms: TARGET_P98_MS, unthrottled, cpu4x: throttled, at: new Date().toISOString() };
+  const result = { browserName, pages, keystrokes: KEYSTROKES, targetP98Ms: TARGET_P98_MS, unthrottled, cpu4x: throttled, at: new Date().toISOString() };
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   fs.writeFileSync(OUT, `${JSON.stringify(result, null, 2)}\n`);
   console.log(JSON.stringify(result, null, 2));
 
-  expect(approxA4Pages).toBeGreaterThanOrEqual(3);
+  expect(pages).toBeGreaterThanOrEqual(3);
   expect(unthrottled.frame.n).toBe(KEYSTROKES);
   expect(throttled.frame.n).toBe(KEYSTROKES);
   expect(unthrottled.frame.p98).toBeLessThan(TARGET_P98_MS);

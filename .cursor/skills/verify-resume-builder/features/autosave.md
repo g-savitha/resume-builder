@@ -19,7 +19,7 @@ Preconditions:
 
 - **Settle.** Load `/`. `[data-app-state="ready"]` is present and `[data-component="save-status"]` has `data-state` `idle` or `saved`.
 - **Change.** Fill the first "Role (required)" with `Principal Frontend Engineer` and choose "Hide Projects in Microsoft". Within 5 s the save status reaches `data-state="saved"` with the text "Saved locally".
-- **Restore.** Reload. The first "Role (required)" has the new value, "Hide Projects in Microsoft" has `aria-pressed="true"`, and the echo contains the new role.
+- **Restore.** Reload. The first "Role (required)" has the new value, "Hide Projects in Microsoft" has `aria-pressed="true"`, and the preview contains the new role.
 - **Run it.** `node .cursor/skills/verify-resume-builder/scripts/drive.mjs autosave` saves `saved.png` and `restored-after-reload.png`.
 
 ## Gotchas

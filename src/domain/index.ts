@@ -11,3 +11,4 @@ export { parseDataUrl, parseDomain, parsePartialDate, parseSafeUrl } from './val
 export { formatRichText, isRichTextEmpty, parseRichText, richTextToPlain } from './richText';
 export { deepEqual } from './equal';
 export { FOREGROUND_ROLES, SURFACE_NAMES, type ForegroundRole, type SurfaceName } from './surface';
+export { hashString } from './hash';

@@ -26,8 +26,8 @@ export default async ({ page, step, evidence, expect }) => {
     await expect(live).toContainText('Moved Experience to position 5 of 8.');
     await expect(list.getByRole('button', { name: 'Move Experience down' })).toBeFocused();
   });
-  await step('the preview echo follows the new order', async () => {
-    const headings = await page.getByTestId('content-echo').getByRole('heading', { level: 3 }).allTextContents();
+  await step('the preview follows the new order', async () => {
+    const headings = await page.getByTestId('resume-preview').getByRole('heading', { level: 2 }).allTextContents();
     expect(headings.indexOf('Projects')).toBeLessThan(headings.indexOf('Experience'));
   });
   await evidence.shot('reorder-sections');

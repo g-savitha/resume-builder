@@ -1,6 +1,6 @@
 # Reorder sections
 
-Sections, and entries within a section, can be reordered by keyboard drag and drop on a drag handle or with Move up / Move down buttons. Each move is announced in the polite live region and reflected in the preview echo.
+Sections, and entries within a section, can be reordered by keyboard drag and drop on a drag handle or with Move up / Move down buttons. Each move is announced in the polite live region and reflected in the preview.
 
 ## Sub-features
 
@@ -24,7 +24,7 @@ Preconditions:
 - **Move.** Press ArrowUp. `live-region` reads "Projects is over position 3 of 8."
 - **Drop.** Press Space. `live-region` reads "Moved Projects to position 3 of 8." The list order starts Profile, Summary, Projects, Experience.
 - **Buttons.** Choose "Move Experience down". `live-region` reads "Moved Experience to position 5 of 8." and "Move Experience down" has focus.
-- **Read back.** The echo's level 3 headings put Projects before Experience.
+- **Read back.** The preview's level 2 headings put Projects before Experience.
 - **Run it.** `node .cursor/skills/verify-resume-builder/scripts/drive.mjs reorder-sections` saves `reorder-sections.png` and `section-list.aria.yml`.
 
 ## Gotchas

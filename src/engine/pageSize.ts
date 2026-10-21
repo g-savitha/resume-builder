@@ -1,4 +1,4 @@
-import { px, type PageName, type PageSize } from './types';
+import { px, type PageName, type PageSize, type Px } from './types';
 
 const PX_PER_MM = 96 / 25.4;
 /** ISO 216 A4 and US Letter, in millimetres. */
@@ -11,4 +11,9 @@ const PAGE_MM: Readonly<Record<PageName, { readonly w: number; readonly h: numbe
 export function pageSize(name: PageName, marginsMm: number): PageSize {
   const mm = PAGE_MM[name];
   return { name, w: px(mm.w * PX_PER_MM), h: px(mm.h * PX_PER_MM), marginPx: px(marginsMm * PX_PER_MM) };
+}
+
+/** The region a page's content flows into: the page less its margins on each side. */
+export function contentBox(size: PageSize): { readonly w: Px; readonly h: Px } {
+  return { w: px(size.w - 2 * size.marginPx), h: px(size.h - 2 * size.marginPx) };
 }

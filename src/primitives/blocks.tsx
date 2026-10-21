@@ -24,18 +24,21 @@ export type BlockContent<S extends ShapeName> = S extends 'entries' ? readonly E
   : S extends 'prose' ? RichText
   : IdentityContent;
 
-type ShapeProps = {
+export type BlockShapeProps = {
   [S in ShapeName]: { readonly shape: S; readonly style: BlockVariants[S]; readonly content: BlockContent<S> };
 }[ShapeName];
 
-export type BlockViewProps = ShapeProps & {
+export type BlockViewProps = BlockShapeProps & {
   /** The flow block key (section id). */
   readonly blockKey: string;
-  /** The section heading; not shown for identity, or on a continued fragment. */
+  /** The section heading (not shown for identity). A continued fragment shows "<heading> (continued)". */
   readonly heading: string;
   readonly range: AtomRange;
   readonly surface?: SurfaceName;
 };
+
+/** The heading repeated where a section continues on a new page. (Theme vocab can reword it later.) */
+export const continuedHeading = (heading: string) => `${heading} (continued)`;
 
 /** Atoms in one entry: its header line, its body (paragraphs and bullets), and its tag line if any. */
 const entryAtomCount = (e: EntryContent) => 1 + richAtomCount(e.body) + (e.tags.length ? 1 : 0);
@@ -47,7 +50,7 @@ const entryAtomCount = (e: EntryContent) => 1 + richAtomCount(e.body) + (e.tags.
  */
 export function BlockView(props: BlockViewProps) {
   const { blockKey, heading, range, surface = 'page' } = props;
-  const showHeading = props.shape !== 'identity' && !range.continued;
+  const showHeading = props.shape !== 'identity';
   return (
     <OnSurface
       surface={surface}
@@ -62,7 +65,7 @@ export function BlockView(props: BlockViewProps) {
       <div className={styles.block}>
         {showHeading ? (
           <div className={styles.sectionHead} data-block-chrome="">
-            <Heading>{heading}</Heading>
+            <Heading>{range.continued ? continuedHeading(heading) : heading}</Heading>
           </div>
         ) : null}
         <ShapeBody {...props} />

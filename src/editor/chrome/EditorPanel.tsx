@@ -6,6 +6,7 @@ import { useActiveResumeDocument } from '../content/useActiveDocument';
 import { useEditorScope } from '../context';
 import { NoSectionSelected, SectionEditor } from '../content/SectionEditor';
 import { SectionsCard } from '../content/SectionsCard';
+import { DesignPanel } from '../design/DesignPanel';
 import { VariantsPanel } from '../variants/VariantsPanel';
 import { Tabs } from './Tabs';
 
@@ -22,7 +23,7 @@ export function EditorPanel() {
     <aside className="editor" aria-label="Editor">
       <Tabs tabs={TABS} active={tab} onChange={setTab} label="Editor sections">
         <div className="ed-body">
-          {tab === 'content' ? <ContentTab /> : tab === 'variants' ? <VariantsPanel /> : <DesignTab />}
+          {tab === 'content' ? <ContentTab /> : tab === 'variants' ? <VariantsPanel /> : <DesignPanel />}
         </div>
       </Tabs>
     </aside>
@@ -58,17 +59,5 @@ function ContentTab() {
         <NoSectionSelected />
       )}
     </div>
-  );
-}
-
-function DesignTab() {
-  return (
-    <section className="card empty-card" aria-labelledby="design-h">
-      <h2 id="design-h">Design</h2>
-      <p>
-        Themes, fonts, spacing, page size and icon styles arrive with the theme engine (milestones 3 and 5). Every theme
-        will take its colors from the target company’s logo, with WCAG AA contrast enforced.
-      </p>
-    </section>
   );
 }

@@ -94,12 +94,12 @@ describe('BlockView', () => {
     expect(block('id')).toHaveAttribute('data-keep-together');
   });
 
-  it('renders only the atoms in range; a continued fragment has no heading', () => {
+  it('renders only the atoms in range; a continued fragment repeats the heading as "(continued)"', () => {
     render(<Resume range={{ from: 2, to: 4, continued: true }} />);
     const exp = block('exp');
     expect(atomIndices(exp)).toEqual([2, 3]);
     expect(exp).toHaveAttribute('data-continued');
-    expect(within(exp).queryByRole('heading', { level: 2 })).toBeNull();
+    expect(within(exp).getByRole('heading', { level: 2 })).toHaveTextContent(/^Experience \(continued\)$/);
     expect(within(exp).getAllByRole('listitem').map((li) => li.textContent)).toEqual(['Cut load time']);
     expect(within(exp).getByRole('heading', { level: 3 })).toHaveTextContent('Engineer');
   });

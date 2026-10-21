@@ -1,0 +1,42 @@
+/*
+ * Page sheets at their real size in CSS pixels. Fragments are absolutely placed at the engine's y, so what the
+ * preview shows is exactly the engine's pagination (and what will print).
+ */
+.preview {
+  display: contents;
+}
+.fit {
+  margin: 0 auto;
+}
+.resume {
+  display: flex;
+  flex-direction: column;
+  transform-origin: 0 0;
+}
+.sheet {
+  position: relative;
+  flex: none;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.35), 0 8px 24px rgb(0 0 0 / 0.25);
+}
+.sheet > [data-surface] {
+  position: absolute;
+  inset: 0;
+}
+.content {
+  position: absolute;
+}
+.fragment {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+/* Off-screen, laid out at the content width, never visible or focusable (aria-hidden + inert). */
+.measure {
+  position: absolute;
+  left: -100000px;
+  top: 0;
+  visibility: hidden;
+  pointer-events: none;
+  contain: layout style;
+}

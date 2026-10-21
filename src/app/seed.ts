@@ -15,6 +15,7 @@ import {
   type ResumeDocument,
   type ResumeId,
   type SectionId,
+  type ThemeBaseRef,
   type VariantId,
 } from '@/domain';
 import { parseSectionKind } from '@/sections';
@@ -116,6 +117,9 @@ const SEED: readonly Seed[] = [
   { kind: 'languages', items: [{ languages: [{ name: 'English' }, { name: 'Telugu' }, { name: 'Hindi' }] }] },
 ];
 
+/** Seeded variants start on the classic archetype (owner decision); ATS plain stays one click away in Design. */
+const CLASSIC: ThemeBaseRef = { kind: 'archetype', id: 'classic' };
+
 /** The first-run document, built only from public domain commands (valid by construction). */
 export function createSeedDocument(now: number): ResumeDocument {
   const general = newId<VariantId>();
@@ -124,7 +128,7 @@ export function createSeedDocument(now: number): ResumeDocument {
     id: newId<ResumeId>(),
     name: 'My resume',
     lang: 'en',
-    variant: { id: general, brand: fallbackProfile({ name: 'General', now }) },
+    variant: { id: general, brand: fallbackProfile({ name: 'General', now }), base: CLASSIC },
   });
   const cmds: Command[] = [];
   let languagesId: SectionId | undefined;
@@ -140,7 +144,7 @@ export function createSeedDocument(now: number): ResumeDocument {
       for (const [field, value] of Object.entries(data)) cmds.push({ type: 'item/set', itemId, field, value });
     });
   });
-  cmds.push({ type: 'variant/create', variantId: microsoft, target: fallbackProfile({ name: 'Microsoft', now }), base: { kind: 'auto' }, copyFrom: general });
+  cmds.push({ type: 'variant/create', variantId: microsoft, target: fallbackProfile({ name: 'Microsoft', now }), base: CLASSIC, copyFrom: general });
   if (languagesId) cmds.push({ type: 'visibility/set', variantId: microsoft, node: languagesId, hidden: true });
   cmds.push({ type: 'variant/select', variantId: microsoft });
   return cmds.reduce(applyCommand, base);

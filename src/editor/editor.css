@@ -45,9 +45,8 @@
   color-scheme: dark;
 }
 
-/* Light (toggle), and the paper in either theme. */
-:root[data-ui-theme='light'],
-.paper {
+/* Light (toggle). The resume pages never read these: their colors come from the variant's theme. */
+:root[data-ui-theme='light'] {
   --ui-bg: #f6f7f9;
   --ui-panel: #ffffff;
   --ui-surface: #ffffff;
@@ -802,7 +801,21 @@ textarea.input {
   font-weight: 600;
 }
 
-/* ── preview placeholder ── */
+/* ── design ── */
+.theme-picker {
+  border: 0;
+  padding: 0;
+  margin: 12px 0 0;
+  min-width: 0;
+}
+.theme-picker > legend {
+  padding: 0;
+  margin-bottom: 8px;
+  color: var(--ui-muted);
+  font-size: 12.5px;
+}
+
+/* ── preview ── */
 .preview {
   display: flex;
   flex-direction: column;
@@ -844,86 +857,12 @@ textarea.input {
   justify-content: center;
   align-items: flex-start;
 }
-.echo {
-  width: min(100%, 640px);
-  background: var(--ui-surface);
-  border: 1px dashed var(--ui-line-strong);
-  border-radius: 6px;
-  padding: 28px 32px;
-  color: var(--ui-fg);
-  font-size: 12.5px;
-  line-height: 1.5;
-  box-shadow: 0 1px 2px var(--ui-shadow-soft);
+.stage-fit {
+  width: 100%;
+  min-width: 0;
 }
-.echo-section + .echo-section {
-  margin-top: 14px;
-}
-.echo h3 {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--ui-fg2);
-  font-weight: 700;
-  border-bottom: 1px solid var(--ui-line);
-  padding-bottom: 3px;
-  margin-bottom: 6px;
-}
-.echo-name {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-.echo-headline {
-  font-weight: 600;
-  color: var(--ui-fg2);
-}
-.echo-contacts {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 16px;
-  margin-top: 6px;
-  color: var(--ui-fg2);
-}
-.echo-contacts li {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-.echo-contacts .icon svg {
-  width: 13px;
-  height: 13px;
-}
-.echo-entry + .echo-entry {
-  margin-top: 8px;
-}
-.echo-entry-head {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 4px;
-}
-.echo-dates {
-  margin-left: auto;
-  color: var(--ui-muted);
+.pv-meta {
   font-variant-numeric: tabular-nums;
-}
-.echo ul {
-  padding-left: 18px;
-  margin: 3px 0;
-}
-.echo-tags,
-.echo-tag-group {
-  color: var(--ui-fg2);
-}
-.echo-tags {
-  font-size: 11.5px;
-  color: var(--ui-muted);
-}
-.echo-link {
-  text-decoration: underline;
-}
-.echo-empty {
-  color: var(--ui-muted);
 }
 
 @media (prefers-reduced-motion: reduce) {
