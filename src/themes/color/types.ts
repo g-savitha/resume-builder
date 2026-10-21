@@ -1,7 +1,9 @@
 // The contrast contract (docs/design/types.ts, graft G1). A foreground color can only exist
 // as a ContrastSafe<Level>, and only ensureContrast mints one. Lint forbids casting to these
 // types anywhere else (eslint.config.js), so a raw brand color can never sit behind text.
-import type { Brand } from '@/domain';
+import type { Brand, ForegroundRole, SurfaceName } from '@/domain';
+
+export type { ForegroundRole, SurfaceName };
 
 declare const contrastMint: unique symbol;
 
@@ -19,16 +21,12 @@ export const SURFACE_FOREGROUNDS = {
   heading: 'AA-text',
   icon: 'AA-ui',
   rule: 'AA-ui',
-} as const satisfies Record<string, ContrastLevel>;
-export type ForegroundRole = keyof typeof SURFACE_FOREGROUNDS;
+} as const satisfies Record<ForegroundRole, ContrastLevel>;
 
 /** One background plus every foreground solved against it. Text can only sit on the bg it was checked against. */
 export type Surface = { readonly bg: CssColor } & {
   readonly [K in ForegroundRole]: ContrastSafe<(typeof SURFACE_FOREGROUNDS)[K]>;
 };
-
-/** page = canvas; raised/sunken = cards, tiles, chips; accent = brand fill (buttons, bands) with its own on-colors. */
-export type SurfaceName = 'page' | 'raised' | 'sunken' | 'accent';
 
 export interface ContrastReportEntry {
   readonly surface: SurfaceName;

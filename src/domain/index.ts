@@ -10,3 +10,4 @@ export { newId } from './ids';
 export { parseDataUrl, parseDomain, parsePartialDate, parseSafeUrl } from './values';
 export { formatRichText, isRichTextEmpty, parseRichText, richTextToPlain } from './richText';
 export { deepEqual } from './equal';
+export { FOREGROUND_ROLES, SURFACE_NAMES, type ForegroundRole, type SurfaceName } from './surface';
