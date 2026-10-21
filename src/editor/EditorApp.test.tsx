@@ -1,7 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'vitest-axe';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { buildDocument } from '@/testing';
 import { createEditorStore, EditorStoreProvider } from '@/store';
 import { EditorApp } from '.';
@@ -66,6 +66,22 @@ describe('EditorApp', () => {
     expect(screen.getByTestId('preview-meta')).toHaveTextContent('ATS plain theme');
     expect(liveRegion()).toHaveTextContent(/ATS plain theme applied/);
     expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('Export PDF prints the preview titled after the resume and variant, and says how to save it', async () => {
+    const { user } = renderEditor();
+    let titleAtPrint = '';
+    const print = vi.spyOn(window, 'print').mockImplementation(() => {
+      titleAtPrint = document.title;
+    });
+    await user.click(screen.getByRole('button', { name: 'Export PDF' }));
+    await vi.waitFor(() => {
+      expect(print).toHaveBeenCalledTimes(1);
+    });
+    expect(titleAtPrint).toBe('My resume – General');
+    expect(liveRegion()).toHaveTextContent(/Save as PDF/);
+    print.mockRestore();
+    window.dispatchEvent(new Event('afterprint'));
   });
 
   it('shows typed text in the paginated preview as you type', async () => {

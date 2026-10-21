@@ -47,5 +47,6 @@ Each feature file starts with an H1 and one paragraph on the user-visible behavi
 - [Variants](./variants.md) covers creating, switching and deleting target-company variants.
 - [Autosave and restore](./autosave.md) covers the save status and persistence across a reload.
 - [Resume preview](./preview.md) covers the paginated pages, the "(continued)" heading on a split section, and the Design-tab theme picker.
+- [Export PDF](./export.md) covers printing the preview to a tagged PDF with the same pages, title and language.
 - [Builder UI theme](./ui-theme.md) covers the dark default, the "Light theme" toggle and its persistence.
 - [Flows](./flows.md) covers the end-to-end "tailor a resume for a company" journey across features.

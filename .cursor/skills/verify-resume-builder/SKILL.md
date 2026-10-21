@@ -35,7 +35,7 @@ Read-only. Checks that our pid is alive, that the port belongs to our process gr
 node .cursor/skills/verify-resume-builder/scripts/drive.mjs <journey> [--headed] [--out <dir>]
 ```
 
-- `<journey>` is a file in `scripts/journeys/` (`edit-content`, `reorder-sections`, `hide-show`, `variants`, `autosave`, `ui-theme`, `preview`, `ready`) or a path to your own `.mjs`.
+- `<journey>` is a file in `scripts/journeys/` (`edit-content`, `reorder-sections`, `hide-show`, `variants`, `autosave`, `ui-theme`, `preview`, `export`, `ready`) or a path to your own `.mjs`.
 - A journey default-exports `async ({ page, step, evidence, expect }) => {}`. `page` is a Playwright page with `baseURL` set (so use `page.goto('/')`), and `expect` is Playwright's auto-retrying `expect`.
 - Wrap each user action and its expected result in `step('what the user does; what they see', fn)`.
 - Any console error or page error fails the run.

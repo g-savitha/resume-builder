@@ -1,4 +1,5 @@
 // Feature: resume preview (features/preview.md).
+/* global getComputedStyle -- runs inside evaluate, in the browser */
 export default async ({ page, step, evidence, expect }) => {
   const root = page.locator('[data-component="resume-preview"]');
   const settled = page.locator('[data-component="resume-preview"][data-pagination-state="settled"]');
@@ -13,6 +14,8 @@ export default async ({ page, step, evidence, expect }) => {
     await expect(root).toHaveAttribute('data-page-count', '1');
     await expect(pages.locator('[data-page]')).toHaveCount(1);
     await expect(meta).toHaveText(/Classic theme · 1 page$/);
+    // Pure white paper for light-ground brands (deviation 46).
+    expect(await pages.locator('[data-page] > [data-surface="page"]').first().evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(255, 255, 255)');
   });
   await evidence.shot('preview-classic');
 

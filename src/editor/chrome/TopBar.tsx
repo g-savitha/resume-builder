@@ -1,6 +1,7 @@
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import { Icon } from '@/icons';
-import { useAnnounce, useDispatch, useResumeName, useVariant, useVariantOrder } from '@/store';
+import { printVariant } from '@/render';
+import { useAnnounce, useDispatch, useResumeName, useVariant, useVariantOrder, useVariantView } from '@/store';
 import type { VariantId } from '@/domain';
 import { useEditorScope } from '../context';
 import { SaveIndicator } from './SaveIndicator';
@@ -25,9 +26,7 @@ export function TopBar() {
       <div className="spacer" />
       <SaveIndicator />
       <ThemeToggle />
-      <button type="button" className="btn btn-primary" disabled title="PDF export arrives with the preview engine (milestone 3)">
-        <Icon name="download" /> Export PDF
-      </button>
+      <ExportPdfButton />
     </header>
   );
 }
@@ -72,6 +71,34 @@ function ThemeToggle() {
   return (
     <button type="button" className="btn btn-ghost btn-sm" aria-pressed={theme === 'light'} onClick={toggle}>
       <Icon name={theme === 'light' ? 'sun' : 'moon'} /> Light theme
+    </button>
+  );
+}
+
+/**
+ * Prints the preview (same DOM) through the browser's dialog, where "Save as PDF" makes the file.
+ * The PDF is titled "<resume> – <variant>" and carries the resume's language.
+ */
+function ExportPdfButton() {
+  const { resumeId, variantId } = useEditorScope();
+  const view = useVariantView({ resumeId, variantId });
+  const announce = useAnnounce();
+  const [busy, setBusy] = useState(false);
+  const exportPdf = () => {
+    if (!view || busy) return;
+    setBusy(true);
+    announce('Preparing the PDF. In the print dialog, choose “Save as PDF”.');
+    printVariant(view)
+      .catch((err: unknown) => {
+        announce(err instanceof Error ? err.message : 'The PDF could not be prepared.');
+      })
+      .finally(() => {
+        setBusy(false);
+      });
+  };
+  return (
+    <button type="button" className="btn btn-primary" onClick={exportPdf} aria-disabled={busy || !view} data-testid="export-pdf">
+      <Icon name="download" /> Export PDF
     </button>
   );
 }
