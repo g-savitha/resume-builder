@@ -23,3 +23,13 @@ Screenshots: preview-classic.png, preview-continued.png (the page break), previe
 9 unit-level mutants in measureDom, engine layout, BlockView, buildFlow and PreviewEngine: all caught.
 
 One e2e-level mutant: marking the preview "settled" while a newer deferred view is pending. The first version of the hide/show e2e failed on exactly this bug before the fix. The test was then rewritten to read the count right after "settled" (no waiting on the count). With the mutant it failed 5/5; with the fix it passed 10/10.
+
+## Follow-up commit 86bd421 (fit with transform, not zoom)
+
+While writing slice 6, a narrow-window (1100 px) run found a fragment drawn 1.6 px shorter than planned. The cause was CSS `zoom`, which re-lays text out at the scaled size. The fix scales pages with `transform: scale()`. A new e2e (laptop-width window) checks that the pages are scaled (< 1), every fragment fits, and the pane does not scroll horizontally.
+
+After the fix:
+- `pnpm check` green: 175 unit tests, size 112.48 kB / 4.04 kB.
+- `pnpm e2e`: 12 passed.
+- Journeys edit-content, hide-show, reorder-sections, preview: VERIFIED. `journeys/preview` was replaced with this run.
+- `pnpm bench` (bench-86bd421.json): 3 pages, p98 15.3 ms unthrottled, 23.9 ms at 4x CPU. That is higher than the first run's 7 / 20.1 ms. Run-to-run variance on this box is in that range. Both runs are under the 50 ms target.
