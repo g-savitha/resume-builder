@@ -1,0 +1,30 @@
+{
+  "journey": "ui-theme",
+  "ok": true,
+  "url": "http://127.0.0.1:5211",
+  "rev": "605de09",
+  "at": "2026-10-21T02:20:46.109Z",
+  "steps": [
+    {
+      "title": "open the builder; it is dark and the toggle is off",
+      "ok": true,
+      "ms": 441
+    },
+    {
+      "title": "press \"Light theme\"; the builder turns light and the toggle is on",
+      "ok": true,
+      "ms": 60
+    },
+    {
+      "title": "reload: the light choice is remembered",
+      "ok": true,
+      "ms": 195
+    },
+    {
+      "title": "press it again; back to dark",
+      "ok": true,
+      "ms": 33
+    }
+  ],
+  "consoleErrors": []
+}
