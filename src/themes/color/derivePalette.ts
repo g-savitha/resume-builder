@@ -21,7 +21,8 @@ const GREY: Oklch = { l: 0.45, c: 0, h: 0 };
 /** Text targeted when `boost` is on (WCAG AAA). Best effort: a mid-tone background cannot reach it. */
 const BOOST_RATIO = 7;
 
-const PAGE_L = { light: [0.97, 0.99], dark: [0.14, 0.2] } as const;
+/** Dark-ground brands keep a dark page, lightly tinted with the ground's hue. */
+const DARK_PAGE_L = [0.14, 0.2] as const;
 const PAGE_MAX_CHROMA = 0.03;
 /** Lightness offset of raised / sunken surfaces from the page. */
 const ELEVATION = { light: { raised: -0.04, sunken: -0.08 }, dark: { raised: 0.06, sunken: -0.04 } } as const;
@@ -94,8 +95,8 @@ function inkFor(bg: Oklch, hue: Oklch) {
 }
 
 /**
- * Derives the four surfaces of a resume theme from a logo palette. The ground swatch sets the mode and a
- * lightly tinted page; the accent swatch becomes the brand fill and the brand-colored foregrounds. Brand
+ * Derives the four surfaces of a resume theme from a logo palette. The ground swatch sets the mode: a light
+ * ground gets a pure white page with neutral raised/sunken surfaces, a dark ground a dark, lightly tinted page; the accent swatch becomes the brand fill and the brand-colored foregrounds. Brand
  * colors are never used raw behind text: each foreground keeps its hue and moves in lightness only as far
  * as its contrast level requires.
  */
@@ -107,8 +108,10 @@ export function derivePalette(palette: LogoPalette, roles: RoleChoice): Accessib
   const boost = roles.boost === 1;
 
   const mode = ground.l < 0.5 ? 'dark' : 'light';
-  const [minL, maxL] = PAGE_L[mode];
-  const page: Oklch = { l: clamp(ground.l, minL, maxL), c: Math.min(ground.c, PAGE_MAX_CHROMA), h: ground.h };
+  // Light mode: the paper is pure white and the neutrals are untinted, whatever the ground swatch's tint
+  // (owner decision, deviation 46). The brand shows in the accent fill and the brand-colored foregrounds.
+  const page: Oklch =
+    mode === 'light' ? WHITE : { l: clamp(ground.l, DARK_PAGE_L[0], DARK_PAGE_L[1]), c: Math.min(ground.c, PAGE_MAX_CHROMA), h: ground.h };
   const raised: Oklch = { ...page, l: page.l + ELEVATION[mode].raised };
   const sunken: Oklch = { ...page, l: page.l + ELEVATION[mode].sunken };
 

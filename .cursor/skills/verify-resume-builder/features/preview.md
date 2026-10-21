@@ -21,7 +21,7 @@ Preconditions:
 
 - Doctor passes. A viewport at least 900 px wide (drive.mjs uses 1440 × 900).
 
-- **Settled.** Wait for `[data-component="resume-preview"][data-pagination-state="settled"]`. The seeded Microsoft variant is one page, `data-theme-base="classic"`.
+- **Settled.** Wait for `[data-component="resume-preview"][data-pagination-state="settled"]`. The seeded Microsoft variant is one page, `data-theme-base="classic"`, on pure white paper (the sheet's `[data-surface="page"]` background is `rgb(255, 255, 255)`).
 - **Grow it.** Choose "Add entry" in Experience a few times and fill "Highlights" with several `- ` lines each. Wait for settled again. `data-page-count` is at least 2, equals the number of `[data-page]` sheets, and page 2 has a level 2 heading named exactly "Experience (continued)".
 - **Fits the page.** Every fragment's drawn height is within 1 px of the engine's (`[data-fragment-h]` vs its block's box) and ends inside its page's content box. This is the "what you see is what prints" check.
 - **Theme.** Design tab, choose the "ATS plain" radio. Root has `data-theme-base="ats-plain"`, settles, and the meta reads "ATS plain theme".

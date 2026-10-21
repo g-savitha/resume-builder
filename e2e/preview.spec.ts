@@ -9,6 +9,9 @@ test.describe('resume preview', () => {
     await openEditor(page);
     expect(await settledPageCount(page)).toBe(1);
     await expect(previewRoot(page)).toHaveAttribute('data-theme-base', 'classic');
+    // Pure white paper (deviation 46), whatever the brand's tint.
+    const paper = await page.getByTestId('resume-preview').locator('[data-page] > [data-surface="page"]').first().evaluate((el) => getComputedStyle(el).backgroundColor);
+    expect(paper).toBe('rgb(255, 255, 255)');
 
     await addExperienceEntries(page, 5, 5);
     const pages = await settledPageCount(page);

@@ -118,6 +118,24 @@ describe('derivePalette', () => {
     for (const name of ['Experian', 'Microsoft', '', 'Ω']) expectAccessible(derivePalette(testBrand(name).palette, DEFAULT_ROLES));
   });
 
+  it('prints on pure white paper for every light-ground brand, with untinted raised and sunken surfaces', () => {
+    const isGrey = (hex: string) => hex.slice(1, 3) === hex.slice(3, 5) && hex.slice(3, 5) === hex.slice(5, 7);
+    fc.assert(
+      fc.property(palette, roles, (p, r) => {
+        const out = derivePalette(p, r);
+        if (out.mode !== 'light') return;
+        expect(out.surfaces.page.bg).toBe('#ffffff');
+        expect(isGrey(out.surfaces.raised.bg) && isGrey(out.surfaces.sunken.bg)).toBe(true);
+      }),
+      { numRuns: 500 },
+    );
+    // Including tinted grounds, and the name-hash fallback palettes the seeded variants use.
+    expect(derivePalette(FIXTURE_PALETTES['yellow-on-mid-grey'], DEFAULT_ROLES).surfaces.page.bg).toBe('#ffffff');
+    for (const name of ['General', 'Microsoft', 'Experian']) expect(derivePalette(testBrand(name).palette, DEFAULT_ROLES).surfaces.page.bg).toBe('#ffffff');
+    // The brand stays in the accent fill.
+    expect(derivePalette(FIXTURE_PALETTES['microsoft-like'], DEFAULT_ROLES).surfaces.accent.bg).toBe('#f25022');
+  });
+
   it('follows the logo ground: light page on white, dark page on black', () => {
     const light = derivePalette(FIXTURE_PALETTES['microsoft-like'], DEFAULT_ROLES);
     const dark = derivePalette(FIXTURE_PALETTES['streaming-red-on-black'], DEFAULT_ROLES);
