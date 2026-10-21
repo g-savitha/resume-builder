@@ -25,11 +25,13 @@ import {
   Layers,
   LoaderCircle,
   Mail,
+  Moon,
   MapPin,
   Phone,
   Play,
   Plus,
   Star,
+  Sun,
   ThumbsDown,
   ThumbsUp,
   Trash,
@@ -80,6 +82,8 @@ export const iconRegistry = {
   saved: CloudCheck,
   spinner: LoaderCircle,
   download: Download,
+  sun: Sun,
+  moon: Moon,
 } as const satisfies Record<string, IconComponent>;
 
 /** Derived from the registry; never listed by hand. */

@@ -24,6 +24,22 @@ const sectionList = () => screen.getByRole('list', { name: 'Sections, in resume 
 const liveRegion = () => screen.getByTestId('live-region');
 
 describe('EditorApp', () => {
+  it('starts dark and toggles the builder to light, remembering the choice', async () => {
+    delete document.documentElement.dataset.uiTheme;
+    localStorage.clear();
+    const { user } = renderEditor();
+    const toggle = screen.getByRole('button', { name: 'Light theme' });
+    expect(toggle).toHaveAttribute('aria-pressed', 'false');
+    await user.click(toggle);
+    expect(document.documentElement.dataset.uiTheme).toBe('light');
+    expect(localStorage.getItem('resume-builder:ui-theme')).toBe('light');
+    expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    await user.click(toggle);
+    expect(document.documentElement.dataset.uiTheme).toBe('dark');
+    expect(localStorage.getItem('resume-builder:ui-theme')).toBe('dark');
+    expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  });
+
   it('has no axe violations in the default view', async () => {
     const { container } = renderEditor();
     expect(await axe(container)).toHaveNoViolations();

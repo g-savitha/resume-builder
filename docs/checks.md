@@ -47,6 +47,7 @@ A bare `/* eslint-disable */` turns off every rule, this one included, and ESLin
 | Rule | Enforced by |
 | --- | --- |
 | No `console` in app code. | `no-console` (allowed in e2e, scripts, configs) |
+| **New:** builder CSS uses color literals only in the theme token blocks, and the dark and light blocks define the same `--ui-*` tokens. | `src/editor/editor-css.test.ts` |
 | Hooks rules; WCAG-strict JSX. | `react-hooks`, `jsx-a11y` strict |
 | No `page.waitForTimeout` in e2e: wait for the end state (a web-first `expect` or `expect.poll` on a state hook). | `no-restricted-syntax` on `e2e/**` |
 
@@ -55,7 +56,7 @@ A bare `/* eslint-disable */` turns off every rule, this one included, and ESLin
 | Rule | Enforced by |
 | --- | --- |
 | Editor shell ≤ 150 kB gzip JS, ≤ 15 kB CSS. | `pnpm size` (`.size-limit.js`) |
-| No axe WCAG 2.2 A/AA violations in the editor. | `pnpm e2e` (`e2e/editor.spec.ts`) |
+| No axe WCAG 2.2 A/AA violations in the editor, in both the dark and the light builder theme. | `pnpm e2e` (`e2e/editor.spec.ts`) |
 | Typing p98 frame < 50 ms on a 3-page resume (unthrottled; the 4× CPU run is recorded, not asserted). | `pnpm bench` (`e2e/typing.bench.ts`) |
 | Property tests finish inside vitest's 5 s default on CI. Never raise `testTimeout` globally. | CI `pnpm test`. See the `ci-only-test-timeouts` skill. |
 

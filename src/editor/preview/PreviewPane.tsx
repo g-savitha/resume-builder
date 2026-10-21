@@ -22,7 +22,7 @@ export function PreviewPane() {
       </div>
       {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- scrollable regions must be keyboard-reachable (axe scrollable-region-focusable, WCAG 2.1.1) */}
       <div className="stage" tabIndex={0} role="region" aria-label="Preview, scrollable">
-        <article className="echo" aria-label="Content echo (read-only)" data-testid="content-echo">
+        <article className="echo paper" aria-label="Content echo (read-only)" data-testid="content-echo">
           {view?.sections.map(({ section, items }) => <EchoSection key={section.id} section={section} items={items} />)}
           {view?.sections.length === 0 ? <p className="echo-empty">Everything is hidden in this variant.</p> : null}
         </article>

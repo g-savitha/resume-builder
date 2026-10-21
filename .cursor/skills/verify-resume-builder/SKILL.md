@@ -5,7 +5,7 @@ description: Launch, drive and prove behavior of the resume builder web app (Vit
 
 # Verify the resume builder
 
-The app is a single-page editor: a Content / Variants / Design tab panel on the left and a read-only preview echo on the right. Data lives only in the browser (IndexedDB), so there is no backend, auth or database to start. Every drive gets a fresh browser profile, which means the app seeds its sample resume ("My resume", variants General and Microsoft, Microsoft active).
+The app is a single-page editor: a Content / Variants / Design tab panel on the left and a read-only preview echo on the right. The builder chrome is dark by default (`html[data-ui-theme]`). Data lives only in the browser (IndexedDB), so there is no backend, auth or database to start. Every drive gets a fresh browser profile, which means the app seeds its sample resume ("My resume", variants General and Microsoft, Microsoft active).
 
 Read [`features/README.md`](features/README.md) first, then the feature file you are verifying. Helpers live in `scripts/`; run them from the repo root.
 
@@ -35,7 +35,7 @@ Read-only. Checks that our pid is alive, that the port belongs to our process gr
 node .cursor/skills/verify-resume-builder/scripts/drive.mjs <journey> [--headed] [--out <dir>]
 ```
 
-- `<journey>` is a file in `scripts/journeys/` (`edit-content`, `reorder-sections`, `hide-show`, `variants`, `autosave`, `ready`) or a path to your own `.mjs`.
+- `<journey>` is a file in `scripts/journeys/` (`edit-content`, `reorder-sections`, `hide-show`, `variants`, `autosave`, `ui-theme`, `ready`) or a path to your own `.mjs`.
 - A journey default-exports `async ({ page, step, evidence, expect }) => {}`. `page` is a Playwright page with `baseURL` set (so use `page.goto('/')`), and `expect` is Playwright's auto-retrying `expect`.
 - Wrap each user action and its expected result in `step('what the user does; what they see', fn)`.
 - Any console error or page error fails the run.

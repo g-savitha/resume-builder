@@ -20,6 +20,7 @@ This directory is the maintained source for verifying the builder's user-facing 
   | `data-drag-state` | every reorderable list | `idle`, `dragging` (arrow keys move the lifted row) |
   | `data-row-label` | section and entry rows | the row's current label |
   | `data-item-body` | entry bodies | the entry id; `hidden` when collapsed |
+  | `data-ui-theme` | `<html>` | `dark` (default), `light` (builder chrome only) |
 - Wait for a visible end state with `expect`: a live-region message (`data-testid="live-region"`, polite), the save status, or the preview echo (`data-testid="content-echo"`).
 - Treat quoted names literally. The curly apostrophe in "Company you’re applying to" is part of the label.
 - Restore nothing by hand: the next drive gets a fresh profile.
@@ -41,4 +42,5 @@ Each feature file starts with an H1 and one paragraph on the user-visible behavi
 - [Hide and show per variant](./hide-show.md) covers the per-variant eye toggle for sections and entries.
 - [Variants](./variants.md) covers creating, switching and deleting target-company variants.
 - [Autosave and restore](./autosave.md) covers the save status and persistence across a reload.
+- [Builder UI theme](./ui-theme.md) covers the dark default, the "Light theme" toggle and its persistence.
 - [Flows](./flows.md) covers the end-to-end "tailor a resume for a company" journey across features.

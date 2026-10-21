@@ -3,20 +3,37 @@ import { expect, test } from '@playwright/test';
 import { openEditor, saveStatus, sectionList, sectionOrder, shot } from './helpers';
 
 test.describe('builder (milestone 1)', () => {
-  test('main editor renders and matches the light builder chrome', async ({ page }) => {
+  test('main editor renders, dark by default', async ({ page }) => {
     await openEditor(page);
+    await expect(page.locator('html')).toHaveAttribute('data-ui-theme', 'dark');
     await expect(page.getByRole('heading', { name: 'Resume builder', level: 1 })).toBeVisible();
     await expect(page.getByTestId('content-echo')).toContainText('Lead Full Stack Engineer');
     await page.screenshot({ path: shot('editor.png') });
   });
 
-  test('passes axe (WCAG 2.2 A/AA, including color contrast) in a real browser', async ({ page }) => {
+  for (const theme of ['dark', 'light'] as const) {
+    test(`passes axe (WCAG 2.2 A/AA, including color contrast) in a real browser, ${theme} builder`, async ({ page }) => {
+      await openEditor(page);
+      if (theme === 'light') await page.getByRole('button', { name: 'Light theme' }).click();
+      await expect(page.locator('html')).toHaveAttribute('data-ui-theme', theme);
+      const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+      expect(results.violations.map((v) => `${v.id}: ${v.nodes.length} node(s)`)).toEqual([]);
+      await page.getByRole('tab', { name: 'Variants' }).click();
+      const variants = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+      expect(variants.violations.map((v) => v.id)).toEqual([]);
+    });
+  }
+
+  test('the light builder theme survives a reload', async ({ page }) => {
     await openEditor(page);
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
-    expect(results.violations.map((v) => `${v.id}: ${v.nodes.length} node(s)`)).toEqual([]);
-    await page.getByRole('tab', { name: 'Variants' }).click();
-    const variants = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
-    expect(variants.violations.map((v) => v.id)).toEqual([]);
+    const toggle = page.getByRole('button', { name: 'Light theme' });
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    await page.reload();
+    await expect(page.locator('[data-app-state="ready"]')).toBeVisible();
+    await expect(page.locator('html')).toHaveAttribute('data-ui-theme', 'light');
+    await expect(page.getByRole('button', { name: 'Light theme' })).toHaveAttribute('aria-pressed', 'true');
+    await page.screenshot({ path: shot('editor-light.png') });
   });
 
   test('reorders sections with the keyboard (dnd-kit keyboard sensor) and announces politely', async ({ page }) => {
