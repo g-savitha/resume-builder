@@ -1,5 +1,5 @@
-// themes: theme as data. Milestone 2 ships the contrast core (themes/color) only; resolveTheme,
-// archetypes and presets arrive in milestone 3. Until then the public surface is the palette types.
+// themes: theme as data. An archetype (colorless ThemeBase) + the variant's AccessiblePalette = a ResolvedTheme.
+// themes/color is the contrast core; ensureContrast stays private to it.
 export type {
   AccessiblePalette,
   ContrastLevel,
@@ -10,3 +10,6 @@ export type {
   Surface,
   SurfaceName,
 } from './color';
+export { resolveTheme, themeBaseFor } from './resolve';
+export { ARCHETYPES, type ImplementedArchetype } from './archetypes';
+export type { BlockStyles, ResolvedTheme, ThemeBase, TypeScale, TypographySpec, Vocab } from './types';
