@@ -10,6 +10,8 @@ export default mergeConfig(
       include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.ts'],
       setupFiles: ['./src/testing/setup.ts'],
       restoreMocks: true,
+      // Process CSS imported with ?raw so contract tests can read a stylesheet (primitives/themeVars.test.ts).
+      css: { include: [/\.css\?raw$/] },
     },
   }),
 );

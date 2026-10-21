@@ -72,3 +72,14 @@ The slice plan is in [m3-plan.md](m3-plan.md).
     - The identity photo.
     - Theme vocabulary: "Present" is the default argument of `formatDateRange`. Vocab arrives with `resolveTheme`.
     - A "continued" label on a split section's second fragment: the fragment has `data-continued` but no heading.
+38. **`resolveTheme(variant)` is synchronous** and returns a `ResolvedTheme`, not a Promise. The M3 archetypes use system font stacks, so there is nothing to load yet. It becomes async when presets and web fonts arrive as lazy chunks (M6); render is the only caller.
+39. **`ThemeBase` is smaller than the contract's.**
+    - It has no `layout`: M3 archetypes are one column, and `LayoutSpec` arrives with the multi-region archetypes in M5.
+    - It has no `radius`, `bespoke`, `decor` or `iconOverrides`.
+    - `typography` is a CSS font stack, a point scale and a heading case. It has no `FontPairId` or `load()`, so `Customization.fontPair` is not used yet.
+    - `id` is an `ArchetypeId`. The archetypes live in a typed record (`ARCHETYPES`, `satisfies Partial<Record<ArchetypeId, ThemeBase>>`), not a glob: they are a closed union, so the compiler checks the list. Presets will still be a glob.
+40. **Fallbacks until the rest exists.** `auto`, every preset, `sidebar` and `app-ui` render as `classic`. `auto` is meant to pick from the brand (ground mode, logo aspect), but with only two archetypes there is nothing to choose between yet. `listThemeChoices` arrives with the theme picker.
+41. **`ResolvedTheme` has no `logo`** (`showLogo` is M4).
+    - `styleHash` covers only what changes geometry: archetype, block styles, and the type and spacing variables. Changing the brand or the role choice recolors without re-measuring. `key` covers colors too.
+    - Page size and margins are not in either hash, because the engine compares them itself.
+42. **The type and spacing variables are a checked contract.** `primitives` exports `THEME_VARS`, the `--rs-*` variables its CSS reads. `themes` must return all of them (`Record<ThemeVar, string>`), and a test keeps the list equal to the variables the stylesheet actually reads. To make that test possible, vitest now processes `*.css?raw` imports (`vitest.config.ts`).

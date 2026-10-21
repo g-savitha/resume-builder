@@ -8,3 +8,4 @@ export { Decor } from './Decor';
 export { RichTextView, richAtomCount, type RichTextViewProps } from './RichTextView';
 export { fgVar, OnSurface, surfaceVar, type OnSurfaceProps } from './surface';
 export { Heading, Text, type Tone } from './text';
+export { THEME_VARS, type ThemeVar } from './themeVars';
