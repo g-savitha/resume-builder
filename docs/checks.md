@@ -42,6 +42,7 @@ A bare `/* eslint-disable */` turns off every rule, this one included, and ESLin
 | --- | --- |
 | No `console` in app code. | `no-console` (allowed in e2e, scripts, configs) |
 | Hooks rules; WCAG-strict JSX. | `react-hooks`, `jsx-a11y` strict |
+| No `page.waitForTimeout` in e2e: wait for the end state (a web-first `expect` or `expect.poll` on a state hook). | `no-restricted-syntax` on `e2e/**` |
 
 ## Product budgets (browser and build)
 
