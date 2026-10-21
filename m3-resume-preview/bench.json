@@ -1,0 +1,37 @@
+{
+  "browserName": "chromium",
+  "pages": 3,
+  "keystrokes": 200,
+  "targetP98Ms": 50,
+  "unthrottled": {
+    "frame": {
+      "n": 200,
+      "p50": 3.7,
+      "p95": 5.6,
+      "p98": 7,
+      "max": 18.1,
+      "mean": 4.1
+    },
+    "eventTiming": {
+      "count": 359,
+      "maxMs": 24,
+      "over50": 0
+    }
+  },
+  "cpu4x": {
+    "frame": {
+      "n": 200,
+      "p50": 14.2,
+      "p95": 18.7,
+      "p98": 20.1,
+      "max": 23,
+      "mean": 14.7
+    },
+    "eventTiming": {
+      "count": 231,
+      "maxMs": 24,
+      "over50": 0
+    }
+  },
+  "at": "2026-10-21T02:38:24.227Z"
+}

@@ -1,0 +1,98 @@
+- article "Resume preview, 2 pages":
+  - heading "Savitha Gollamudi" [level=1]
+  - paragraph: Lead Full Stack Engineer
+  - list "Contact":
+    - listitem:
+      - link "savitha@example.com":
+        - /url: mailto:savitha@example.com
+    - listitem: Hyderabad, India
+    - listitem:
+      - link "linkedin.com/in/example":
+        - /url: https://linkedin.com/in/example
+    - listitem:
+      - link "github.com/example":
+        - /url: https://github.com/example
+  - heading "Summary" [level=2]
+  - paragraph:
+    - text: "Full stack engineer who ships product end to end:"
+    - strong: React and TypeScript
+    - text: front ends, Node.js and Python services, and the data layers underneath. Leads small teams and turns ambiguous requirements into predictable releases.
+  - heading "Experience" [level=2]
+  - heading "Lead Full Stack Engineer" [level=3]
+  - paragraph: Example Company A · Hyderabad, India
+  - paragraph: Dec 2023 – Present
+  - list:
+    - listitem: "Example: leads a squad of engineers building customer-facing React/TypeScript dashboards on Node.js services."
+    - listitem: "Example: defined API contracts and review standards; introduced typed end-to-end services."
+    - listitem: "Example: set up performance budgets and caching for the slowest read paths."
+  - paragraph: React · TypeScript · Node.js
+  - heading "Senior Software Engineer" [level=3]
+  - paragraph: Example Company B · Hyderabad, India
+  - paragraph: 2021 – 2023
+  - list:
+    - listitem: "Placeholder: owned the web client of a B2B SaaS product (React, Redux Toolkit, TypeScript)."
+    - listitem: "Placeholder: introduced Storybook and visual regression tests for the shared component library."
+  - paragraph: Redux · PostgreSQL
+  - heading "Software Engineer" [level=3]
+  - paragraph: Example Company C · Bengaluru, India
+  - paragraph: 2017 – 2021
+  - list:
+    - listitem: "Placeholder: built Python and Node.js services backed by MongoDB for an internal platform."
+  - heading "Preview role 1" [level=3]
+  - list:
+    - listitem: "Highlight 1: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 2: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 3: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 4: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 5: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 6: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+  - heading "Preview role 2" [level=3]
+  - list:
+    - listitem: "Highlight 1: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 2: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 3: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 4: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 5: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 6: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+  - heading "Preview role 3" [level=3]
+  - list:
+    - listitem: "Highlight 1: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 2: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 3: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 4: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 5: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+  - heading "Experience (continued)" [level=2]
+  - list:
+    - listitem: "Highlight 6: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+  - heading "Preview role 4" [level=3]
+  - list:
+    - listitem: "Highlight 1: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 2: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 3: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 4: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 5: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+    - listitem: "Highlight 6: shipped a measurable improvement to a customer-facing surface, with tests and docs."
+  - heading "Projects" [level=2]
+  - heading "Resume builder" [level=3]:
+    - link "Resume builder":
+      - /url: https://github.com/g-savitha/resume-builder
+  - paragraph: One resume, themed per company with contrast-checked palettes.
+  - paragraph: React · Zustand
+  - heading "Skills" [level=2]
+  - paragraph:
+    - strong: "Frontend:"
+    - text: React, Redux, TypeScript
+  - paragraph:
+    - strong: "Backend:"
+    - text: Node.js, Python / FastAPI
+  - paragraph:
+    - strong: "Data:"
+    - text: PostgreSQL, MongoDB, Redis
+  - heading "Certifications" [level=2]
+  - heading "Example cloud developer certification" [level=3]
+  - paragraph: Placeholder issuer
+  - paragraph: "2024"
+  - heading "Education" [level=2]
+  - heading "B.Tech, Computer Science" [level=3]
+  - paragraph: Example university
+  - paragraph: 2013 – 2017

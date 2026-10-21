@@ -1,0 +1,4 @@
+PASS open the builder; the Microsoft variant is active and shows Projects
+PASS "Hide Projects in Microsoft": pressed, marked "hidden here", gone from the preview
+PASS switch to the General variant: Projects is still visible there
+VERIFIED hide-show. Evidence: /workspace/rb-work/e2e/.artifacts/verify/2026-10-21T02-39-38-290Z-hide-show

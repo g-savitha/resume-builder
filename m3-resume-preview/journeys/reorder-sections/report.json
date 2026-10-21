@@ -1,0 +1,30 @@
+{
+  "journey": "reorder-sections",
+  "ok": true,
+  "url": "http://127.0.0.1:5211",
+  "rev": "6934876",
+  "at": "2026-10-21T02:39:37.953Z",
+  "steps": [
+    {
+      "title": "open the builder; Experience is 3rd and Projects 4th",
+      "ok": true,
+      "ms": 466
+    },
+    {
+      "title": "keyboard: Space on \"Reorder Projects\", ArrowUp, Space moves Projects to position 3",
+      "ok": true,
+      "ms": 160
+    },
+    {
+      "title": "\"Move Experience down\" moves it to position 5 and keeps focus on the moved row",
+      "ok": true,
+      "ms": 53
+    },
+    {
+      "title": "the preview follows the new order",
+      "ok": true,
+      "ms": 3
+    }
+  ],
+  "consoleErrors": []
+}

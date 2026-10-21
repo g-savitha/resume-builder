@@ -1,0 +1,25 @@
+{
+  "journey": "hide-show",
+  "ok": true,
+  "url": "http://127.0.0.1:5211",
+  "rev": "6934876",
+  "at": "2026-10-21T02:39:39.310Z",
+  "steps": [
+    {
+      "title": "open the builder; the Microsoft variant is active and shows Projects",
+      "ok": true,
+      "ms": 513
+    },
+    {
+      "title": "\"Hide Projects in Microsoft\": pressed, marked \"hidden here\", gone from the preview",
+      "ok": true,
+      "ms": 62
+    },
+    {
+      "title": "switch to the General variant: Projects is still visible there",
+      "ok": true,
+      "ms": 70
+    }
+  ],
+  "consoleErrors": []
+}

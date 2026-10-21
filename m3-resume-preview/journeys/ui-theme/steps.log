@@ -1,0 +1,5 @@
+PASS open the builder; it is dark and the toggle is off
+PASS press "Light theme"; the builder turns light and the toggle is on
+PASS reload: the light choice is remembered
+PASS press it again; back to dark
+VERIFIED ui-theme. Evidence: /workspace/rb-work/e2e/.artifacts/verify/2026-10-21T02-39-43-912Z-ui-theme

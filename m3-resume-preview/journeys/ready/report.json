@@ -1,0 +1,15 @@
+{
+  "journey": "ready",
+  "ok": true,
+  "url": "http://127.0.0.1:5211",
+  "rev": "6934876",
+  "at": "2026-10-21T02:39:34.934Z",
+  "steps": [
+    {
+      "title": "open the builder; the resume loads and the save status settles",
+      "ok": true,
+      "ms": 458
+    }
+  ],
+  "consoleErrors": []
+}
