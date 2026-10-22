@@ -119,7 +119,9 @@ export function derivePalette(palette: LogoPalette, roles: RoleChoice): Accessib
   // Its own foregrounds are then solved against it, so text on it always passes as well.
   const accentBg = solveLightness(accent, toHex(page), MIN_RATIO['AA-ui']);
 
-  const onNeutral = (bg: Oklch): Sources => ({ ...inkFor(bg, accent), brand: accent, rule: secondary ?? accent });
+  // Headings on the page and cards start from the brand color itself (deviation 57); ensureContrast then moves
+  // it in lightness only as far as AA (or the 7:1 boost) needs. A grey brand still gets grey headings.
+  const onNeutral = (bg: Oklch): Sources => ({ ...inkFor(bg, accent), heading: accent, brand: accent, rule: secondary ?? accent });
   const onAccent = (bg: Oklch): Sources => {
     const poles = inkFor(bg, accent);
     return { ...poles, brand: secondary ?? poles.ink, rule: poles.ink };
