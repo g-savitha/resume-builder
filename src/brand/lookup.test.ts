@@ -3,8 +3,8 @@ import { memoryBrandCache, type BrandCache } from './cache';
 import type { DecodeImage } from './decodeImage';
 import { createLookup, FRESH_MS } from './lookup';
 
-/** Fake logos: the image's first byte picks its color (0 = fully transparent). */
-const COLORS: Record<number, readonly [number, number, number, number]> = { 0: [0, 0, 0, 0], 1: [229, 9, 20, 255], 2: [10, 102, 194, 255] };
+/** Fake logos: the image's first byte picks its color (0 = fully transparent; 0x89 starts every real PNG upload). */
+const COLORS: Record<number, readonly [number, number, number, number]> = { 0: [0, 0, 0, 0], 1: [229, 9, 20, 255], 2: [10, 102, 194, 255], 0x89: [10, 102, 194, 255] };
 const b64 = (byte: number) => btoa(String.fromCharCode(byte));
 const decode: DecodeImage = async (blob) => {
   const byte = new Uint8Array(await blob.arrayBuffer())[0] ?? 0;
@@ -134,5 +134,51 @@ describe('lookupBrand', () => {
     const { lookup, calls } = setup(() => found(1));
     expect(await lookup({ name: '   ' })).toMatchObject({ ok: false, reason: 'not-found' });
     expect(calls).toEqual([]);
+  });
+});
+
+describe('lookupBrand with an uploaded logo', () => {
+  const png = () => new Blob([Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])], { type: 'image/png' });
+
+  it('uses the upload without the network, and it overrides the fetched logo from then on, for good', async () => {
+    let t = 0;
+    const { lookup, calls } = setup(() => found(1), { now: () => t });
+    expect(hueOf(await lookup({ name: 'Microsoft' }))).toBeCloseTo(28, 0); // fetched: red
+    const up = await lookup({ name: 'Microsoft', logoFile: png() });
+    expect(up).toMatchObject({ ok: true, from: 'upload', profile: { name: 'Microsoft', domain: 'microsoft.com', palette: { source: 'logo' } } });
+    expect(hueOf(up)).toBeCloseTo(255, 0); // uploaded: blue
+    t = FRESH_MS.ok * 10;
+    const later = await lookup({ name: 'microsoft' });
+    expect(later).toMatchObject({ ok: true, from: 'cache' });
+    expect(hueOf(later)).toBeCloseTo(255, 0);
+    expect(calls).toHaveLength(1);
+  });
+
+  it('refuses a file that is not a PNG, JPEG or SVG, an oversized one, or one that will not decode', async () => {
+    const { lookup, calls } = setup(() => found(1));
+    expect(await lookup({ name: 'Acme', logoFile: new Blob(['<html>'], { type: 'image/png' }) })).toMatchObject({ ok: false, reason: 'unsupported-logo' });
+    expect(await lookup({ name: 'Acme', logoFile: new Blob([new Uint8Array(3 * 1024 * 1024)], { type: 'image/png' }) })).toMatchObject({ ok: false, reason: 'logo-too-large' });
+    expect(await lookup({ name: 'Acme', logoFile: new Blob([Uint8Array.from([0xff, 0xd8, 0xff, 0])], { type: 'image/jpeg' }) })).toMatchObject({ ok: false, reason: 'unreadable-logo' });
+    expect(calls).toEqual([]);
+  });
+
+  it('keeps an upload that lands while a fetch for the same company is still out', async () => {
+    let release: () => void = () => undefined;
+    const gate = new Promise<void>((r) => (release = r));
+    const cache = memoryBrandCache();
+    const lookup = createLookup({
+      fetch: async () => {
+        await gate;
+        return Response.json(found(1));
+      },
+      decode,
+      cache,
+      now: () => 1,
+    });
+    const fetching = lookup({ name: 'Microsoft' });
+    await lookup({ name: 'Microsoft', logoFile: png() });
+    release();
+    expect(hueOf(await fetching)).toBeCloseTo(255, 0);
+    expect((await cache.get('name:microsoft'))?.uploaded).toBe(true);
   });
 });
