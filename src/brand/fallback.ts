@@ -11,9 +11,8 @@ function hash(text: string): number {
 }
 
 /**
- * The name-hash fallback profile, used when no logo can be obtained (and, in milestone 1,
- * for every variant: the logo pipeline lands in milestone 4). One of the two legal minters
- * of LogoPalette (the other is the palette worker).
+ * The name-hash fallback profile, used when no logo can be obtained. One of the two legal minters
+ * of LogoPalette (the other is extractPalette, from logo pixels).
  */
 export function fallbackProfile({ name, now }: { readonly name: string; readonly now: number }): BrandProfile {
   const hue = hash(name) % 360;

@@ -30,3 +30,4 @@ flowchart LR
 5. **More archetypes and icons:** `sidebar` and `app-ui` (multi-region, bands), icon toggles and styles, customization panel.
 6. **Bespoke presets:** the Netflix-style preset via `BespokeBlock`, plus axe across presets × fixture brands.
 7. **Interchange and polish:** native and JSON Resume import/export, duplicate resume, multi-tab lock, mobile preview-only route, perf budget sign-off.
+8. **Backend and auth (after v1):** sign-in (magic link or Google, e.g. Supabase Auth or Better Auth), resumes and variants synced to a database across devices while staying offline-first, and a small typed API with per-user access rules.

@@ -136,6 +136,23 @@ describe('derivePalette', () => {
     expect(derivePalette(FIXTURE_PALETTES['microsoft-like'], DEFAULT_ROLES).surfaces.accent.bg).toBe('#f25022');
   });
 
+  it('prints logo palettes (no ground swatch) on pure white paper, with the brand in the accent', () => {
+    // extractPalette never marks a ground (deviation 50), so the ground strategy finds none and the page is white.
+    const noGround = (p: LogoPalette) => ({ ...p, swatches: p.swatches.map((s) => ({ ...s, isGround: false })) }) as LogoPalette;
+    fc.assert(
+      fc.property(palette, roles, (p, r) => {
+        const out = derivePalette(noGround(p), { ...r, ground: 'ground' });
+        expect(out.mode).toBe('light');
+        expect(out.surfaces.page.bg).toBe('#ffffff');
+        expectAccessible(out);
+      }),
+      { numRuns: 500 },
+    );
+    const red = derivePalette(noGround(FIXTURE_PALETTES['streaming-red-on-black']), DEFAULT_ROLES);
+    expect(red.surfaces.page.bg).toBe('#ffffff');
+    expect(red.surfaces.accent.bg).toBe('#e50914');
+  });
+
   it('follows the logo ground: light page on white, dark page on black', () => {
     const light = derivePalette(FIXTURE_PALETTES['microsoft-like'], DEFAULT_ROLES);
     const dark = derivePalette(FIXTURE_PALETTES['streaming-red-on-black'], DEFAULT_ROLES);
