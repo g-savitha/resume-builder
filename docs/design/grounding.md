@@ -15,7 +15,7 @@ Goal: a builder where the SAME resume content can be rendered in many company th
 - Real page pagination in preview (content flows across pages), page count shown.
 - PDF export with selectable, ATS-readable text in logical reading order (print-CSS / browser print is acceptable for v1; a library is fine if justified).
 - Multiple resumes, duplicate a resume, autosave (localStorage / IndexedDB), import/export JSON (consider JSON Resume schema compatibility at the boundary).
-- Later: undo/redo, shareable public link, cover letters, AI bullet rewriting, cloud sync/accounts.
+- Later: undo/redo, shareable public link, cover letters, AI bullet rewriting. Cloud sync and accounts are now planned as milestone 8 (backend and auth, after v1; owner decision 2026-10-22).
 
 ## Constraints and preferences
 - Editor app UI is LIGHT themed for this project (company themes keep their own brand colors, e.g. Netflix stays dark). **Superseded 2026-10-21 (owner):** the builder UI is DARK by default (charcoal/slate), regardless of `prefers-color-scheme`, with a persisted light toggle. The resume paper stays white / theme-colored.

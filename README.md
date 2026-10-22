@@ -6,7 +6,7 @@ Status: **milestone 2** (contrast core). Milestone 1 shipped the core model and 
 
 ## Principles
 
-- **Local-first, static.** No accounts, no backend in v1. Resumes autosave to IndexedDB in your browser.
+- **Local-first, static.** No accounts, no backend in v1. Resumes autosave to IndexedDB in your browser. Sign-in and cross-device sync are planned for milestone 8, after v1, and stay offline-first.
 - **Accessible.** The builder targets WCAG 2.2 AA: full keyboard operation (including reorder), visible focus, labeled fields, live announcements. Generated resume themes must pass AA contrast by construction.
 - **Fast.** Typing stays under 50 ms per keystroke; the initial editor shell stays under 150 KB gzip. Both are checked by scripts, not by hope.
 - **Agent-friendly structure.** Every folder in `src/` is a module imported only through its `index.ts` (`@/<module>`), along the arrows in `scripts/eslint/architecture.js`. Lint fails on deep imports or undeclared arrows. Lists such as section kinds are derived from folders, never hand-synced.
