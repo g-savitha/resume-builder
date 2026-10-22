@@ -1,6 +1,6 @@
 # Variants
 
-A variant is one target company: same content, its own hide/show choices and (from milestone 4) its own logo-derived theme. Users create a variant by naming the company, switch between variants, and delete ones they no longer need.
+A variant is one target company: same content, its own hide/show choices and its own logo-derived theme ([brand pipeline](brand.md)). Users create a variant by naming the company, switch between variants, and delete ones they no longer need.
 
 ## Sub-features
 
@@ -20,12 +20,12 @@ Preconditions:
 - Doctor passes. Fresh profile: variants General and Microsoft, with Microsoft active.
 
 - **Open.** Choose the "Variants" tab. The "Active variant" group has 2 radios and Microsoft is checked.
-- **Create.** Fill "Company you’re applying to" with `Experian` and choose "Create variant". The Experian radio is checked, the top-bar select shows "Experian variant", and `live-region` reads "Created and switched to the Experian variant."
+- **Create.** Fill "Company you’re applying to" with `Experian` and choose "Create variant". The Experian radio is checked, the top-bar select shows "Experian variant", and `live-region` reads "Created and switched to the Experian variant.", then, once the row leaves `data-brand-state="looking-up"`, the logo lookup's result ("Applied the Experian logo colors." or "…keeps a placeholder palette.")
 - **Delete.** Choose "Delete Experian variant", then "Delete" in the "Confirm deleting Experian variant" group. 2 radios remain and `live-region` reads "Deleted the Experian variant."
 - **Run it.** `node .cursor/skills/verify-resume-builder/scripts/drive.mjs variants` saves `variant-created.png` and `variants-panel.aria.yml`.
 
 ## Gotchas
 
 - "Create variant" is disabled until the company field has non-blank text.
-- Variants use a placeholder palette ("placeholder palette" in the row) until milestone 4's logo pipeline. Do not try to verify colors from it.
+- Creating a variant starts a logo lookup, which announces after the "Created and switched" message. Wait for the row's `data-brand-state` to leave `looking-up` before asserting the live region. Colors are verified in [brand.md](brand.md).
 - Top-bar option labels end in " variant" ("Microsoft variant"), but radio labels start with the company name.

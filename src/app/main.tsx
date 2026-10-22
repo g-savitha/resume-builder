@@ -1,8 +1,9 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { EditorApp } from '@/editor';
+import type { ResumeDocument } from '@/domain';
+import { applyBrand, EditorApp } from '@/editor';
 import { createEditorStore, EditorStoreProvider } from '@/store';
-import { createSeedDocument } from './seed';
+import { createSeedDocument, SEEDED_COMPANIES } from './seed';
 
 const store = createEditorStore();
 const root = document.getElementById('root');
@@ -16,7 +17,16 @@ if (root) {
     </StrictMode>,
   );
   // Storage (idb + valibot) is a lazy chunk: the shell paints first, then the saved resume loads.
-  void import('@/storage').then(({ startPersistence }) =>
-    startPersistence({ store, createInitial: () => createSeedDocument(Date.now()) }),
-  );
+  let seeded: ResumeDocument | undefined;
+  void import('@/storage')
+    .then(({ startPersistence }) => startPersistence({ store, createInitial: () => (seeded = createSeedDocument(Date.now())) }))
+    .then(() => {
+      // First run only: the seeded company variants start on the placeholder palette, then get their logo
+      // colors once the lookup returns (silently; nothing the user did needs announcing).
+      if (!seeded) return;
+      for (const variant of Object.values(seeded.variants)) {
+        if (!SEEDED_COMPANIES.includes(variant.label)) continue;
+        void applyBrand({ dispatch: store.dispatch }, seeded.id, variant.id, variant.label, { name: variant.label });
+      }
+    });
 }

@@ -14,7 +14,9 @@ export default async ({ page, step, evidence, expect }) => {
     await page.getByRole('button', { name: 'Create variant' }).click();
     await expect(radios.getByRole('radio', { name: /^Experian/ })).toBeChecked();
     await expect(select.locator('option:checked')).toHaveText('Experian variant');
-    await expect(page.getByTestId('live-region')).toContainText('Created and switched to the Experian variant.');
+    // The live region first says "Created and switched to the Experian variant.", then reports the logo lookup.
+    await expect(radios.locator('[data-brand-state]', { hasText: 'Experian' })).not.toHaveAttribute('data-brand-state', 'looking-up', { timeout: 15_000 });
+    await expect(page.getByTestId('live-region')).toContainText(/Applied the Experian logo colors\.|keeps a placeholder palette\./);
   });
   await evidence.shot('variant-created');
   await step('delete Experian (two-step confirm): two variants remain', async () => {

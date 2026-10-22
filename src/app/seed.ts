@@ -117,6 +117,9 @@ const SEED: readonly Seed[] = [
   { kind: 'languages', items: [{ languages: [{ name: 'English' }, { name: 'Telugu' }, { name: 'Hindi' }] }] },
 ];
 
+/** Seeded variants that name a real company. On first run their logo is looked up (main.tsx); General has none. */
+export const SEEDED_COMPANIES: readonly string[] = ['Microsoft'];
+
 /** Seeded variants start on the classic archetype (owner decision); ATS plain stays one click away in Design. */
 const CLASSIC: ThemeBaseRef = { kind: 'archetype', id: 'classic' };
 

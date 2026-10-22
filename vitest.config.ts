@@ -7,7 +7,7 @@ export default mergeConfig(
     test: {
       environment: 'jsdom',
       globals: true,
-      include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.ts'],
+      include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.ts', 'api/**/*.test.ts'],
       setupFiles: ['./src/testing/setup.ts'],
       restoreMocks: true,
       // Process CSS imported with ?raw so contract tests can read a stylesheet (primitives/themeVars.test.ts).

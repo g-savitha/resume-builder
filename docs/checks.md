@@ -49,6 +49,7 @@ A bare `/* eslint-disable */` turns off every rule, this one included, and ESLin
 | No `console` in app code. | `no-console` (allowed in e2e, scripts, configs) |
 | **New:** builder CSS uses color literals only in the theme token blocks, and the dark and light blocks define the same `--ui-*` tokens. | `src/editor/editor-css.test.ts` |
 | Hooks rules; WCAG-strict JSX. | `react-hooks`, `jsx-a11y` strict |
+| **New:** e2e never calls the real logo services: `openEditor` stubs `/api/brand` (not found) unless the test installed its own `stubBrandApi`. | `e2e/helpers.ts` |
 | No `page.waitForTimeout` in e2e: wait for the end state (a web-first `expect` or `expect.poll` on a state hook). | `no-restricted-syntax` on `e2e/**` |
 
 ## Product budgets (browser and build)
