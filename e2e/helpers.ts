@@ -1,6 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
+import zlib from 'node:zlib';
 
 export const SHOTS_DIR = process.env.SHOTS_DIR ?? path.resolve('e2e/.artifacts/shots');
 fs.mkdirSync(SHOTS_DIR, { recursive: true });
@@ -9,8 +10,56 @@ export const shot = (name: string) => path.join(SHOTS_DIR, name);
 /** The autosave status in the top bar; `data-state` is idle | saving | saved | error. */
 export const saveStatus = (page: Page) => page.locator('[data-component="save-status"]');
 
+/** A body for the /api/brand stub (the BrandWireV1 shape in api/brand.ts). */
+export type BrandStub = (url: URL) => unknown;
+/** The default stub: no company is found, so every variant keeps its placeholder palette. Deterministic, offline. */
+export const NO_BRAND: BrandStub = () => ({ v: 1, status: 'not-found' });
+
+/**
+ * Stubs GET /api/brand so e2e never depends on the real favicon services. Returns the URLs the app asked for.
+ * Call before `openEditor` (which installs NO_BRAND unless a stub is already in place).
+ */
+const brandStubbed = new WeakSet<Page>();
+export async function stubBrandApi(page: Page, answer: BrandStub): Promise<URL[]> {
+  const calls: URL[] = [];
+  brandStubbed.add(page);
+  await page.unroute('**/api/brand?*');
+  await page.route('**/api/brand?*', (route) => {
+    const url = new URL(route.request().url());
+    calls.push(url);
+    return route.fulfill({ json: answer(url) });
+  });
+  return calls;
+}
+
+/** A width×width PNG: a solid square of `hex` inset on a transparent background. Built by hand (zlib only). */
+export function solidPng(hex: string, width = 32, inset = 4): string {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+  const rows = Buffer.alloc((width * 4 + 1) * width);
+  for (let y = 0; y < width; y++)
+    for (let x = 0; x < width; x++) {
+      const inside = x >= inset && y >= inset && x < width - inset && y < width - inset;
+      rows.set(inside ? [r ?? 0, g ?? 0, b ?? 0, 255] : [0, 0, 0, 0], y * (width * 4 + 1) + 1 + x * 4);
+    }
+  const chunk = (type: string, data: Buffer) => {
+    const body = Buffer.concat([Buffer.from(type, 'ascii'), data]);
+    const len = Buffer.alloc(4);
+    len.writeUInt32BE(data.length);
+    const crc = Buffer.alloc(4);
+    crc.writeUInt32BE(zlib.crc32(body));
+    return Buffer.concat([len, body, crc]);
+  };
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(width, 0);
+  ihdr.writeUInt32BE(width, 4);
+  ihdr.set([8, 6, 0, 0, 0], 8); // 8-bit RGBA
+  const png = Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), chunk('IHDR', ihdr), chunk('IDAT', zlib.deflateSync(rows)), chunk('IEND', Buffer.alloc(0))]);
+  return png.toString('base64');
+}
+
 /** Opens the builder with a fresh profile and waits until the saved (or seeded) resume has loaded. */
 export async function openEditor(page: Page) {
+  if (!brandStubbed.has(page)) await stubBrandApi(page, NO_BRAND);
   await page.goto('/');
   await expect(page.locator('[data-app-state="ready"]')).toBeVisible();
   await expect(saveStatus(page)).toHaveAttribute('data-state', /^(idle|saved)$/);

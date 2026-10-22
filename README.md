@@ -6,7 +6,7 @@ Status: **milestone 2** (contrast core). Milestone 1 shipped the core model and 
 
 ## Principles
 
-- **Local-first, static.** No accounts, no backend in v1. Resumes autosave to IndexedDB in your browser. Sign-in and cross-device sync are planned for milestone 8, after v1, and stay offline-first.
+- **Local-first, static.** No accounts, no backend in v1. Resumes autosave to IndexedDB in your browser. The only server code is `api/brand.ts`, a stateless logo proxy (Vercel Function) that resolves a company to its domain and favicon. Sign-in and cross-device sync are planned for milestone 8, after v1, and stay offline-first.
 - **Accessible.** The builder targets WCAG 2.2 AA: full keyboard operation (including reorder), visible focus, labeled fields, live announcements. Generated resume themes must pass AA contrast by construction.
 - **Fast.** Typing stays under 50 ms per keystroke; the initial editor shell stays under 150 KB gzip. Both are checked by scripts, not by hope.
 - **Agent-friendly structure.** Every folder in `src/` is a module imported only through its `index.ts` (`@/<module>`), along the arrows in `scripts/eslint/architecture.js`. Lint fails on deep imports or undeclared arrows. Lists such as section kinds are derived from folders, never hand-synced.
@@ -54,7 +54,7 @@ The registry (`import.meta.glob`) picks it up, the editor generates its form fro
 | `icons/` | The single Lucide-backed icon registry (`IconName` is derived from it) |
 | `store/` | Zustand store behind per-field selector hooks; the only writer of documents |
 | `storage/` | IndexedDB persistence: versioned records, valibot parsing, debounced idle autosave that skips unchanged revisions |
-| `brand/` | Brand profiles (milestone 1: the name-hash fallback only) |
+| `brand/` | `lookupBrand` (lazy chunk): company → logo (via `api/brand`) → extracted palette, cached per company in IndexedDB; plus the name-hash fallback |
 | `themes/` | Theme as data. Milestone 2: `themes/color`, where `ensureContrast` is the only minter of `ContrastSafe` colors and `derivePalette` the only minter of `AccessiblePalette` |
 | `editor/` | The light builder UI: generated forms, accessible reorder (dnd-kit keyboard sensor + Move up/down), hide/show per variant |
 | `app/` | Composition root and first-run sample content |
@@ -65,5 +65,6 @@ The registry (`import.meta.glob`) picks it up, the editor generates its form fro
 | --- | --- |
 | `src/<module>/index.ts` | The only public entry of each module |
 | `scripts/eslint/` | The module-boundary lint rule and the architecture map it enforces |
+| `api/` | Vercel Functions (`api/brand.ts`, the logo proxy). `vite dev`/`preview` mount the same handler |
 | `e2e/` | Playwright tests and the typing benchmark |
 | `docs/design/` | Design docs: overview, rationale, module map, type contract |
