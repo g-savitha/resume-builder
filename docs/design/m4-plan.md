@@ -10,7 +10,8 @@ Small stacked PRs, each green on `pnpm check` and `pnpm e2e`.
 | 2 | **brand: `lookupBrand` with the `/api/brand` logo proxy and a per-company cache** (stacked on 1) | Name or URL → domain → logo → palette, through one boundary. A same-origin Vercel function resolves the domain and proxies the favicon bytes (no key, no CORS). The client validates the wire, decodes the image, extracts the palette and caches the profile per company in IndexedDB, so a company is fetched once. Every failure is a value: the variant keeps `fallbackProfile`. New variants and the seeded Microsoft variant get their logo colors. |
 | 3 | **editor: upload your own logo** (stacked on 2) | PNG, SVG or JPG, validated (type, magic bytes, size) at the upload boundary and rasterized to PNG. It overrides the fetched logo for that company, now and for later variants (cached as an upload). |
 | 4 | **themes: brand-colored section headings** (independent of 1–3) | Headings start from the accent hue instead of a near-neutral, then go through `ensureContrast` like every other foreground, so AA (and the 7:1 boost) still hold by construction. |
+| 5 | **editor: swatch picker** (after 1–4 merged) | Design → Colors: radio groups for the accent and an optional secondary over the logo's swatches, stored as numeric `roles` picks (`variant/setRoles`). No ground choice, so the page stays white. Picks still go through `ensureContrast`; the card says when a pick was adjusted. "Reset to automatic". Persisted with the variant (deviation 58). |
 
-Not in M4 (follow-ups): the company dialog with ambiguous candidates, the swatch picker, `showLogo` (drawing the logo on the resume), and a palette Web Worker (deviation 51).
+Not in M4 (follow-ups): the company dialog with ambiguous candidates, `showLogo` (drawing the logo on the resume), and a palette Web Worker (deviation 51).
 
 Deviations from `types.ts`, `module-map.md` and `rationale.md` are recorded in `deviations.md` in the PR that makes them.
