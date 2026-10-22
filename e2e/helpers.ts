@@ -57,9 +57,27 @@ export function solidPng(hex: string, width = 32, inset = 4): string {
   return png.toString('base64');
 }
 
+/**
+ * Every message the polite live region has carried since the page loaded. The region holds one message at a
+ * time and autosave ("All changes saved…") can replace a message within milliseconds, so assert on this log
+ * (`expect.poll(() => announcements(page)).toContain(…)`) when a message races with a save.
+ */
+export async function announcements(page: Page): Promise<string[]> {
+  return page.evaluate(() => (window as unknown as { __announcements?: string[] }).__announcements ?? []);
+}
+const RECORD_ANNOUNCEMENTS = () => {
+  const log: string[] = [];
+  (window as unknown as { __announcements: string[] }).__announcements = log;
+  new MutationObserver(() => {
+    const text = document.querySelector('[data-testid="live-region"]')?.textContent ?? '';
+    if (text && log[log.length - 1] !== text) log.push(text);
+  }).observe(document, { subtree: true, childList: true, characterData: true });
+};
+
 /** Opens the builder with a fresh profile and waits until the saved (or seeded) resume has loaded. */
 export async function openEditor(page: Page) {
   if (!brandStubbed.has(page)) await stubBrandApi(page, NO_BRAND);
+  await page.addInitScript(RECORD_ANNOUNCEMENTS);
   await page.goto('/');
   await expect(page.locator('[data-app-state="ready"]')).toBeVisible();
   await expect(saveStatus(page)).toHaveAttribute('data-state', /^(idle|saved)$/);

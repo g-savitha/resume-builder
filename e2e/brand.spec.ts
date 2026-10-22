@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { openEditor, shot, solidPng, stubBrandApi } from './helpers';
+import { announcements, openEditor, shot, solidPng, stubBrandApi } from './helpers';
 
 // The brand pipeline end to end in a real browser: /api/brand (stubbed) → decode → extractPalette → cache →
 // variant/refreshBrand → derivePalette → the preview. The stub's logo is a solid #0a66c2 square on transparent.
@@ -34,7 +34,7 @@ test.describe('brand pipeline', () => {
 
     await createVariant(page, 'Acme');
     await expect(row(page, 'Acme')).toHaveAttribute('data-brand-state', 'logo');
-    await expect(page.getByTestId('live-region')).toHaveText('Applied the Acme logo colors.');
+    await expect.poll(() => announcements(page)).toContain('Applied the Acme logo colors.');
     await expect(row(page, 'Acme')).toContainText('logo palette (acme.example)');
     await expect(page.locator('[data-pagination-state="settled"]')).toBeVisible();
     expect(await surfaceBg(page, 'page')).toBe('rgb(255, 255, 255)');
@@ -55,10 +55,10 @@ test.describe('brand pipeline', () => {
     await stubBrandApi(page, (url) => (url.searchParams.get('name') === 'Offline Co' ? { v: 1, status: 'unavailable' } : { v: 1, status: 'not-found' }));
     await openEditor(page);
     await createVariant(page, 'Qwzx Widgets');
-    await expect(page.getByTestId('live-region')).toHaveText('No logo found for Qwzx Widgets, so the variant keeps a placeholder palette.');
+    await expect.poll(() => announcements(page)).toContain('No logo found for Qwzx Widgets, so the variant keeps a placeholder palette.');
     await expect(row(page, 'Qwzx Widgets')).toHaveAttribute('data-brand-state', 'placeholder');
     await createVariant(page, 'Offline Co');
-    await expect(page.getByTestId('live-region')).toHaveText('Couldn’t reach the logo service, so the Offline Co variant keeps a placeholder palette.');
+    await expect.poll(() => announcements(page)).toContain('Couldn’t reach the logo service, so the Offline Co variant keeps a placeholder palette.');
     await expect(row(page, 'Offline Co')).toHaveAttribute('data-brand-state', 'placeholder');
     expect(await surfaceBg(page, 'page')).toBe('rgb(255, 255, 255)');
   });
