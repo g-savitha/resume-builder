@@ -192,6 +192,22 @@ describe('derivePalette', () => {
     }
   });
 
+  it('colors section headings with the brand hue, still at AA or better', () => {
+    for (const [fixture, hue] of [['microsoft-like', 35.64], ['experian-like', 350.97], ['pure-yellow', 109.77], ['green-on-navy', 148.92]] as const) {
+      for (const boost of [0, 1] as const) {
+        const p = derivePalette(FIXTURE_PALETTES[fixture], { ...DEFAULT_ROLES, boost });
+        for (const name of ['page', 'raised', 'sunken'] as const) {
+          const heading = hexToOklch(p.surfaces[name].heading);
+          expect(heading.c, `${fixture} ${name}`).toBeGreaterThan(0.04);
+          expect(hueDistance(heading.h, hue), `${fixture} ${name}`).toBeLessThan(6);
+          expect(contrastRatio(p.surfaces[name].heading, p.surfaces[name].bg)).toBeGreaterThanOrEqual(boost ? 7 : 4.5);
+        }
+      }
+    }
+    // A brand color that already reads on white is used as is.
+    expect(derivePalette(FIXTURE_PALETTES['experian-like'], DEFAULT_ROLES).surfaces.page.heading).toBe('#ba2f7d');
+  });
+
   it('keeps gray-only brands gray', () => {
     const p = derivePalette(FIXTURE_PALETTES['mid-greys'], DEFAULT_ROLES);
     for (const name of SURFACES) for (const fg of ROLES) expect(hexToOklch(p.surfaces[name][fg]).c, `${name}.${fg}`).toBeLessThan(0.01);
