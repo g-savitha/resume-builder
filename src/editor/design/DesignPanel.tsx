@@ -2,6 +2,7 @@ import { useId } from 'react';
 import { useAnnounce, useDispatch, useVariant } from '@/store';
 import { ARCHETYPES, themeBaseFor, type ImplementedArchetype } from '@/themes';
 import { useEditorScope } from '../context';
+import { LogoCard } from './LogoCard';
 
 const HINTS: Readonly<Record<ImplementedArchetype, string>> = {
   classic: 'Default. Name banner in the brand color, entries with dates on the right.',
@@ -10,7 +11,7 @@ const HINTS: Readonly<Record<ImplementedArchetype, string>> = {
 const CHOICES = Object.keys(HINTS) as readonly ImplementedArchetype[];
 
 /**
- * Design, milestone 3: pick the active variant's theme. Fonts, spacing, page size and icons arrive with the
+ * Design: pick the active variant's theme (milestone 3) and upload its logo (milestone 4). Fonts, spacing, page size and icons arrive with the
  * theme engine's customization (M5); presets with M6.
  */
 export function DesignPanel() {
@@ -22,24 +23,27 @@ export function DesignPanel() {
   if (!variant) return null;
   const current = themeBaseFor(variant.themeBase).id;
   return (
-    <section className="card" aria-labelledby="design-h">
-      <h2 id="design-h">Design</h2>
-      <fieldset className="panel-stack theme-picker" data-testid="theme-picker">
-        <legend>Theme for the {variantLabel} variant</legend>
-        {CHOICES.map((id) => (
-          <ThemeChoice
-            key={id}
-            id={id}
-            name={name}
-            checked={current === id}
-            onPick={() => {
-              dispatch(resumeId, { type: 'variant/setBase', variantId, base: { kind: 'archetype', id } });
-              announce(`${ARCHETYPES[id].label} theme applied to the ${variantLabel} variant.`);
-            }}
-          />
-        ))}
-      </fieldset>
-    </section>
+    <div className="panel-stack">
+      <section className="card" aria-labelledby="design-h">
+        <h2 id="design-h">Design</h2>
+        <fieldset className="panel-stack theme-picker" data-testid="theme-picker">
+          <legend>Theme for the {variantLabel} variant</legend>
+          {CHOICES.map((id) => (
+            <ThemeChoice
+              key={id}
+              id={id}
+              name={name}
+              checked={current === id}
+              onPick={() => {
+                dispatch(resumeId, { type: 'variant/setBase', variantId, base: { kind: 'archetype', id } });
+                announce(`${ARCHETYPES[id].label} theme applied to the ${variantLabel} variant.`);
+              }}
+            />
+          ))}
+        </fieldset>
+      </section>
+      <LogoCard key={variantId} />
+    </div>
   );
 }
 

@@ -11,6 +11,8 @@ export interface CacheEntry {
   readonly status: 'ok' | 'no-logo' | 'not-found';
   readonly domain?: Domain;
   readonly logo?: NonNullable<BrandProfile['logo']>;
+  /** An uploaded logo never expires and is never replaced by a fetched one. */
+  readonly uploaded?: true;
   readonly storedAt: number;
 }
 
@@ -34,7 +36,7 @@ export function parseEntry(x: unknown): CacheEntry | undefined {
   const logo = x.logo;
   if (!isRecord(logo) || typeof logo.dataUrl !== 'string' || !isSize(logo.width) || !isSize(logo.height)) return undefined;
   const dataUrl = parseDataUrl(logo.dataUrl);
-  return dataUrl ? { ...base, logo: { dataUrl, width: logo.width, height: logo.height } } : undefined;
+  return dataUrl ? { ...base, logo: { dataUrl, width: logo.width, height: logo.height }, ...(x.uploaded === true ? { uploaded: true } : {}) } : undefined;
 }
 
 export function memoryBrandCache(): BrandCache {

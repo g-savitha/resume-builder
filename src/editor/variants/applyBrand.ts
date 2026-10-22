@@ -8,15 +8,21 @@ export interface BrandPorts {
 
 /** What the live region says after a lookup. Exported for the panel's tests. */
 export function brandMessage(label: string, r: BrandResult): string {
-  if (r.ok) return `Applied the ${label} logo colors.`;
+  if (r.ok) return r.from === 'upload' ? `Applied your uploaded logo to the ${label} variant.` : `Applied the ${label} logo colors.`;
   switch (r.reason) {
+    case 'unsupported-logo':
+      return `That file isn’t a PNG, SVG or JPG image. The ${label} variant is unchanged.`;
+    case 'logo-too-large':
+      return `That logo is over 2 MB. The ${label} variant is unchanged.`;
+    case 'unreadable-logo':
+      return `Couldn’t read that image. The ${label} variant is unchanged.`;
     case 'offline':
       return `Couldn’t reach the logo service, so the ${label} variant keeps a placeholder palette.`;
     case 'not-found':
     case 'no-logo':
-      return `No logo found for ${label}, so the variant keeps a placeholder palette.`;
+      return `No logo found for ${label}, so the variant keeps a placeholder palette. You can upload one in Design.`;
     default: {
-      const _exhaustive: never = r.reason;
+      const _exhaustive: never = r;
       return _exhaustive;
     }
   }

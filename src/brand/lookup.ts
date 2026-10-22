@@ -6,6 +6,7 @@ import { decodeImage, type DecodeImage } from './decodeImage';
 import { extractPalette } from './extractPalette';
 import { fallbackProfile } from './fallback';
 import type { BrandResult, CompanyQuery, LookupOptions } from './types';
+import { checkUpload } from './upload';
 import { base64ToBlob, parseBrandWire } from './wire';
 
 const DAY_MS = 86_400_000;
@@ -45,7 +46,7 @@ export function createLookup(deps: LookupDeps): (q: CompanyQuery, opts?: LookupO
   const { cache, decode, now, endpoint = '/api/brand' } = deps;
   const inflight = new Map<string, Promise<BrandResult>>();
 
-  const miss = (t: Target, reason: 'not-found' | 'no-logo' | 'offline'): BrandResult => ({
+  const miss = (t: Target, reason: Extract<BrandResult, { ok: false }>['reason']): BrandResult => ({
     ok: false,
     reason,
     fallback: { ...fallbackProfile({ name: t.name, now: now() }), ...(t.domain ? { domain: t.domain } : {}) },
@@ -75,6 +76,10 @@ export function createLookup(deps: LookupDeps): (q: CompanyQuery, opts?: LookupO
       const old = stale && (await fromEntry(t, stale));
       return old ? { ok: true, profile: old, from: 'cache' } : miss(t, 'offline');
     }
+    // An upload that landed while this request was out wins: never overwrite it with a fetched logo.
+    const current = await cache.get(t.key);
+    const uploaded = current?.uploaded ? await fromEntry(t, current) : null;
+    if (uploaded) return { ok: true, profile: uploaded, from: 'cache' };
     const storedAt = now();
     if (wire.status === 'not-found') {
       await cache.put({ key: t.key, status: 'not-found', storedAt });
@@ -90,10 +95,23 @@ export function createLookup(deps: LookupDeps): (q: CompanyQuery, opts?: LookupO
     return { ok: true, profile: { name: t.name, domain: wire.domain, logo: decoded.logo, palette, fetchedAt: storedAt }, from: 'network' };
   }
 
+  /** An uploaded logo: validated, rasterized, extracted, and cached as this company's logo for good. */
+  async function upload(t: Target, file: Blob): Promise<BrandResult> {
+    const checked = await checkUpload(file);
+    if (!checked.ok) return miss(t, checked.problem === 'too-large' ? 'logo-too-large' : 'unsupported-logo');
+    const decoded = await decode(checked.blob);
+    const palette = decoded && extractPalette(decoded.pixels);
+    if (!decoded || !palette || palette.swatches.length === 0) return miss(t, 'unreadable-logo');
+    const domain = t.domain ?? (await cache.get(t.key))?.domain;
+    const storedAt = now();
+    await cache.put({ key: t.key, status: 'ok', ...(domain ? { domain } : {}), logo: decoded.logo, uploaded: true, storedAt });
+    return { ok: true, profile: { name: t.name, ...(domain ? { domain } : {}), logo: decoded.logo, palette, fetchedAt: storedAt }, from: 'upload' };
+  }
+
   async function lookup(t: Target, opts: LookupOptions | undefined): Promise<BrandResult> {
     if (!t.name) return miss(t, 'not-found');
     const entry = await cache.get(t.key);
-    if (entry && now() - entry.storedAt < FRESH_MS[entry.status]) {
+    if (entry && (entry.uploaded || now() - entry.storedAt < FRESH_MS[entry.status])) {
       if (entry.status !== 'ok') return miss({ ...t, domain: entry.domain ?? t.domain }, entry.status);
       const profile = await fromEntry(t, entry);
       if (profile) return { ok: true, profile, from: 'cache' };
@@ -104,11 +122,21 @@ export function createLookup(deps: LookupDeps): (q: CompanyQuery, opts?: LookupO
   /** Never rejects. Concurrent lookups of one company share one request. */
   return (q, opts) => {
     const t = target(q);
+    if (q.logoFile) {
+      // Uploads are never shared or deduplicated: the user picked this file. Later lookups wait for it.
+      const p = upload(t, q.logoFile).catch(() => miss(t, 'unreadable-logo'));
+      inflight.set(t.key, p);
+      return p.finally(() => {
+        if (inflight.get(t.key) === p) inflight.delete(t.key);
+      });
+    }
     const pending = inflight.get(t.key);
     if (pending) return pending.then((r) => withName(r, t.name));
     const p = lookup(t, opts)
       .catch(() => miss(t, 'offline'))
-      .finally(() => inflight.delete(t.key));
+      .finally(() => {
+        if (inflight.get(t.key) === p) inflight.delete(t.key);
+      });
     inflight.set(t.key, p);
     return p;
   };
