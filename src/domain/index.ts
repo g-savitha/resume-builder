@@ -14,7 +14,7 @@ export {
   type VocabSetId,
 } from './persona';
 export { CONTACT_KINDS, DEFAULT_CUSTOMIZATION, DEFAULT_ROLES } from './model';
-export type { Command, CommandType } from './commands';
+export type { Command, CommandType, CustomizationPatch } from './commands';
 export { applyCommand } from './applyCommand';
 export { resolveView, type ResumeView } from './view';
 export { createDocument, checkInvariants, normalizeDocument, type NewDocument } from './document';

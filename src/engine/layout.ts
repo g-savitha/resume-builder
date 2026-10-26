@@ -172,7 +172,7 @@ export function layoutDocument<B extends FlowBlock>(
   let y = 0;
   let overflow = false;
   const closePage = () => {
-    pages.push({ regions: [{ id: 'main', width, height, fragments }], overflow });
+    pages.push({ regions: [{ id: input.region ?? 'main', width, height, fragments }], overflow });
     fragments = [];
     y = 0;
     overflow = false;

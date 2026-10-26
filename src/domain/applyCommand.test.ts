@@ -10,6 +10,7 @@ import {
   type ResumeDocument,
   type SectionId,
   type SectionKind,
+  type FontPairId,
   type VariantId,
 } from '.';
 
@@ -108,6 +109,15 @@ describe('applyCommand', () => {
     const picked = run(doc, { type: 'variant/setRoles', variantId: variantA, roles: { ground: 2, accent: 1, secondary: 0, boost: 1 } });
     const refreshed = run(picked, { type: 'variant/refreshBrand', variantId: variantA, target: testBrand('General 2') });
     expect(refreshed.variants[variantA]?.roles).toEqual({ ground: 'ground', accent: 'most-chromatic', secondary: 'most-weighted', boost: 1 });
+  });
+
+  it('customize merges a patch, keeps the font pair unless told, and fontPair: null goes back to the theme font', () => {
+    const serif = run(doc, { type: 'variant/customize', variantId: variantA, patch: { fontPair: 'serif' as FontPairId, page: 'Letter' } });
+    const sized = run(serif, { type: 'variant/customize', variantId: variantA, patch: { fontScale: 1.1 } });
+    expect(sized.variants[variantA]?.customization).toMatchObject({ fontPair: 'serif', page: 'Letter', fontScale: 1.1 });
+    const reset = run(sized, { type: 'variant/customize', variantId: variantA, patch: { fontPair: null } });
+    expect(reset.variants[variantA]?.customization).not.toHaveProperty('fontPair');
+    expect(run(reset, { type: 'variant/customize', variantId: variantA, patch: { fontPair: null } })).toBe(reset);
   });
 });
 

@@ -1,11 +1,13 @@
 import type { ArchetypeId } from '@/domain';
 import type { ThemeBase } from '../types';
+import { appUi } from './app-ui';
 import { atsPlain } from './ats-plain';
 import { classic } from './classic';
+import { sidebar } from './sidebar';
 
-/** The archetypes implemented so far. `sidebar` and `app-ui` arrive in M5 (multi-region layouts). */
-export const ARCHETYPES = { 'ats-plain': atsPlain, classic } as const satisfies Partial<Record<ArchetypeId, ThemeBase>>;
+/** Every archetype in the contract (M5 completes the set). */
+export const ARCHETYPES = { 'ats-plain': atsPlain, classic, sidebar, 'app-ui': appUi } as const satisfies Record<ArchetypeId, ThemeBase>;
 export type ImplementedArchetype = keyof typeof ARCHETYPES;
 
-/** Until M5 every unimplemented archetype, every preset and 'auto' render as classic. */
+/** 'auto' renders as classic. */
 export const FALLBACK_ARCHETYPE: ImplementedArchetype = 'classic';

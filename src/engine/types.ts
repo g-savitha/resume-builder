@@ -66,6 +66,8 @@ export interface LayoutInput<B extends FlowBlock> {
   /** Everything outside the blocks that affects geometry (fonts, scale, spacing). */
   readonly styleHash: string;
   readonly rules?: Partial<BreakRules>;
+  /** The region these blocks flow into (default `main`). Each region of a page is laid out separately. */
+  readonly region?: RegionId;
 }
 
 export interface AtomRange {
@@ -83,8 +85,8 @@ export interface Fragment {
   readonly h: Px;
 }
 
-/** Milestone 3 archetypes are single-column. `header` and `side` regions arrive with multi-region layouts (M5). */
-export type RegionId = 'main';
+/** `main` for single-column themes; multi-column archetypes (M5) add a `side` column, paginated on its own. */
+export type RegionId = 'main' | 'side';
 export interface RegionBox {
   readonly id: RegionId;
   readonly width: Px;

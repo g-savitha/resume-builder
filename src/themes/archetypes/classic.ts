@@ -6,6 +6,7 @@ export const classic: ThemeBase = {
   id: 'classic',
   label: 'Classic',
   blocks: { identity: 'banner', entries: 'row', tags: 'inline', prose: 'plain' },
+  layout: { kind: 'single' },
   vocab: { present: 'Present' },
   typography: {
     stack: "Georgia, 'Times New Roman', 'Liberation Serif', serif",

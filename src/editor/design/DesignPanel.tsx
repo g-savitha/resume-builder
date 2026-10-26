@@ -3,18 +3,21 @@ import { useAnnounce, useDispatch, useVariant } from '@/store';
 import { ARCHETYPES, themeBaseFor, type ImplementedArchetype } from '@/themes';
 import { useEditorScope } from '../context';
 import { LogoCard } from './LogoCard';
+import { CustomizeCard } from './CustomizeCard';
 import { PersonaCard } from './PersonaCard';
 import { SwatchPicker } from './SwatchPicker';
 
 const HINTS: Readonly<Record<ImplementedArchetype, string>> = {
   classic: 'Default. Name banner in the brand color, entries with dates on the right.',
   'ats-plain': 'Plain single column, no color fills. For applicant tracking systems.',
+  sidebar: 'Two columns: name, contacts and skills in a brand-colored left column.',
+  'app-ui': 'Product look: rounded brand header, entry cards and a grey skills rail on the right.',
 };
 const CHOICES = Object.keys(HINTS) as readonly ImplementedArchetype[];
 
 /**
- * Design: pick the active variant's theme (milestone 3), upload its logo and pick which logo colors it uses (milestone 4). Fonts, spacing, page size and icons arrive with the
- * theme engine's customization (M5); presets with M6.
+ * Design: pick the active variant's theme (milestone 3), upload its logo and pick which logo colors it uses (milestone 4). Then customize its fonts, spacing, page size, icons and
+ * text contrast (M5); presets with M6.
  */
 export function DesignPanel() {
   const { resumeId, variantId, variantLabel } = useEditorScope();
@@ -47,6 +50,7 @@ export function DesignPanel() {
       <LogoCard key={variantId} />
       <SwatchPicker />
       <PersonaCard />
+      <CustomizeCard />
     </div>
   );
 }

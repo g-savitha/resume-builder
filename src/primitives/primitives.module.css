@@ -76,6 +76,12 @@
   list-style: disc outside;
 }
 .list > li::marker {
+  color: var(--fg-text);
+}
+.block[data-bullets='accent'] .list {
+  list-style-type: square;
+}
+.block[data-bullets='accent'] .list > li::marker {
   color: var(--fg-icon);
 }
 .identity {
@@ -123,4 +129,53 @@
 .dialValue {
   font-size: var(--rs-h2, 12pt);
   color: var(--fg-heading);
+}
+
+/* ── M5 variants: card entries, chips, rounded identity, icons ── */
+.entryCard {
+  border-left: 3px solid var(--fg-icon);
+  padding-left: 8pt;
+}
+.chipLabel {
+  font-weight: 600;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3pt;
+  padding: 2pt 0 0;
+  list-style: none;
+}
+.chip {
+  border: 1px solid var(--fg-rule);
+  border-radius: 999px;
+  padding: 0 6pt;
+  font-size: var(--rs-small, 9pt);
+}
+.rounded {
+  border-radius: 8pt;
+}
+.iconLine,
+.iconBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.35em;
+  vertical-align: -0.1em;
+  color: var(--fg-icon);
+}
+.iconLine svg,
+.iconBadge svg {
+  display: block;
+}
+.iconBadge {
+  width: 1.45em;
+  height: 1.45em;
+  border-radius: 50%;
+  background: var(--fg-icon);
+  color: var(--bg);
+}
+.iconBadge svg {
+  width: 0.8em;
+  height: 0.8em;
 }

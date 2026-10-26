@@ -50,4 +50,32 @@ describe('buildFlow', () => {
     const off = applyCommand(withPersona, { type: 'variant/setPersona', variantId: ids.variants[0], persona: null });
     expect(flowOf(off).map((b) => b.view.heading)).toEqual(['Experience', 'Skills', 'Summary']);
   });
+
+  it('sends the theme’s side kinds to the side column with the side block styles (sidebar, app-ui)', () => {
+    const { doc, ids } = buildDocument();
+    const v = ids.variants[0];
+    const sidebar = applyCommand(doc, { type: 'variant/setBase', variantId: v, base: { kind: 'archetype', id: 'app-ui' } });
+    const flow = flowOf(sidebar, v);
+    expect(flow.map((b) => [b.view.heading, b.region])).toEqual([
+      ['Experience', 'main'],
+      ['Skills', 'side'],
+      ['Summary', 'main'],
+    ]);
+    expect(flow.find((b) => b.view.shape === 'entries')?.view.style).toBe('card');
+    expect(flowOf(doc, v).every((b) => b.region === 'main')).toBe(true);
+  });
+
+  it('resolves icon settings into icon names: heading icons from the section, bullets flag, line or badge', () => {
+    const { doc, ids } = buildDocument();
+    const v = ids.variants[0];
+    const on = applyCommand(doc, {
+      type: 'variant/customize',
+      variantId: v,
+      patch: { icons: { contact: false, headings: true, bullets: true, style: 'badge' } },
+    });
+    const icons = flowOf(on, v).map((b) => b.view.icons);
+    expect(icons.every((i) => i?.style === 'badge' && i.bullets === true && typeof i.heading === 'string')).toBe(true);
+    const off = applyCommand(doc, { type: 'variant/customize', variantId: v, patch: { icons: { contact: false, headings: false, bullets: false, style: 'line' } } });
+    expect(flowOf(off, v).every((b) => b.view.icons === undefined)).toBe(true);
+  });
 });

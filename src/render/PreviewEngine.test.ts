@@ -5,7 +5,7 @@ import { PreviewEngine } from './PreviewEngine';
 
 const size = pageSize('A4', 15);
 const W = px(size.w - 2 * size.marginPx);
-const block = (key: string, hash = key): RenderBlock => ({ key, contentHash: hash, view: { shape: 'prose', style: 'plain', heading: key, content: [] } });
+const block = (key: string, hash = key): RenderBlock => ({ key, contentHash: hash, region: 'main', view: { shape: 'prose', style: 'plain', heading: key, content: [] } });
 const tall = (atoms: number): Measured => ({
   atoms: Array.from({ length: atoms }, () => ({ h: px(100), keepWithNext: false })),
   chromeTop: px(20),

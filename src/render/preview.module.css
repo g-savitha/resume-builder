@@ -63,3 +63,14 @@
   pointer-events: none;
   contain: layout style;
 }
+.region {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+.band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: var(--bg);
+}
