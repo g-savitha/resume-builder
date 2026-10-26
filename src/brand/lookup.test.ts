@@ -181,4 +181,27 @@ describe('lookupBrand with an uploaded logo', () => {
     expect(hueOf(await fetching)).toBeCloseTo(255, 0);
     expect((await cache.get('name:microsoft'))?.uploaded).toBe(true);
   });
+
+  it('removing an upload goes back to the fetched logo (forgetUpload)', async () => {
+    const { lookup, calls } = setup(() => found(1));
+    await lookup({ name: 'Microsoft', logoFile: png() });
+    const back = await lookup({ name: 'Microsoft' }, { forgetUpload: true });
+    expect(back).toMatchObject({ ok: true, from: 'network' });
+    expect(back.ok && back.profile.uploaded).toBeUndefined();
+    expect(hueOf(back)).toBeCloseTo(28, 0);
+    expect(calls).toHaveLength(1);
+  });
+});
+
+describe('lookupBrand with an ambiguous name', () => {
+  it('passes the candidates through, for the "Which company?" choice', async () => {
+    const candidates = [
+      { name: 'Acme Corp', domain: 'acme.com' },
+      { name: 'Acme Tools', domain: 'acmetools.com' },
+      { name: 'bad', domain: 'not a domain' },
+    ];
+    const { lookup } = setup(() => ({ ...found(1, 'acme.com', 'Acme Corp'), candidates }));
+    const r = await lookup({ name: 'Acme' });
+    expect(r.ok && r.candidates).toEqual(candidates.slice(0, 2));
+  });
 });

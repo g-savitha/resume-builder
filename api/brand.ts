@@ -17,10 +17,23 @@ export interface BrandWireLogo {
 }
 /** Version 1 of the wire format. src/brand/wire.ts parses it on the client. */
 export type BrandWireV1 =
-  | { readonly v: 1; readonly status: 'found'; readonly name: string; readonly domain: string; readonly logo: BrandWireLogo | null }
+  | {
+      readonly v: 1;
+      readonly status: 'found';
+      readonly name: string;
+      readonly domain: string;
+      readonly logo: BrandWireLogo | null;
+      /** Present when the name matched no suggestion exactly: the other companies it might mean (at most 5). */
+      readonly candidates?: readonly BrandCandidateWire[];
+    }
   | { readonly v: 1; readonly status: 'not-found' }
   | { readonly v: 1; readonly status: 'unavailable' }
   | { readonly v: 1; readonly status: 'bad-request'; readonly message: string };
+
+export interface BrandCandidateWire {
+  readonly name: string;
+  readonly domain: string;
+}
 
 type Fetch = (input: string, init?: RequestInit) => Promise<Response>;
 
@@ -52,8 +65,14 @@ export function parseDomain(input: string): string | null {
 
 const squash = (s: string) => s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
 
-/** Clearbit's suggestion list → the best domain for `name`: an exact name match first, else the top hit. */
-export function pickSuggestion(name: string, body: unknown): { readonly name: string; readonly domain: string } | null {
+/**
+ * Clearbit's suggestion list → the best domain for `name`: an exact name match first, else the top hit. Without an
+ * exact match the name is ambiguous, so the valid suggestions (up to 5) come back as candidates for the user to pick.
+ */
+export function pickSuggestion(
+  name: string,
+  body: unknown,
+): { readonly name: string; readonly domain: string; readonly candidates?: readonly BrandCandidateWire[] } | null {
   if (!Array.isArray(body)) return null;
   const valid = body.flatMap((row: unknown) => {
     if (typeof row !== 'object' || row === null) return [];
@@ -61,7 +80,11 @@ export function pickSuggestion(name: string, body: unknown): { readonly name: st
     const domain = typeof d === 'string' ? parseDomain(d) : null;
     return typeof n === 'string' && domain ? [{ name: n.slice(0, LIMITS.nameChars), domain }] : [];
   });
-  return valid.find((s) => squash(s.name) === squash(name)) ?? valid[0] ?? null;
+  const exact = valid.find((s) => squash(s.name) === squash(name));
+  if (exact) return exact;
+  const [top] = valid;
+  if (!top) return null;
+  return valid.length > 1 ? { ...top, candidates: valid.slice(0, 5) } : top;
 }
 
 async function fetchWithin(fetchImpl: Fetch, url: string): Promise<Response> {
@@ -70,7 +93,8 @@ async function fetchWithin(fetchImpl: Fetch, url: string): Promise<Response> {
 
 type Lookup<T> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly reason: 'not-found' | 'unavailable' };
 
-async function resolveName(fetchImpl: Fetch, name: string): Promise<Lookup<{ readonly name: string; readonly domain: string }>> {
+type Resolved = NonNullable<ReturnType<typeof pickSuggestion>>;
+async function resolveName(fetchImpl: Fetch, name: string): Promise<Lookup<Resolved>> {
   try {
     const res = await fetchWithin(fetchImpl, SUGGEST(name));
     if (!res.ok) return { ok: false, reason: 'unavailable' };
@@ -124,7 +148,7 @@ export function createBrandHandler(fetchImpl: Fetch): (request: Request) => Prom
     const name = (params.get('name') ?? '').trim();
     if (name.length > LIMITS.nameChars) return reply({ v: 1, status: 'bad-request', message: 'name is too long.' }, 400);
 
-    let target: { readonly name: string; readonly domain: string };
+    let target: Resolved;
     if (domainParam !== null) {
       const domain = parseDomain(domainParam);
       if (!domain) return reply({ v: 1, status: 'bad-request', message: 'domain is not a valid domain.' }, 400);
@@ -136,7 +160,8 @@ export function createBrandHandler(fetchImpl: Fetch): (request: Request) => Prom
       target = resolved.value;
     }
     const logo = await fetchLogo(fetchImpl, target.domain);
-    return reply({ v: 1, status: 'found', name: target.name, domain: target.domain, logo });
+    const { candidates } = target;
+    return reply({ v: 1, status: 'found', name: target.name, domain: target.domain, logo, ...(candidates ? { candidates } : {}) });
   };
 }
 

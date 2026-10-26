@@ -7,6 +7,8 @@ A variant's resume colors come from the target company's logo. Naming a company 
 - `brand-lookup` runs after "Create variant", and once on first run for the seeded Microsoft variant. The row's `data-brand-state` goes `looking-up` → `logo` or `placeholder`, and the row shows a logo thumbnail and "logo palette (<domain>)".
 - `brand-fallback`: an unknown company or an unreachable service leaves the placeholder palette, with a live-region message saying which.
 - `brand-upload`: Design tab → "Logo" card → "Upload a logo for <variant>" (PNG, SVG or JPG, ≤ 2 MB). It replaces the fetched logo for that company, in this variant and in later ones. A file that is not really an image is refused with an inline error (`aria-invalid` on the input) and the variant is unchanged.
+- `brand-choice`: a name with no exact match and several suggestions applies the first one and shows a "Which <name>?" card (`data-testid="company-choice"`) in the Variants tab: radios per candidate (name and domain), "Use this company" re-looks the variant up by that domain, "Keep <first>" closes it.
+- `brand-remove-upload`: Design → Logo shows "Remove uploaded logo" only for an uploaded logo (the hint reads "Colors come from your uploaded logo."). It goes back to the fetched logo, or the placeholder.
 - `brand-cache`: a second lookup of the same company (any case, or after a reload) makes no `/api/brand` request.
 
 ## How to get to it (user POV)

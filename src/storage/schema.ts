@@ -119,6 +119,7 @@ const brand: v.GenericSchema<unknown, BrandProfile> = v.strictObject({
   palette: logoPalette,
   siteDark: v.exactOptional(v.boolean()),
   fetchedAt: v.number(),
+  uploaded: v.exactOptional(v.literal(true)),
 });
 const swatchPick = v.union([v.number(), v.picklist(['most-chromatic', 'most-weighted', 'darkest', 'lightest', 'ground'])]);
 const roles: v.GenericSchema<unknown, RoleChoice> = v.strictObject({

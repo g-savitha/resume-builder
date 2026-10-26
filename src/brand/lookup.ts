@@ -58,7 +58,14 @@ export function createLookup(deps: LookupDeps): (q: CompanyQuery, opts?: LookupO
     const decoded = await decode(dataUrlToBlob(entry.logo.dataUrl));
     const palette = decoded && extractPalette(decoded.pixels);
     if (!palette || palette.swatches.length === 0) return null;
-    return { name: t.name, ...(entry.domain ? { domain: entry.domain } : {}), logo: entry.logo, palette, fetchedAt: entry.storedAt };
+    return {
+      name: t.name,
+      ...(entry.domain ? { domain: entry.domain } : {}),
+      logo: entry.logo,
+      palette,
+      fetchedAt: entry.storedAt,
+      ...(entry.uploaded ? { uploaded: true } : {}),
+    };
   }
 
   async function network(t: Target, opts: LookupOptions | undefined, stale: CacheEntry | undefined): Promise<BrandResult> {
@@ -92,7 +99,8 @@ export function createLookup(deps: LookupDeps): (q: CompanyQuery, opts?: LookupO
       return miss({ ...t, domain: wire.domain }, 'no-logo');
     }
     await cache.put({ key: t.key, status: 'ok', domain: wire.domain, logo: decoded.logo, storedAt });
-    return { ok: true, profile: { name: t.name, domain: wire.domain, logo: decoded.logo, palette, fetchedAt: storedAt }, from: 'network' };
+    const candidates = wire.candidates.length > 1 ? { candidates: wire.candidates } : {};
+    return { ok: true, profile: { name: t.name, domain: wire.domain, logo: decoded.logo, palette, fetchedAt: storedAt }, from: 'network', ...candidates };
   }
 
   /** An uploaded logo: validated, rasterized, extracted, and cached as this company's logo for good. */
@@ -105,12 +113,21 @@ export function createLookup(deps: LookupDeps): (q: CompanyQuery, opts?: LookupO
     const domain = t.domain ?? (await cache.get(t.key))?.domain;
     const storedAt = now();
     await cache.put({ key: t.key, status: 'ok', ...(domain ? { domain } : {}), logo: decoded.logo, uploaded: true, storedAt });
-    return { ok: true, profile: { name: t.name, ...(domain ? { domain } : {}), logo: decoded.logo, palette, fetchedAt: storedAt }, from: 'upload' };
+    return {
+      ok: true,
+      profile: { name: t.name, ...(domain ? { domain } : {}), logo: decoded.logo, palette, fetchedAt: storedAt, uploaded: true },
+      from: 'upload',
+    };
   }
 
   async function lookup(t: Target, opts: LookupOptions | undefined): Promise<BrandResult> {
     if (!t.name) return miss(t, 'not-found');
-    const entry = await cache.get(t.key);
+    let entry = await cache.get(t.key);
+    if (opts?.forgetUpload && entry?.uploaded) {
+      // Expire it rather than delete it: a stale entry is refetched, and the cache keeps one write path.
+      entry = { key: t.key, status: 'not-found', storedAt: now() - FRESH_MS['not-found'] - 1 };
+      await cache.put(entry);
+    }
     if (entry && (entry.uploaded || now() - entry.storedAt < FRESH_MS[entry.status])) {
       if (entry.status !== 'ok') return miss({ ...t, domain: entry.domain ?? t.domain }, entry.status);
       const profile = await fromEntry(t, entry);

@@ -12,6 +12,8 @@ Small stacked PRs, each green on `pnpm check` and `pnpm e2e`.
 | 4 | **themes: brand-colored section headings** (independent of 1–3) | Headings start from the accent hue instead of a near-neutral, then go through `ensureContrast` like every other foreground, so AA (and the 7:1 boost) still hold by construction. |
 | 5 | **editor: swatch picker** (after 1–4 merged) | Design → Colors: radio groups for the accent and an optional secondary over the logo's swatches, stored as numeric `roles` picks (`variant/setRoles`). No ground choice, so the page stays white. Picks still go through `ensureContrast`; the card says when a pick was adjusted. "Reset to automatic". Persisted with the variant (deviation 58). |
 
-Not in M4 (follow-ups): the company dialog with ambiguous candidates, `showLogo` (drawing the logo on the resume), and a palette Web Worker (deviation 51).
+Shipped after the plan (v1 batch): the "Which company?" choice for ambiguous names and "Remove uploaded logo" (deviation 60).
+
+Not in M4 (follow-ups): `showLogo` (drawing the logo on the resume), and a palette Web Worker (deviation 51).
 
 Deviations from `types.ts`, `module-map.md` and `rationale.md` are recorded in `deviations.md` in the PR that makes them.

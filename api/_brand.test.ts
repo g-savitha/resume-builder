@@ -98,7 +98,14 @@ describe('pickSuggestion', () => {
   it('prefers an exact name match, skips malformed rows, else takes the top hit', () => {
     const rows = [{ name: 'Zerodha Money', domain: 'zerodhamoney.com' }, { name: 'bad' }, { name: 'Zerodha', domain: 'zerodha.com' }];
     expect(pickSuggestion('zerodha', rows)).toEqual({ name: 'Zerodha', domain: 'zerodha.com' });
-    expect(pickSuggestion('Zerodha Fund', rows)).toEqual({ name: 'Zerodha Money', domain: 'zerodhamoney.com' });
+    expect(pickSuggestion('Zerodha Fund', rows)).toEqual({
+      name: 'Zerodha Money',
+      domain: 'zerodhamoney.com',
+      candidates: [
+        { name: 'Zerodha Money', domain: 'zerodhamoney.com' },
+        { name: 'Zerodha', domain: 'zerodha.com' },
+      ],
+    });
     expect(pickSuggestion('x', 'not an array')).toBeNull();
   });
 });

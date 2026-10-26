@@ -3,7 +3,7 @@
 import type { BrandResult, CompanyQuery, LookupOptions } from './types';
 
 export { fallbackProfile } from './fallback';
-export type { BrandResult, CompanyQuery, LookupOptions } from './types';
+export type { BrandCandidate, BrandResult, CompanyQuery, LookupOptions } from './types';
 
 /** The one way to get a logo-derived BrandProfile. Never rejects: a miss carries the fallback profile. */
 export async function lookupBrand(q: CompanyQuery, opts?: LookupOptions): Promise<BrandResult> {
