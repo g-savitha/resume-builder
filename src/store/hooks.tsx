@@ -15,7 +15,7 @@ import {
   type Variant,
   type VariantId,
 } from '@/domain';
-import { rawStore, type EditorState, type EditorStore, type SaveState } from './store';
+import { rawStore, type EditorState, type EditorStore, type SaveState, type TabState } from './store';
 
 const StoreContext = createContext<EditorStore | null>(null);
 
@@ -143,3 +143,13 @@ export function useGetDocument(): (id: ResumeId) => ResumeDocument | undefined {
 }
 
 const EMPTY: readonly never[] = [];
+
+export function useTabState(): TabState {
+  return useEditor((s) => s.tab);
+}
+
+/** Whole-document actions for the File menu: add (import, duplicate) and switch the open resume. */
+export function useResumeActions(): Pick<EditorStore, 'addDocument' | 'selectResume' | 'getDocument'> {
+  const store = useEditorStore();
+  return useMemo(() => ({ addDocument: store.addDocument, selectResume: store.selectResume, getDocument: store.getDocument }), [store]);
+}

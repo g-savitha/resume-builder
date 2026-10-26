@@ -1,5 +1,5 @@
 // store: live editor state (Zustand, normalized). The only writer of documents.
-export { createEditorStore, type EditorStore, type SaveState } from './store';
+export { createEditorStore, type EditorStore, type SaveState, type TabState } from './store';
 export {
   EditorStoreProvider,
   useActiveResumeId,
@@ -12,10 +12,12 @@ export {
   useIsHidden,
   useItemExists,
   useItemField,
+  useResumeActions,
   useResumeList,
   useResumeName,
   useSaveState,
   useSection,
+  useTabState,
   useSectionOrder,
   useVariant,
   useVariantOrder,

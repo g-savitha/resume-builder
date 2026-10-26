@@ -169,6 +169,9 @@ ul {
   grid-template-rows: 56px minmax(0, 1fr);
   height: 100vh;
 }
+.app-body {
+  display: contents;
+}
 .app-loading {
   display: grid;
   place-items: center;
@@ -989,6 +992,18 @@ textarea.input {
   }
 }
 @media (max-width: 900px) {
+  .app {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .topbar {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 8px 12px;
+    height: auto;
+  }
+  .topbar .spacer {
+    display: none;
+  }
   .main {
     grid-template-columns: 1fr;
   }
@@ -1011,4 +1026,97 @@ textarea.input {
   border: 1px solid var(--ui-line);
   border-radius: 8px;
   padding: 0.75rem;
+}
+
+/* File menu (M7) */
+.file-menu {
+  position: relative;
+}
+.file-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 20;
+  display: grid;
+  gap: 4px;
+  min-width: 220px;
+  padding: 8px;
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-line-strong);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px var(--ui-shadow-soft);
+}
+.file-panel[hidden] {
+  display: none;
+}
+.file-panel .btn {
+  justify-content: flex-start;
+  width: 100%;
+}
+.file-import {
+  cursor: pointer;
+}
+.file-menu:has(input:focus-visible) .file-import {
+  box-shadow: var(--focus);
+}
+.preview-link {
+  display: none;
+}
+@media (max-width: 900px) {
+  .preview-link {
+    display: inline-flex;
+  }
+}
+
+/* Multi-tab guard (M7) */
+.tab-guard {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  background: var(--ui-shadow);
+}
+.tab-guard-card {
+  max-width: 420px;
+  padding: 24px;
+  background: var(--ui-panel);
+  border: 1px solid var(--ui-line-strong);
+  border-radius: 12px;
+  display: grid;
+  gap: 12px;
+}
+
+/* Preview-only route (M7) */
+.pv-only {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+.pv-only-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 10px 16px;
+  background: var(--ui-panel);
+  border-bottom: 1px solid var(--ui-line);
+}
+.pv-only-bar h1 {
+  font-size: 1rem;
+  margin: 0;
+}
+.pv-only-stage {
+  padding: 12px;
+  overflow: auto;
+}
+@media print {
+  .pv-only-bar,
+  .tab-guard {
+    display: none !important;
+  }
+  .pv-only-stage {
+    padding: 0;
+    overflow: visible;
+  }
 }

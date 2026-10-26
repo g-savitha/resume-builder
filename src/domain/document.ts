@@ -129,3 +129,11 @@ export function normalizeDocument(doc: ResumeDocument): ResumeDocument {
 function uniqueExisting<T extends string>(ids: readonly string[], keep: (id: string) => id is T): T[] {
   return [...new Set(ids)].filter(keep);
 }
+
+/**
+ * A copy of a resume under a new id and name, with its history reset (rev 0). Section, item and variant ids are
+ * scoped to their document, so they are kept: hide state and swatch picks carry over unchanged.
+ */
+export function duplicateDocument(doc: ResumeDocument, id: ResumeId, name: string): ResumeDocument {
+  return { ...doc, id, name, rev: 0 };
+}

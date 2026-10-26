@@ -1,7 +1,8 @@
 import { useEffect, useMemo } from 'react';
-import { useActiveVariantSummary } from '@/store';
+import { useActiveVariantSummary, useTabState } from '@/store';
 import { LiveRegion } from './a11y/LiveRegion';
 import { EditorPanel } from './chrome/EditorPanel';
+import { TabGuard } from './chrome/TabGuard';
 import { TopBar } from './chrome/TopBar';
 import { EditorScopeContext, type EditorScope } from './context';
 import { PreviewPane } from './preview/PreviewPane';
@@ -13,6 +14,7 @@ import './editor.css';
  */
 export function EditorApp() {
   const active = useActiveVariantSummary();
+  const tab = useTabState();
   const scope = useMemo<EditorScope | null>(
     () => (active ? { resumeId: active.resumeId, variantId: active.variantId, variantLabel: active.label } : null),
     [active],
@@ -30,12 +32,15 @@ export function EditorApp() {
   return (
     <EditorScopeContext value={scope}>
       <div className="app" data-app-state="ready">
-        <TopBar />
-        <main className="main">
-          <EditorPanel />
-          <PreviewPane />
-        </main>
+        <div className="app-body" inert={tab === 'elsewhere'}>
+          <TopBar />
+          <main className="main">
+            <EditorPanel />
+            <PreviewPane />
+          </main>
+        </div>
         <LiveRegion />
+        <TabGuard />
       </div>
     </EditorScopeContext>
   );
