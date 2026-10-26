@@ -4,6 +4,7 @@ import { deepEqual } from './equal';
 import {
   DEFAULT_CUSTOMIZATION,
   DEFAULT_ROLES,
+  type Customization,
   type Item,
   type ItemId,
   type NodeId,
@@ -138,7 +139,10 @@ function reduce(doc: ResumeDocument, cmd: Command): ResumeDocument {
     case 'variant/customize': {
       const variant = doc.variants[cmd.variantId];
       if (!variant) return doc;
-      const customization = { ...variant.customization, ...cmd.patch };
+      const { fontPair, ...rest } = cmd.patch;
+      const { fontPair: oldPair, ...kept } = { ...variant.customization, ...rest };
+      const pair = fontPair === null ? undefined : (fontPair ?? oldPair);
+      const customization: Customization = pair === undefined ? kept : { ...kept, fontPair: pair };
       if (deepEqual(customization, variant.customization)) return doc;
       return putVariant(doc, { ...variant, customization });
     }

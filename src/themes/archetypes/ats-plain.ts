@@ -6,6 +6,7 @@ export const atsPlain: ThemeBase = {
   id: 'ats-plain',
   label: 'ATS plain',
   blocks: { identity: 'stacked', entries: 'stacked', tags: 'inline', prose: 'plain' },
+  layout: { kind: 'single' },
   vocab: { present: 'Present' },
   typography: {
     stack: "Arial, 'Helvetica Neue', Helvetica, 'Liberation Sans', sans-serif",

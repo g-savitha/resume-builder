@@ -1,6 +1,9 @@
 import type { BrandProfile, RoleChoice, ThemeBaseRef } from './brand';
 import type { CompanyPersona } from './persona';
-import type { Customization, FieldValue, ItemId, NodeId, Section, SectionId, SectionKind, VariantId } from './model';
+import type { Customization, FieldValue, FontPairId, ItemId, NodeId, Section, SectionId, SectionKind, VariantId } from './model';
+
+/** A partial customization; `fontPair: null` goes back to the theme's own font. */
+export type CustomizationPatch = Partial<Omit<Customization, 'fontPair'>> & { readonly fontPair?: FontPairId | null };
 
 /** Every edit. All idempotent: carry target values/indices and client ids, never deltas. */
 export type Command =
@@ -28,7 +31,7 @@ export type Command =
     }
   | { readonly type: 'variant/select'; readonly variantId: VariantId }
   | { readonly type: 'variant/refreshBrand'; readonly variantId: VariantId; readonly target: BrandProfile }
-  | { readonly type: 'variant/customize'; readonly variantId: VariantId; readonly patch: Partial<Customization> }
+  | { readonly type: 'variant/customize'; readonly variantId: VariantId; readonly patch: CustomizationPatch }
   | { readonly type: 'variant/setRoles'; readonly variantId: VariantId; readonly roles: RoleChoice }
   | { readonly type: 'variant/setBase'; readonly variantId: VariantId; readonly base: ThemeBaseRef }
   | { readonly type: 'variant/setPersona'; readonly variantId: VariantId; readonly persona: CompanyPersona | null }

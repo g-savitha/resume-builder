@@ -1,4 +1,5 @@
 import type { EntryContent, IdentityContent, RichText, ShapeName, SurfaceName, TagGroupContent } from '@/domain';
+import { Icon, type IconName } from '@/icons';
 import { Atom, inRange, type AtomRange } from './Atom';
 import { Centerpiece, type CenterpieceData } from './centerpieces';
 import { formatDateRange } from './dates';
@@ -13,10 +14,21 @@ import styles from './primitives.module.css';
  * that need them (M5). Adding one = a component here plus its key below.
  */
 export interface BlockVariants {
-  entries: 'stacked' | 'row';
-  tags: 'inline';
+  entries: 'stacked' | 'row' | 'card';
+  tags: 'inline' | 'chips';
   prose: 'plain';
-  identity: 'stacked' | 'banner';
+  identity: 'stacked' | 'banner' | 'rounded';
+}
+
+/** Icons a block draws, resolved by render from the variant's icon settings (customization.icons). */
+export interface BlockIcons {
+  readonly style: 'line' | 'badge';
+  /** Before the section heading. */
+  readonly heading?: IconName;
+  /** One per identity contact, in order. */
+  readonly contacts?: readonly IconName[];
+  /** Brand-colored square bullets instead of plain text-colored discs. */
+  readonly bullets?: boolean;
 }
 
 /** What a block of each shape renders: entries and tags are one per item; prose and identity are one per section. */
@@ -32,6 +44,7 @@ export type BlockShapeProps = {
     readonly content: BlockContent<S>;
     /** Identity only: the persona's centerpiece, drawn beside the name. */
     readonly centerpiece?: CenterpieceData;
+    readonly icons?: BlockIcons;
   };
 }[ShapeName];
 
@@ -69,10 +82,13 @@ export function BlockView(props: BlockViewProps) {
         'data-keep-together': props.shape === 'identity' ? '' : undefined,
       }}
     >
-      <div className={styles.block}>
+      <div className={styles.block} data-bullets={props.icons?.bullets ? 'accent' : undefined}>
         {showHeading ? (
           <div className={styles.sectionHead} data-block-chrome="">
-            <Heading>{range.continued ? continuedHeading(heading) : heading}</Heading>
+            <Heading>
+              {props.icons?.heading ? <ResumeIcon name={props.icons.heading} style={props.icons.style} /> : null}
+              {range.continued ? continuedHeading(heading) : heading}
+            </Heading>
           </div>
         ) : null}
         <ShapeBody {...props} />
@@ -86,11 +102,13 @@ function ShapeBody(props: BlockViewProps) {
     case 'entries':
       return <Entries entries={props.content} style={props.style} range={props.range} />;
     case 'tags':
-      return props.content.map((group, i) => (inRange(i, props.range) ? <TagLine key={i} i={i} group={group} /> : null));
+      return props.content.map((group, i) => (inRange(i, props.range) ? <TagLine key={i} i={i} group={group} chips={props.style === 'chips'} /> : null));
     case 'prose':
       return <RichTextView value={props.content} range={props.range} />;
     case 'identity':
-      return inRange(0, props.range) ? <Identity identity={props.content} style={props.style} centerpiece={props.centerpiece} /> : null;
+      return inRange(0, props.range) ? (
+        <Identity identity={props.content} style={props.style} centerpiece={props.centerpiece} icons={props.icons} />
+      ) : null;
     default: {
       const _exhaustive: never = props;
       return _exhaustive;
@@ -148,12 +166,12 @@ function Entry({ entry, style, base, range }: EntryProps) {
     entry.title
   );
   return (
-    <div className={styles.entry}>
+    <div className={style === 'card' ? `${styles.entry} ${styles.entryCard}` : styles.entry}>
       {inRange(base, range) ? (
         <Atom
           i={base}
           keepWithNext={entry.tags.length + bodyAtoms > 0}
-          className={style === 'row' ? styles.entryHeadRow : styles.entryHead}
+          className={style === 'stacked' ? styles.entryHead : styles.entryHeadRow}
         >
           <div className={styles.entryMain}>
             <HeadingLevel level={3}>
@@ -182,7 +200,21 @@ function Entry({ entry, style, base, range }: EntryProps) {
   );
 }
 
-function TagLine({ i, group }: { readonly i: number; readonly group: TagGroupContent }) {
+function TagLine({ i, group, chips }: { readonly i: number; readonly group: TagGroupContent; readonly chips: boolean }) {
+  if (chips) {
+    return (
+      <Atom i={i} as="div">
+        {group.label ? <p className={styles.chipLabel}>{group.label}</p> : null}
+        <ul className={styles.chips} aria-label={group.label ?? 'Tags'}>
+          {group.tags.map((t, k) => (
+            <li key={k} className={styles.chip}>
+              {t.name}
+            </li>
+          ))}
+        </ul>
+      </Atom>
+    );
+  }
   return (
     <Atom i={i} as="p">
       {group.label ? <strong>{group.label}: </strong> : null}
@@ -191,12 +223,22 @@ function TagLine({ i, group }: { readonly i: number; readonly group: TagGroupCon
   );
 }
 
+/** A decorative icon in the surface's icon color; `badge` puts it on a small filled circle (icon vs bg ≥ 3:1). */
+function ResumeIcon({ name, style }: { readonly name: IconName; readonly style: 'line' | 'badge' }) {
+  return (
+    <span className={style === 'badge' ? styles.iconBadge : styles.iconLine} data-icon={name}>
+      <Icon name={name} size="0.9em" />
+    </span>
+  );
+}
+
 interface IdentityProps {
   readonly identity: IdentityContent;
   readonly style: BlockVariants['identity'];
   readonly centerpiece?: CenterpieceData | undefined;
+  readonly icons?: BlockIcons | undefined;
 }
-function Identity({ identity, style, centerpiece }: IdentityProps) {
+function Identity({ identity, style, centerpiece, icons }: IdentityProps) {
   const text = (
     <div>
       <HeadingLevel level={1}>
@@ -211,6 +253,7 @@ function Identity({ identity, style, centerpiece }: IdentityProps) {
         <ul className={styles.contacts} aria-label="Contact">
           {identity.contacts.map((c, k) => (
             <li key={k}>
+              {icons?.contacts?.[k] ? <ResumeIcon name={icons.contacts[k]} style={icons.style} /> : null}
               {c.href ? (
                 <a href={c.href} className={styles.link}>
                   {c.text}
@@ -234,9 +277,9 @@ function Identity({ identity, style, centerpiece }: IdentityProps) {
   );
   return (
     <Atom i={0} as="header" className={styles.identity}>
-      {style === 'banner' ? (
+      {style === 'banner' || style === 'rounded' ? (
         <OnSurface surface="accent">
-          <div className={styles.banner}>{body}</div>
+          <div className={style === 'rounded' ? `${styles.banner} ${styles.rounded}` : styles.banner}>{body}</div>
         </OnSurface>
       ) : (
         body

@@ -75,14 +75,10 @@ describe('themeBaseFor', () => {
     expect(themeBaseFor({ kind: 'archetype', id: 'classic' }).blocks).toMatchObject({ identity: 'banner', entries: 'row' });
   });
 
-  it('renders auto, presets and not-yet-built archetypes as classic until they exist', () => {
-    for (const ref of [
-      { kind: 'auto' },
-      { kind: 'preset', id: 'netflix' },
-      { kind: 'archetype', id: 'sidebar' },
-      { kind: 'archetype', id: 'app-ui' },
-    ] as const) {
+  it('renders auto and presets as classic until they exist, and every archetype as itself', () => {
+    for (const ref of [{ kind: 'auto' }, { kind: 'preset', id: 'netflix' }] as const) {
       expect(themeBaseFor(ref).id, JSON.stringify(ref)).toBe('classic');
     }
+    for (const id of ['ats-plain', 'classic', 'sidebar', 'app-ui'] as const) expect(themeBaseFor({ kind: 'archetype', id }).id).toBe(id);
   });
 });

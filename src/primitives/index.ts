@@ -2,7 +2,15 @@
 // the data hooks the measurer reads (data-block, data-atom, data-keep-with-next, data-keep-together), the surface
 // CSS-variable contract, and the no-outer-margin rule.
 export { Atom, ALL_ATOMS, type AtomProps, type AtomRange } from './Atom';
-export { BlockView, continuedHeading, type BlockContent, type BlockShapeProps, type BlockVariants, type BlockViewProps } from './blocks';
+export {
+  BlockView,
+  continuedHeading,
+  type BlockContent,
+  type BlockIcons,
+  type BlockShapeProps,
+  type BlockVariants,
+  type BlockViewProps,
+} from './blocks';
 export { Centerpiece, ScoreDial, type CenterpieceData, type ScoreDialData } from './centerpieces';
 export { formatDateRange } from './dates';
 export { Decor } from './Decor';

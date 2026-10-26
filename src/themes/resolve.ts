@@ -4,6 +4,7 @@ import { ARCHETYPES, FALLBACK_ARCHETYPE, type ImplementedArchetype } from './arc
 import { derivePalette, type AccessiblePalette } from './color';
 import type { ResolvedTheme, ThemeBase } from './types';
 import { personaChoices } from './vocab';
+import { fontStack } from './fonts';
 
 const LEADING: Readonly<Record<Customization['lineHeight'], number>> = { tight: 1.25, normal: 1.4, relaxed: 1.55 };
 /** Space between sections, in points. */
@@ -23,7 +24,7 @@ function geometryVars(base: ThemeBase, c: Customization): Record<ThemeVar, strin
   const k = c.fontScale;
   const gap = SECTION_GAP[c.sectionGap];
   return {
-    '--rs-font': base.typography.stack,
+    '--rs-font': fontStack(c.fontPair) ?? base.typography.stack,
     '--rs-name': pt(s.name * k),
     '--rs-h2': pt(s.h2 * k),
     '--rs-h3': pt(s.h3 * k),
@@ -61,7 +62,7 @@ export function resolveTheme(variant: Variant): ResolvedTheme {
   const geometry = geometryVars(base, c);
   const cssVars = { ...colorVars(palette), ...geometry };
   // Page size and margins are not here: the engine compares them itself, and the measurer keys on width.
-  const styleHash = hashString(JSON.stringify([base.id, base.blocks, geometry]));
+  const styleHash = hashString(JSON.stringify([base.id, base.blocks, base.sideBlocks, base.layout, c.icons, geometry]));
   const sectionGapPt = SECTION_GAP[c.sectionGap];
   const { headings, centerpiece } = personaChoices(variant);
   return {

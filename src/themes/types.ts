@@ -1,4 +1,4 @@
-import type { ArchetypeId, CenterpieceId, Customization, RoleChoice, ShapeName } from '@/domain';
+import type { ArchetypeId, CenterpieceId, Customization, RoleChoice, ShapeName, SurfaceName } from '@/domain';
 import type { BlockVariants } from '@/primitives';
 import type { AccessiblePalette } from './color';
 
@@ -25,11 +25,31 @@ export interface TypographySpec {
   readonly headingCase: 'none' | 'uppercase';
 }
 
+/**
+ * Where sections go on the page. `single`: one column. `columns`: a main column plus a side column (M5), each
+ * paginated on its own; the side column is filled with `sideSurface` from the top to the bottom of every page.
+ */
+export type LayoutSpec =
+  | { readonly kind: 'single' }
+  | {
+      readonly kind: 'columns';
+      readonly side: 'left' | 'right';
+      /** Share of the content width the side column takes. */
+      readonly sideFraction: number;
+      /** Section kinds placed in the side column; everything else flows in the main column. */
+      readonly sideKinds: readonly string[];
+      readonly identityIn: 'main' | 'side';
+      readonly sideSurface: SurfaceName;
+    };
+
 /** Colorless theme data. A generated theme = an archetype + the variant's derived palette. */
 export interface ThemeBase {
   readonly id: ArchetypeId;
   readonly label: string;
   readonly blocks: BlockStyles;
+  /** Block styles for the side column (columns layouts only); defaults to `blocks`. */
+  readonly sideBlocks?: Partial<BlockStyles>;
+  readonly layout: LayoutSpec;
   readonly vocab: Vocab;
   readonly typography: TypographySpec;
   readonly roleHints: RoleChoice;
