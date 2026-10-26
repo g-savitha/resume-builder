@@ -6,8 +6,8 @@ Measured on the box (Chromium, Playwright, production build) with `pnpm bench` a
 | --- | --- | --- | --- |
 | Typing latency, ~3-page resume, unthrottled | p98 < 50 ms | frame p50 4.8 ms, p98 7.4 ms, max 10.3 ms | pass |
 | Typing latency, 4× CPU throttle | p98 < 50 ms | frame p50 21.1 ms, p98 36.6 ms, max 41.8 ms; 559 input events, none over 50 ms (max 32 ms) | pass |
-| Shell JS (gzip) | ≤ 150 kB | 128 kB with M7 (`pnpm size`: app entry 122 kB before M7) | pass |
-| Storage chunk (gzip) | ≤ 15 kB | 5.8 kB | pass |
+| App entry JS (gzip, `pnpm size`) | ≤ 150 kB | 126.6 kB with M7 (122.3 kB after M6) | pass |
+| Editor shell initial CSS (gzip) | ≤ 15 kB | 5.2 kB | pass |
 | Logo lookup | never on a keystroke | once per company, cached (30 d logo, 1 d miss) | pass |
 
 Notes:
