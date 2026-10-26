@@ -56,8 +56,13 @@ test.describe('builder (milestone 1)', () => {
     await expect(sectionList(page)).toHaveAttribute('data-drag-state', 'idle');
     expect((await sectionOrder(page)).slice(2, 4)).toEqual(['Projects', 'Experience']);
     await expect(handle).toBeFocused();
-    const previewHeadings = await page.getByTestId('resume-preview').getByRole('heading', { level: 2 }).allTextContents();
-    expect(previewHeadings.indexOf('Projects')).toBeLessThan(previewHeadings.indexOf('Experience'));
+    // The preview renders from a deferred view, so poll until it has caught up with the move.
+    await expect
+      .poll(async () => {
+        const headings = await page.getByTestId('resume-preview').getByRole('heading', { level: 2 }).allTextContents();
+        return headings.indexOf('Projects') < headings.indexOf('Experience');
+      })
+      .toBe(true);
   });
 
   test('Move up/down buttons keep focus on the moved row', async ({ page }) => {
