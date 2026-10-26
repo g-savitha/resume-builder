@@ -1,5 +1,6 @@
 import type { IconName } from '@/icons';
 import type { Brand, BrandSnapshot, DataUrl, RoleChoice, ThemeBaseRef } from './brand';
+import type { CompanyPersona } from './persona';
 
 export type ResumeId = Brand<string, 'ResumeId'>;
 export type VariantId = Brand<string, 'VariantId'>;
@@ -117,6 +118,8 @@ export interface Variant {
   readonly customization: Customization;
   /** Sorted, unique (kept by applyCommand); array so it serializes. */
   readonly hidden: readonly NodeId[];
+  /** Pinned AI persona (M4b): heading words and a centerpiece. Absent = none (or turned off). */
+  readonly persona?: CompanyPersona;
 }
 
 export type FontPairId = Brand<string, 'FontPairId'>;

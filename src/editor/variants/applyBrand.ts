@@ -1,5 +1,5 @@
-import { lookupBrand, type BrandResult, type CompanyQuery } from '@/brand';
-import type { Command, ResumeId, VariantId } from '@/domain';
+import { lookupBrand, lookupPersona, type BrandResult, type CompanyQuery } from '@/brand';
+import type { Command, CompanyPersona, Domain, ResumeId, VariantId } from '@/domain';
 
 export interface BrandPorts {
   readonly dispatch: (resumeId: ResumeId, cmd: Command) => void;
@@ -43,9 +43,20 @@ export async function applyBrand(
 ): Promise<BrandResult> {
   const result = await lookupBrand(query);
   if (result.ok) ports.dispatch(resumeId, { type: 'variant/refreshBrand', variantId, target: result.profile });
+  if (result.ok && result.profile.domain) void applyPersona(ports, resumeId, variantId, result.profile.domain, label);
   const reset = result.ok && options.picksReset ? ` ${PICKS_RESET}` : '';
   ports.announce?.(`${brandMessage(label, result)}${reset}`);
   return result;
+}
+
+/**
+ * Looks up the company's persona (M4b) and pins it on the variant. A miss leaves the variant as it is: the persona
+ * only changes heading words and adds a centerpiece, so a resume without one is complete.
+ */
+export async function applyPersona(ports: BrandPorts, resumeId: ResumeId, variantId: VariantId, domain: Domain, label: string): Promise<CompanyPersona | null> {
+  const persona = await lookupPersona(domain, label);
+  if (persona) ports.dispatch(resumeId, { type: 'variant/setPersona', variantId, persona });
+  return persona;
 }
 
 /**

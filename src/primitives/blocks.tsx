@@ -1,5 +1,6 @@
 import type { EntryContent, IdentityContent, RichText, ShapeName, SurfaceName, TagGroupContent } from '@/domain';
 import { Atom, inRange, type AtomRange } from './Atom';
+import { Centerpiece, type CenterpieceData } from './centerpieces';
 import { formatDateRange } from './dates';
 import { richAtomCount, RichTextView } from './RichTextView';
 import { OnSurface } from './surface';
@@ -25,7 +26,13 @@ export type BlockContent<S extends ShapeName> = S extends 'entries' ? readonly E
   : IdentityContent;
 
 export type BlockShapeProps = {
-  [S in ShapeName]: { readonly shape: S; readonly style: BlockVariants[S]; readonly content: BlockContent<S> };
+  [S in ShapeName]: {
+    readonly shape: S;
+    readonly style: BlockVariants[S];
+    readonly content: BlockContent<S>;
+    /** Identity only: the persona's centerpiece, drawn beside the name. */
+    readonly centerpiece?: CenterpieceData;
+  };
 }[ShapeName];
 
 export type BlockViewProps = BlockShapeProps & {
@@ -83,7 +90,7 @@ function ShapeBody(props: BlockViewProps) {
     case 'prose':
       return <RichTextView value={props.content} range={props.range} />;
     case 'identity':
-      return inRange(0, props.range) ? <Identity identity={props.content} style={props.style} /> : null;
+      return inRange(0, props.range) ? <Identity identity={props.content} style={props.style} centerpiece={props.centerpiece} /> : null;
     default: {
       const _exhaustive: never = props;
       return _exhaustive;
@@ -187,10 +194,11 @@ function TagLine({ i, group }: { readonly i: number; readonly group: TagGroupCon
 interface IdentityProps {
   readonly identity: IdentityContent;
   readonly style: BlockVariants['identity'];
+  readonly centerpiece?: CenterpieceData | undefined;
 }
-function Identity({ identity, style }: IdentityProps) {
-  const body = (
-    <>
+function Identity({ identity, style, centerpiece }: IdentityProps) {
+  const text = (
+    <div>
       <HeadingLevel level={1}>
         <Heading>{identity.name}</Heading>
       </HeadingLevel>
@@ -214,7 +222,15 @@ function Identity({ identity, style }: IdentityProps) {
           ))}
         </ul>
       ) : null}
-    </>
+    </div>
+  );
+  const body = centerpiece ? (
+    <div className={styles.identityRow}>
+      {text}
+      <Centerpiece piece={centerpiece} />
+    </div>
+  ) : (
+    text
   );
   return (
     <Atom i={0} as="header" className={styles.identity}>

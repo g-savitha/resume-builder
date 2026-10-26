@@ -1,4 +1,4 @@
-import type { ArchetypeId, Customization, RoleChoice, ShapeName } from '@/domain';
+import type { ArchetypeId, CenterpieceId, Customization, RoleChoice, ShapeName } from '@/domain';
 import type { BlockVariants } from '@/primitives';
 import type { AccessiblePalette } from './color';
 
@@ -48,4 +48,8 @@ export interface ResolvedTheme {
   readonly cssVars: Readonly<Record<`--${string}`, string>>;
   /** The space between sections, in points (the same value as `--rs-section-gap`); the engine's gapAfter. */
   readonly sectionGapPt: number;
+  /** Persona heading words by section kind (used when the user has not renamed the section). */
+  readonly headings: Readonly<Record<string, string>>;
+  /** The persona's centerpiece, drawn in the identity block. */
+  readonly centerpiece: CenterpieceId;
 }

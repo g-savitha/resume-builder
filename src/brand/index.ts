@@ -3,6 +3,7 @@
 import type { BrandResult, CompanyQuery, LookupOptions } from './types';
 
 export { fallbackProfile } from './fallback';
+export { lookupPersona } from './persona';
 export type { BrandCandidate, BrandResult, CompanyQuery, LookupOptions } from './types';
 
 /** The one way to get a logo-derived BrandProfile. Never rejects: a miss carries the fallback profile. */

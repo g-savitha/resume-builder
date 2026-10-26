@@ -3,6 +3,7 @@ import { useAnnounce, useDispatch, useVariant } from '@/store';
 import { ARCHETYPES, themeBaseFor, type ImplementedArchetype } from '@/themes';
 import { useEditorScope } from '../context';
 import { LogoCard } from './LogoCard';
+import { PersonaCard } from './PersonaCard';
 import { SwatchPicker } from './SwatchPicker';
 
 const HINTS: Readonly<Record<ImplementedArchetype, string>> = {
@@ -45,6 +46,7 @@ export function DesignPanel() {
       </section>
       <LogoCard key={variantId} />
       <SwatchPicker />
+      <PersonaCard />
     </div>
   );
 }

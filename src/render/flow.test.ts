@@ -39,4 +39,15 @@ describe('buildFlow', () => {
     const renamed = flowOf(applyCommand(doc, { type: 'section/rename', sectionId: ids.sections[1]!, title: 'Tools' }));
     expect(renamed[1]!.contentHash).not.toBe(before[1]!.contentHash);
   });
+
+  it('uses the persona’s heading words for sections the user did not rename (M4b)', () => {
+    const { doc, ids } = buildDocument();
+    const persona = { industry: 'technology', tone: 'bold', vocab: 'builder', centerpiece: 'none', source: 'rules' } as const;
+    const withPersona = applyCommand(doc, { type: 'variant/setPersona', variantId: ids.variants[0], persona });
+    expect(flowOf(withPersona).map((b) => b.view.heading)).toEqual(['What I’ve built', 'Toolbox', 'Summary']);
+    const renamed = applyCommand(withPersona, { type: 'section/rename', sectionId: ids.sections[1]!, title: 'Tools' });
+    expect(flowOf(renamed)[1]!.view.heading).toBe('Tools');
+    const off = applyCommand(withPersona, { type: 'variant/setPersona', variantId: ids.variants[0], persona: null });
+    expect(flowOf(off).map((b) => b.view.heading)).toEqual(['Experience', 'Skills', 'Summary']);
+  });
 });
