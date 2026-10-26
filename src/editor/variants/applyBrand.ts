@@ -33,9 +33,24 @@ export function brandMessage(label: string, r: BrandResult): string {
  * The variant was created with the name-hash fallback, so it is usable while this runs and stays usable if
  * it fails. A variant deleted meanwhile makes refreshBrand a no-op.
  */
-export async function applyBrand(ports: BrandPorts, resumeId: ResumeId, variantId: VariantId, label: string, query: CompanyQuery): Promise<BrandResult> {
+export async function applyBrand(
+  ports: BrandPorts,
+  resumeId: ResumeId,
+  variantId: VariantId,
+  label: string,
+  query: CompanyQuery,
+  options: { readonly picksReset?: boolean } = {},
+): Promise<BrandResult> {
   const result = await lookupBrand(query);
   if (result.ok) ports.dispatch(resumeId, { type: 'variant/refreshBrand', variantId, target: result.profile });
-  ports.announce?.(brandMessage(label, result));
+  const reset = result.ok && options.picksReset ? ` ${PICKS_RESET}` : '';
+  ports.announce?.(`${brandMessage(label, result)}${reset}`);
   return result;
 }
+
+/** Said when a new logo replaces one the user had picked colors from: its swatch indices no longer apply. */
+export const PICKS_RESET = 'Your color picks were reset to automatic, because the new logo has different colors.';
+
+/** True when the roles hold a numeric swatch pick, which a new logo resets (variant/refreshBrand). */
+export const hasSwatchPicks = (roles: { readonly accent: unknown; readonly secondary?: unknown }) =>
+  typeof roles.accent === 'number' || typeof roles.secondary === 'number';

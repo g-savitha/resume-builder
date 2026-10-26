@@ -94,6 +94,24 @@ function inkFor(bg: Oklch, hue: Oklch) {
   };
 }
 
+/** White text needs a little more than 4.5:1 on the fill, so white (not black) is the better ink pole there. */
+const WHITE_INK_FILL = 4.6;
+/** How far a fill may be darkened for white text before it stops looking like the brand color (OKLCH L). */
+const MAX_DARKEN_FOR_WHITE_INK = 0.12;
+
+/**
+ * The accent fill: the logo color, adjusted only if it is under 3:1 on the page. On a white page a pale fill
+ * would get dark text; when darkening it a little (at most MAX_DARKEN_FOR_WHITE_INK) lets white text pass, the
+ * darker fill with white text wins (deviation 59). Yellow and other very light brands keep a light fill.
+ */
+function bannerFill(accent: Oklch, page: Oklch, mode: 'light' | 'dark'): Oklch {
+  const pageHex = toHex(page);
+  const minimal = solveLightness(accent, pageHex, MIN_RATIO['AA-ui']);
+  if (mode === 'dark' || contrastRatio('#ffffff', toHex(minimal)) >= WHITE_INK_FILL) return minimal;
+  const forWhite = solveLightness(accent, '#ffffff', WHITE_INK_FILL);
+  return minimal.l - forWhite.l <= MAX_DARKEN_FOR_WHITE_INK ? forWhite : minimal;
+}
+
 /**
  * Derives the four surfaces of a resume theme from a logo palette. The ground swatch sets the mode: a light
  * ground gets a pure white page with neutral raised/sunken surfaces, a dark ground a dark, lightly tinted page; the accent swatch becomes the brand fill and the brand-colored foregrounds. Brand
@@ -117,7 +135,7 @@ export function derivePalette(palette: LogoPalette, roles: RoleChoice): Accessib
 
   // The accent fill is the logo color itself, adjusted only if it would not stand out 3:1 from the page.
   // Its own foregrounds are then solved against it, so text on it always passes as well.
-  const accentBg = solveLightness(accent, toHex(page), MIN_RATIO['AA-ui']);
+  const accentBg = bannerFill(accent, page, mode);
 
   // Headings on the page and cards start from the brand color itself (deviation 57); ensureContrast then moves
   // it in lightness only as far as AA (or the 7:1 boost) needs. A grey brand still gets grey headings.

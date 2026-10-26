@@ -8,7 +8,7 @@ The Design tab's "Colors" card lets the user choose which of the variant's logo 
 - `swatch-secondary`: radio group "Secondary color for the <variant> variant (rules and banner links)". "None" (the default: rules follow the accent) or a swatch.
 - `swatch-contrast-note`: when a picked swatch had to be darkened or lightened, `data-testid="contrast-note-accent"` (or `-secondary`) reads "Adjusted for contrast: the banner uses #… and headings #… instead of #…." It is also the group's accessible description and part of the live-region announcement.
 - `swatch-reset`: "Reset to automatic" puts both roles back (accent automatic, no secondary). Disabled when they already are.
-- `swatch-persist`: picks are part of the variant, so autosave keeps them across a reload. A new logo (lookup or upload) resets numeric picks to automatic, because the indices would point at different colors.
+- `swatch-persist`: picks are part of the variant, so autosave keeps them across a reload. A new logo (lookup or upload) resets numeric picks to automatic, because the indices would point at different colors; after an upload the Logo card shows `data-testid="picks-reset-note"` ("Your color picks were reset to automatic, because the new logo has different colors.").
 - Placeholder palette: the card shows "Find or upload a logo to pick which of its colors the <variant> resume uses." and no radios.
 
 ## How to get to it (user POV)
