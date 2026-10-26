@@ -1,5 +1,6 @@
 import type { EntryContent, IdentityContent, RichText, ShapeName, SurfaceName, TagGroupContent } from '@/domain';
 import { Icon, type IconName } from '@/icons';
+import { useBespoke } from './bespoke';
 import { Atom, inRange, type AtomRange } from './Atom';
 import { Centerpiece, type CenterpieceData } from './centerpieces';
 import { formatDateRange } from './dates';
@@ -14,10 +15,12 @@ import styles from './primitives.module.css';
  * that need them (M5). Adding one = a component here plus its key below.
  */
 export interface BlockVariants {
-  entries: 'stacked' | 'row' | 'card';
+  /** `bespoke`: the preset's own entry header (BespokeBlocks.entryHead), falling back to `row`. */
+  entries: 'stacked' | 'row' | 'card' | 'bespoke';
   tags: 'inline' | 'chips';
   prose: 'plain';
-  identity: 'stacked' | 'banner' | 'rounded';
+  /** `bespoke`: the preset's own identity (BespokeBlocks.identity), falling back to `banner`. */
+  identity: 'stacked' | 'banner' | 'rounded' | 'bespoke';
 }
 
 /** Icons a block draws, resolved by render from the variant's icon settings (customization.icons). */
@@ -141,19 +144,21 @@ interface EntriesProps {
 function Entries({ entries, style, range }: EntriesProps) {
   return numberEntries(entries).map(({ entry, first, count }, k) =>
     first + count <= range.from || first >= range.to ? null : (
-      <Entry key={k} entry={entry} style={style} base={first} range={range} />
+      <Entry key={k} entry={entry} index={k} style={style} base={first} range={range} />
     ),
   );
 }
 
 interface EntryProps {
   readonly entry: EntryContent;
+  readonly index: number;
   readonly style: BlockVariants['entries'];
   /** Index of the entry's header atom in the block. */
   readonly base: number;
   readonly range: AtomRange;
 }
-function Entry({ entry, style, base, range }: EntryProps) {
+function Entry({ entry, index, style, base, range }: EntryProps) {
+  const Bespoke = useBespoke().entryHead;
   const bodyAtoms = richAtomCount(entry.body);
   const tagAtom = base + 1 + bodyAtoms;
   const meta = [entry.subtitle, entry.place].filter(Boolean).join(' · ');
@@ -173,6 +178,12 @@ function Entry({ entry, style, base, range }: EntryProps) {
           keepWithNext={entry.tags.length + bodyAtoms > 0}
           className={style === 'stacked' ? styles.entryHead : styles.entryHeadRow}
         >
+          {style === 'bespoke' && Bespoke ? (
+            <HeadingLevel level={3}>
+              <Bespoke entry={entry} index={index} />
+            </HeadingLevel>
+          ) : (
+            <>
           <div className={styles.entryMain}>
             <HeadingLevel level={3}>
               <Heading>{title}</Heading>
@@ -188,6 +199,8 @@ function Entry({ entry, style, base, range }: EntryProps) {
               <Text tone="muted">{dates}</Text>
             </p>
           ) : null}
+            </>
+          )}
         </Atom>
       ) : null}
       <RichTextView value={entry.body} base={base + 1} range={range} keepLastWithNext={entry.tags.length > 0} />
@@ -239,6 +252,16 @@ interface IdentityProps {
   readonly icons?: BlockIcons | undefined;
 }
 function Identity({ identity, style, centerpiece, icons }: IdentityProps) {
+  const Bespoke = useBespoke().identity;
+  if (style === 'bespoke' && Bespoke) {
+    return (
+      <Atom i={0} as="header" className={styles.identity}>
+        <HeadingLevel level={1}>
+          <Bespoke identity={identity} />
+        </HeadingLevel>
+      </Atom>
+    );
+  }
   const text = (
     <div>
       <HeadingLevel level={1}>
@@ -277,7 +300,7 @@ function Identity({ identity, style, centerpiece, icons }: IdentityProps) {
   );
   return (
     <Atom i={0} as="header" className={styles.identity}>
-      {style === 'banner' || style === 'rounded' ? (
+      {style !== 'stacked' ? (
         <OnSurface surface="accent">
           <div className={style === 'rounded' ? `${styles.banner} ${styles.rounded}` : styles.banner}>{body}</div>
         </OnSurface>
@@ -285,5 +308,25 @@ function Identity({ identity, style, centerpiece, icons }: IdentityProps) {
         body
       )}
     </Atom>
+  );
+}
+
+/** The identity's contact list, for bespoke identities: kit links and semantics, laid out inline. */
+export function ContactList({ contacts }: { readonly contacts: IdentityContent['contacts'] }) {
+  if (!contacts.length) return null;
+  return (
+    <ul className={styles.contacts} aria-label="Contact">
+      {contacts.map((c, k) => (
+        <li key={k}>
+          {c.href ? (
+            <a href={c.href} className={styles.link}>
+              {c.text}
+            </a>
+          ) : (
+            c.text
+          )}
+        </li>
+      ))}
+    </ul>
   );
 }

@@ -4,6 +4,7 @@
 export { Atom, ALL_ATOMS, type AtomProps, type AtomRange } from './Atom';
 export {
   BlockView,
+  ContactList,
   continuedHeading,
   type BlockContent,
   type BlockIcons,
@@ -11,6 +12,7 @@ export {
   type BlockVariants,
   type BlockViewProps,
 } from './blocks';
+export { BespokeProvider, type BespokeBlocks, type BespokeEntryHeadProps, type BespokeIdentityProps } from './bespoke';
 export { Centerpiece, ScoreDial, type CenterpieceData, type ScoreDialData } from './centerpieces';
 export { formatDateRange } from './dates';
 export { Decor } from './Decor';

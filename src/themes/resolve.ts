@@ -5,6 +5,7 @@ import { derivePalette, type AccessiblePalette } from './color';
 import type { ResolvedTheme, ThemeBase } from './types';
 import { personaChoices } from './vocab';
 import { fontStack } from './fonts';
+import { PRESETS, presetForDomain } from './presets';
 
 const LEADING: Readonly<Record<Customization['lineHeight'], number>> = { tight: 1.25, normal: 1.4, relaxed: 1.55 };
 /** Space between sections, in points. */
@@ -12,9 +13,14 @@ const SECTION_GAP: Readonly<Record<Customization['sectionGap'], number>> = { com
 
 const isImplemented = (id: string): id is ImplementedArchetype => Object.hasOwn(ARCHETYPES, id);
 
-/** The archetype a variant renders with. */
-export function themeBaseFor(ref: ThemeBaseRef): ThemeBase {
-  return ARCHETYPES[ref.kind === 'archetype' && isImplemented(ref.id) ? ref.id : FALLBACK_ARCHETYPE];
+/**
+ * The theme a variant renders with: its archetype or preset; `auto` is the preset made for the company's domain
+ * (netflix.com → Streaming), else classic. An unknown id (from a newer build) renders as classic.
+ */
+export function themeBaseFor(ref: ThemeBaseRef, domain?: string): ThemeBase {
+  if (ref.kind === 'archetype') return ARCHETYPES[isImplemented(ref.id) ? ref.id : FALLBACK_ARCHETYPE];
+  const preset = PRESETS.get(ref.kind === 'preset' ? ref.id : (presetForDomain(domain) ?? ''));
+  return preset?.base ?? ARCHETYPES[FALLBACK_ARCHETYPE];
 }
 
 const pt = (n: number) => `${String(Math.round(n * 100) / 100)}pt`;
@@ -56,7 +62,7 @@ function colorVars(p: AccessiblePalette): Record<`--${string}`, string> {
  * and role choice. Pure and synchronous (M3 archetypes use system fonts; presets lazy-load in M6).
  */
 export function resolveTheme(variant: Variant): ResolvedTheme {
-  const base = themeBaseFor(variant.themeBase);
+  const base = themeBaseFor(variant.themeBase, variant.brand.domain);
   const c = variant.customization;
   const palette = derivePalette(variant.brand.palette, variant.roles);
   const geometry = geometryVars(base, c);

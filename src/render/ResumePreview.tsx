@@ -2,7 +2,7 @@ import { createPortal } from 'react-dom';
 import { memo, useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type RefObject } from 'react';
 import type { ResumeView } from '@/domain';
 import { contentBox, pageSize, type LayoutInput, type PageBox, type PagedLayout, type PageSize, type RegionId } from '@/engine';
-import { ALL_ATOMS, BlockView, OnSurface, type AtomRange } from '@/primitives';
+import { ALL_ATOMS, BespokeProvider, BlockView, OnSurface, type AtomRange } from '@/primitives';
 import { resolveTheme, type ResolvedTheme } from '@/themes';
 import { buildFlow, type RenderBlock } from './flow';
 import { measureBlock } from './measureDom';
@@ -163,6 +163,7 @@ function MeasureArea({ region, theme }: { readonly region: RegionLayout; readonl
       inert
       data-measure-region={frame.id}
     >
+      <BespokeProvider blocks={theme.base.bespoke}>
       <OnSurface surface={frame.surface}>
         {missing.map((b) => (
           <div key={b.key} data-measure={b.key}>
@@ -175,6 +176,7 @@ function MeasureArea({ region, theme }: { readonly region: RegionLayout; readonl
           </div>
         ))}
       </OnSurface>
+      </BespokeProvider>
     </div>
   );
 }
@@ -207,9 +209,11 @@ function Pages({ pages, size, frame, blocks, theme, view, scale }: PagesProps) {
         data-testid="resume-preview"
         style={{ ...(theme.cssVars as CSSProperties), width: w, gap: PAGE_GAP, transform: scale === 1 ? undefined : `scale(${String(scale)})` }}
       >
-        {pages.map((p, i) => (
-          <PageView key={i} page={p} number={i + 1} size={size} frame={frame} blocks={blocks} />
-        ))}
+        <BespokeProvider blocks={theme.base.bespoke}>
+          {pages.map((p, i) => (
+            <PageView key={i} page={p} number={i + 1} size={size} frame={frame} blocks={blocks} />
+          ))}
+        </BespokeProvider>
       </article>
     </div>
   );

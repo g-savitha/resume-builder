@@ -1,6 +1,7 @@
 import { useId } from 'react';
 import { useAnnounce, useDispatch, useVariant } from '@/store';
-import { ARCHETYPES, themeBaseFor, type ImplementedArchetype } from '@/themes';
+import type { ThemeBaseRef } from '@/domain';
+import { ARCHETYPES, PRESETS, themeBaseFor, type ImplementedArchetype } from '@/themes';
 import { useEditorScope } from '../context';
 import { LogoCard } from './LogoCard';
 import { CustomizeCard } from './CustomizeCard';
@@ -13,11 +14,21 @@ const HINTS: Readonly<Record<ImplementedArchetype, string>> = {
   sidebar: 'Two columns: name, contacts and skills in a brand-colored left column.',
   'app-ui': 'Product look: rounded brand header, entry cards and a grey skills rail on the right.',
 };
-const CHOICES = Object.keys(HINTS) as readonly ImplementedArchetype[];
+interface Choice {
+  readonly id: string;
+  readonly ref: ThemeBaseRef;
+  readonly label: string;
+  readonly hint: string;
+}
+/** The archetypes, then every preset folder (M6). */
+const CHOICES: readonly Choice[] = [
+  ...(Object.keys(HINTS) as ImplementedArchetype[]).map((id) => ({ id, ref: { kind: 'archetype', id } as const, label: ARCHETYPES[id].label, hint: HINTS[id] })),
+  ...[...PRESETS].map(([id, p]) => ({ id, ref: { kind: 'preset', id } as const, label: p.manifest.label, hint: p.manifest.hint })),
+];
 
 /**
  * Design: pick the active variant's theme (milestone 3), upload its logo and pick which logo colors it uses (milestone 4). Then customize its fonts, spacing, page size, icons and
- * text contrast (M5); presets with M6.
+ * text contrast (M5). Presets (M6) are listed after the archetypes.
  */
 export function DesignPanel() {
   const { resumeId, variantId, variantLabel } = useEditorScope();
@@ -26,22 +37,22 @@ export function DesignPanel() {
   const announce = useAnnounce();
   const name = useId();
   if (!variant) return null;
-  const current = themeBaseFor(variant.themeBase).id;
+  const current = themeBaseFor(variant.themeBase, variant.brand.domain).id;
   return (
     <div className="panel-stack">
       <section className="card" aria-labelledby="design-h">
         <h2 id="design-h">Design</h2>
         <fieldset className="panel-stack theme-picker" data-testid="theme-picker">
           <legend>Theme for the {variantLabel} variant</legend>
-          {CHOICES.map((id) => (
+          {CHOICES.map((choice) => (
             <ThemeChoice
-              key={id}
-              id={id}
+              key={choice.id}
+              choice={choice}
               name={name}
-              checked={current === id}
+              checked={current === choice.id}
               onPick={() => {
-                dispatch(resumeId, { type: 'variant/setBase', variantId, base: { kind: 'archetype', id } });
-                announce(`${ARCHETYPES[id].label} theme applied to the ${variantLabel} variant.`);
+                dispatch(resumeId, { type: 'variant/setBase', variantId, base: choice.ref });
+                announce(`${choice.label} theme applied to the ${variantLabel} variant.`);
               }}
             />
           ))}
@@ -55,14 +66,14 @@ export function DesignPanel() {
   );
 }
 
-function ThemeChoice(props: { readonly id: ImplementedArchetype; readonly name: string; readonly checked: boolean; readonly onPick: () => void }) {
+function ThemeChoice(props: { readonly choice: Choice; readonly name: string; readonly checked: boolean; readonly onPick: () => void }) {
   const inputId = useId();
   return (
-    <div className={`variant-row${props.checked ? ' active' : ''}`} data-theme-choice={props.id}>
+    <div className={`variant-row${props.checked ? ' active' : ''}`} data-theme-choice={props.choice.id}>
       <input type="radio" id={inputId} name={props.name} checked={props.checked} onChange={props.onPick} />
       <label htmlFor={inputId}>
-        <span className="name">{ARCHETYPES[props.id].label}</span>
-        <span className="kind">{HINTS[props.id]}</span>
+        <span className="name">{props.choice.label}</span>
+        <span className="kind">{props.choice.hint}</span>
       </label>
     </div>
   );
