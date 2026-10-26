@@ -32,7 +32,7 @@ export function PreviewPane() {
     setPages(n);
   }, []);
   const [fitRef, fitWidth] = useWidth<HTMLDivElement>();
-  const themeLabel = view ? themeBaseFor(view.variant.themeBase).label : '';
+  const themeLabel = view ? themeBaseFor(view.variant.themeBase, view.variant.brand.domain).label : '';
   return (
     <section className="preview" aria-labelledby="preview-h">
       <div className="pv-bar">

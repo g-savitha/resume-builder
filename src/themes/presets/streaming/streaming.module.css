@@ -1,0 +1,34 @@
+/* Streaming preset chrome. Colors only from the surface variables (OnSurface); no margins (see primitives). */
+.card {
+  padding: 14pt 14pt 12pt;
+}
+.eyebrow {
+  font-size: var(--rs-small, 9pt);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.title h1 {
+  font-size: var(--rs-name, 28pt);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  padding: 2pt 0 4pt;
+}
+.logline {
+  font-size: var(--rs-h3, 11pt);
+  padding-bottom: 4pt;
+}
+.episode {
+  display: flex;
+  gap: 8pt;
+  align-items: flex-start;
+}
+.number {
+  display: block;
+  min-width: 1.4em;
+  font-size: 22pt;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--fg-accentText);
+}

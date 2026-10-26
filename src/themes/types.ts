@@ -1,8 +1,8 @@
 import type { ArchetypeId, CenterpieceId, Customization, RoleChoice, ShapeName, SurfaceName } from '@/domain';
-import type { BlockVariants } from '@/primitives';
+import type { BespokeBlocks, BlockVariants } from '@/primitives';
 import type { AccessiblePalette } from './color';
 
-/** One block variant per shape. ('bespoke' joins with presets, M6.) */
+/** One block variant per shape. `bespoke` needs the theme's `bespoke` components (presets). */
 export type BlockStyles = { readonly [S in ShapeName]: BlockVariants[S] };
 
 export interface Vocab {
@@ -44,7 +44,8 @@ export type LayoutSpec =
 
 /** Colorless theme data. A generated theme = an archetype + the variant's derived palette. */
 export interface ThemeBase {
-  readonly id: ArchetypeId;
+  /** An archetype id, or a preset's folder name. */
+  readonly id: ArchetypeId | (string & {});
   readonly label: string;
   readonly blocks: BlockStyles;
   /** Block styles for the side column (columns layouts only); defaults to `blocks`. */
@@ -53,6 +54,8 @@ export interface ThemeBase {
   readonly vocab: Vocab;
   readonly typography: TypographySpec;
   readonly roleHints: RoleChoice;
+  /** Presets only: their bespoke identity / entry-head components (primitives' escape hatch). */
+  readonly bespoke?: BespokeBlocks;
 }
 
 /** Everything a renderer needs. Derived, never stored. */

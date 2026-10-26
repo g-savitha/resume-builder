@@ -79,11 +79,12 @@ async function fetchSiteText(fetchImpl: Fetch, domain: string): Promise<SiteText
 const KEYWORDS: readonly (readonly [Industry, RegExp])[] = [
   ['finance', /\b(bank|banking|invest|fintech|payments?|insurance|credit|trading|wealth|capital)\b/gi],
   ['health', /\b(health|medical|clinic|hospital|pharma|patients?|care|biotech|therapeut)/gi],
-  ['media', /\b(stream\w*|movies?|tv|shows|music|news|entertainment|games?|studio|media)\b/gi],
+  // No bare "games": a tech company's homepage sells games too (Xbox on microsoft.com).
+  ['media', /\b(stream\w*|movies?|tv|series|music|news|entertainment|studio|media)\b/gi],
   ['consulting', /\b(consulting|advisory|strategy|professional services|audit|accounting)\b/gi],
   ['retail', /\b(shop|store|retail|fashion|groceries|e-?commerce|marketplace|delivery)\b/gi],
   ['public', /\b(government|ministry|council|nonprofit|non-profit|charity|university|foundation)\b/gi],
-  ['technology', /\b(software|cloud|ai|developer|platform|saas|data|devices|apps?|technology|tech)\b/gi],
+  ['technology', /\b(software|cloud|ai|copilot|developers?|platform|saas|data|devices|apps?|technology|tech|computing|computers?|laptops?|pcs?|windows|security|search)\b/gi],
 ];
 const PRESET: Readonly<Record<Industry, Omit<PersonaWire, 'industry' | 'source'>>> = {
   technology: { tone: 'bold', vocab: 'builder', centerpiece: 'score-dial' },

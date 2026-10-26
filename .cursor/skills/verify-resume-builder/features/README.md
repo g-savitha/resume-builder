@@ -23,7 +23,7 @@ This directory is the maintained source for verifying the builder's user-facing 
   | `data-ui-theme` | `<html>` | `dark` (default), `light` (builder chrome only) |
   | `data-component="resume-preview"` + `data-pagination-state` | preview root | `measuring`, `settled` (every block measured, pages final) |
   | `data-page-count` | preview root | pages in the current layout |
-  | `data-theme-base` | preview root | the archetype drawn: `classic` (default), `ats-plain`, `sidebar`, `app-ui` |
+  | `data-theme-base` | preview root | the archetype drawn: `classic` (default), `ats-plain`, `sidebar`, `app-ui`, or a preset id (`streaming`) |
   | `data-layout` | preview root | `single` or `columns` (sidebar, app-ui) |
   | `data-region` / `data-band` | inside each sheet | `main`, `side` columns; `left` / `right` side fill |
   | `data-icon` | resume icons | the icon name (contact, heading) |
@@ -58,6 +58,7 @@ Each feature file starts with an H1 and one paragraph on the user-visible behavi
 - [Swatch picker](./swatches.md) covers choosing which logo colors drive the accent and secondary roles, the contrast note and reset.
 - [Autosave and restore](./autosave.md) covers the save status and persistence across a reload.
 - [Multi-column themes and Customize](./customize.md) covers the Sidebar and App UI archetypes, per-column pagination and the Customize card (fonts, spacing, page, icons, 7:1).
+- [Bespoke presets](./presets.md) covers the Streaming (Netflix-style) preset, `auto` preset matching and the theme × brand axe matrix.
 - [Resume preview](./preview.md) covers the paginated pages, the "(continued)" heading on a split section, and the Design-tab theme picker.
 - [Export PDF](./export.md) covers printing the preview to a tagged PDF with the same pages, title and language.
 - [Builder UI theme](./ui-theme.md) covers the dark default, the "Light theme" toggle and its persistence.
