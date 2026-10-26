@@ -101,4 +101,46 @@ test.describe('brand pipeline', () => {
     await expect.poll(() => surfaceBg(page, 'accent')).toBe('rgb(92, 45, 145)');
     expect(calls).toHaveLength(1);
   });
+
+  test('an ambiguous name offers "Which company?", and picking one re-themes the variant by its domain', async ({ page }) => {
+    const calls = await stubBrandApi(page, (url) => {
+      const domain = url.searchParams.get('domain');
+      if (domain === 'acmetools.example') return { v: 1, status: 'found', name: 'Acme Tools', domain, logo: { type: 'image/png', base64: solidPng('#5c2d91') } };
+      if (url.searchParams.get('name') !== 'Acme') return { v: 1, status: 'not-found' };
+      return {
+        ...found(url),
+        name: 'Acme Corp',
+        candidates: [
+          { name: 'Acme Corp', domain: 'acme.example' },
+          { name: 'Acme Tools', domain: 'acmetools.example' },
+        ],
+      };
+    });
+    await openEditor(page);
+    await createVariant(page, 'Acme');
+    const choice = page.getByRole('region', { name: 'Which Acme?' });
+    await expect(choice).toBeVisible();
+    await expect.poll(() => surfaceBg(page, 'accent')).toBe('rgb(10, 102, 194)');
+    await choice.getByRole('radio', { name: /Acme Tools/ }).check();
+    await choice.getByRole('button', { name: 'Use this company' }).click();
+    await expect(choice).toHaveCount(0);
+    await expect(row(page, 'Acme')).toContainText('logo palette (acmetools.example)');
+    await expect.poll(() => surfaceBg(page, 'accent')).toBe('rgb(92, 45, 145)');
+    expect(calls.some((u) => u.searchParams.get('domain') === 'acmetools.example')).toBe(true);
+  });
+
+  test('Remove uploaded logo goes back to the fetched logo', async ({ page }) => {
+    await stubBrandApi(page, found);
+    await openEditor(page);
+    await page.getByRole('tab', { name: 'Variants' }).click();
+    await expect(row(page, 'Microsoft')).toHaveAttribute('data-brand-state', 'logo');
+    await page.getByRole('tab', { name: 'Design' }).click();
+    await page.getByLabel('Upload a logo for Microsoft').setInputFiles({ name: 'logo.png', mimeType: 'image/png', buffer: Buffer.from(solidPng('#5c2d91'), 'base64') });
+    await expect.poll(() => surfaceBg(page, 'accent')).toBe('rgb(92, 45, 145)');
+    await expect(page.getByText('Colors come from your uploaded logo.')).toBeVisible();
+    await page.getByRole('button', { name: 'Remove uploaded logo' }).click();
+    await expect.poll(() => announcements(page)).toContain('Removed your uploaded logo. The Microsoft variant uses the fetched logo again.');
+    await expect.poll(() => surfaceBg(page, 'accent')).toBe('rgb(10, 102, 194)');
+    await expect(page.getByRole('button', { name: 'Remove uploaded logo' })).toHaveCount(0);
+  });
 });

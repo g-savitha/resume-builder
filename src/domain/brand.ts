@@ -31,6 +31,8 @@ export interface BrandProfile {
   readonly palette: LogoPalette;
   readonly siteDark?: boolean;
   readonly fetchedAt: number;
+  /** The logo is one the user uploaded (Design → Logo can remove it). */
+  readonly uploaded?: true;
 }
 /** What a variant pins. Same type on purpose: the cache is an accelerator, the snapshot is the record. */
 export type BrandSnapshot = BrandProfile;

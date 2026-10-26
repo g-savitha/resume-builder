@@ -814,6 +814,13 @@ textarea.input {
   object-fit: contain;
 }
 
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 /* ── design ── */
 .logo-current {
   display: flex;

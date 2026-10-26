@@ -48,6 +48,21 @@ export async function applyBrand(
   return result;
 }
 
+/**
+ * Drops the variant's uploaded logo and re-themes it from the fetched one, or from the placeholder palette when
+ * none can be fetched. Color picks reset like any brand change.
+ */
+export async function removeUploadedLogo(ports: BrandPorts, resumeId: ResumeId, variantId: VariantId, label: string): Promise<BrandResult> {
+  const result = await lookupBrand({ name: label }, { forgetUpload: true });
+  ports.dispatch(resumeId, { type: 'variant/refreshBrand', variantId, target: result.ok ? result.profile : result.fallback });
+  ports.announce?.(
+    result.ok
+      ? `Removed your uploaded logo. The ${label} variant uses the fetched logo again.`
+      : `Removed your uploaded logo. No other logo was found, so the ${label} variant uses a placeholder palette.`,
+  );
+  return result;
+}
+
 /** Said when a new logo replaces one the user had picked colors from: its swatch indices no longer apply. */
 export const PICKS_RESET = 'Your color picks were reset to automatic, because the new logo has different colors.';
 

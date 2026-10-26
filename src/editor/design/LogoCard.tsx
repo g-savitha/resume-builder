@@ -1,7 +1,7 @@
 import { useId, useRef, useState } from 'react';
 import { useAnnounce, useDispatch, useVariant } from '@/store';
 import { useEditorScope } from '../context';
-import { applyBrand, brandMessage, hasSwatchPicks, PICKS_RESET } from '../variants/applyBrand';
+import { applyBrand, brandMessage, hasSwatchPicks, PICKS_RESET, removeUploadedLogo } from '../variants/applyBrand';
 
 /** Upload your own logo for the active variant. It replaces the fetched one, for this company from now on. */
 export function LogoCard() {
@@ -28,6 +28,12 @@ export function LogoCard() {
     if (input.current) input.current.value = '';
   };
 
+  const onRemove = async () => {
+    setState({ kind: 'reading' });
+    await removeUploadedLogo({ dispatch, announce }, resumeId, variantId, variantLabel);
+    setState({ kind: 'idle' });
+  };
+
   return (
     <section className="card" aria-labelledby={`${inputId}-h`} data-logo-state={state.kind}>
       <h2 id={`${inputId}-h`}>Logo</h2>
@@ -35,10 +41,17 @@ export function LogoCard() {
         {logo ? <img className="logo-chip logo-chip-lg" src={logo.dataUrl} alt={`Current logo for ${variantLabel}`} /> : null}
         <p className="field-hint">
           {palette.source === 'logo'
-            ? `Colors come from this logo${domain ? ` (${domain})` : ''}.`
+            ? variant.brand.uploaded
+              ? 'Colors come from your uploaded logo.'
+              : `Colors come from this logo${domain ? ` (${domain})` : ''}.`
             : 'No logo yet: the resume uses a placeholder palette.'}
         </p>
       </div>
+      {variant.brand.uploaded ? (
+        <button type="button" className="btn btn-sm" disabled={state.kind === 'reading'} onClick={() => void onRemove()}>
+          Remove uploaded logo
+        </button>
+      ) : null}
       <div className="field">
         <label htmlFor={inputId}>Upload a logo for {variantLabel}</label>
         <input

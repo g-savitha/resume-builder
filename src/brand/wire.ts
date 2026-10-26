@@ -1,9 +1,10 @@
 // The /api/brand response → a trusted value. The server is ours, but its body is still unknown until parsed:
 // a proxy, an old deployment or a dev stub can answer anything. Mirrors BrandWireV1 in api/brand.ts.
 import { parseDomain, type Domain } from '@/domain';
+import type { BrandCandidate } from './types';
 
 export type BrandWire =
-  | { readonly status: 'found'; readonly name: string; readonly domain: Domain; readonly logo: Blob | null }
+  | { readonly status: 'found'; readonly name: string; readonly domain: Domain; readonly logo: Blob | null; readonly candidates: readonly BrandCandidate[] }
   | { readonly status: 'not-found' }
   | { readonly status: 'unavailable' };
 
@@ -30,6 +31,16 @@ function parseLogo(x: unknown): Blob | null {
   return base64ToBlob(base64, type);
 }
 
+/** Up to 5 well-formed candidates; anything malformed is dropped. */
+function parseCandidates(x: unknown): readonly BrandCandidate[] {
+  if (!Array.isArray(x)) return [];
+  return x.slice(0, 5).flatMap((c: unknown) => {
+    if (!isRecord(c) || typeof c.name !== 'string' || typeof c.domain !== 'string') return [];
+    const domain = parseDomain(c.domain);
+    return domain ? [{ name: c.name.slice(0, 100), domain }] : [];
+  });
+}
+
 /** Null for anything that is not a well-formed v1 body (the caller treats it like an outage). */
 export function parseBrandWire(body: unknown): BrandWire | null {
   if (!isRecord(body) || body.v !== 1) return null;
@@ -41,7 +52,7 @@ export function parseBrandWire(body: unknown): BrandWire | null {
     case 'found': {
       const domain = typeof body.domain === 'string' ? parseDomain(body.domain) : null;
       if (!domain || typeof body.name !== 'string') return null;
-      return { status: 'found', name: body.name.slice(0, 100), domain, logo: parseLogo(body.logo) };
+      return { status: 'found', name: body.name.slice(0, 100), domain, logo: parseLogo(body.logo), candidates: parseCandidates(body.candidates) };
     }
     default:
       return null;

@@ -1,11 +1,19 @@
 import { useId, useState } from 'react';
-import { fallbackProfile } from '@/brand';
+import { fallbackProfile, type BrandCandidate } from '@/brand';
 import { newId, type VariantId } from '@/domain';
 import { Icon } from '@/icons';
 import { useAnnounce, useDispatch, useVariant, useVariantOrder } from '@/store';
 import { useEditorScope } from '../context';
 import { ConfirmDelete } from '../content/ConfirmDelete';
 import { applyBrand } from './applyBrand';
+import { CompanyChoice } from './CompanyChoice';
+
+/** An ambiguous lookup waiting for the user to say which company they meant. */
+export interface PendingChoice {
+  readonly variantId: VariantId;
+  readonly name: string;
+  readonly candidates: readonly BrandCandidate[];
+}
 
 /** Variants: one per target company. Content is shared; each variant has its own hide/show state. */
 export function VariantsPanel() {
@@ -16,6 +24,22 @@ export function VariantsPanel() {
   const inputId = useId();
   const [company, setCompany] = useState('');
   const [pending, setPending] = useState<ReadonlySet<VariantId>>(new Set());
+  const [choice, setChoice] = useState<PendingChoice | null>(null);
+
+  const lookUp = (variantId: VariantId, name: string, url?: string) => {
+    setPending((p) => new Set(p).add(variantId));
+    void applyBrand({ dispatch, announce }, resumeId, variantId, name, url ? { name, url } : { name })
+      .then((r) => {
+        if (!url && r.ok && r.candidates) setChoice({ variantId, name, candidates: r.candidates });
+      })
+      .finally(() => {
+        setPending((p) => {
+          const next = new Set(p);
+          next.delete(variantId);
+          return next;
+        });
+      });
+  };
 
   const create = () => {
     const name = company.trim();
@@ -31,14 +55,8 @@ export function VariantsPanel() {
     dispatch(resumeId, { type: 'variant/select', variantId });
     setCompany('');
     announce(`Created and switched to the ${name} variant. Looking up its logo…`);
-    setPending((p) => new Set(p).add(variantId));
-    void applyBrand({ dispatch, announce }, resumeId, variantId, name, { name }).finally(() => {
-      setPending((p) => {
-        const next = new Set(p);
-        next.delete(variantId);
-        return next;
-      });
-    });
+    setChoice(null);
+    lookUp(variantId, name);
   };
 
   return (
@@ -54,6 +72,20 @@ export function VariantsPanel() {
           ))}
         </fieldset>
       </section>
+      {choice ? (
+        <CompanyChoice
+          key={choice.variantId}
+          choice={choice}
+          onPick={(c) => {
+            setChoice(null);
+            announce(`Using ${c.name} (${c.domain}) for the ${choice.name} variant. Looking up its logo…`);
+            lookUp(choice.variantId, choice.name, c.domain);
+          }}
+          onDismiss={() => {
+            setChoice(null);
+          }}
+        />
+      ) : null}
       <section className="card" aria-labelledby="new-variant-h">
         <div className="card-head">
           <h2 id="new-variant-h">New variant</h2>
