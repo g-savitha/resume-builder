@@ -3,6 +3,7 @@ import { useAnnounce, useDispatch, useVariant } from '@/store';
 import { ARCHETYPES, themeBaseFor, type ImplementedArchetype } from '@/themes';
 import { useEditorScope } from '../context';
 import { LogoCard } from './LogoCard';
+import { SwatchPicker } from './SwatchPicker';
 
 const HINTS: Readonly<Record<ImplementedArchetype, string>> = {
   classic: 'Default. Name banner in the brand color, entries with dates on the right.',
@@ -11,7 +12,7 @@ const HINTS: Readonly<Record<ImplementedArchetype, string>> = {
 const CHOICES = Object.keys(HINTS) as readonly ImplementedArchetype[];
 
 /**
- * Design: pick the active variant's theme (milestone 3) and upload its logo (milestone 4). Fonts, spacing, page size and icons arrive with the
+ * Design: pick the active variant's theme (milestone 3), upload its logo and pick which logo colors it uses (milestone 4). Fonts, spacing, page size and icons arrive with the
  * theme engine's customization (M5); presets with M6.
  */
 export function DesignPanel() {
@@ -43,6 +44,7 @@ export function DesignPanel() {
         </fieldset>
       </section>
       <LogoCard key={variantId} />
+      <SwatchPicker />
     </div>
   );
 }

@@ -26,6 +26,7 @@ This directory is the maintained source for verifying the builder's user-facing 
   | `data-theme-base` | preview root | the archetype drawn: `classic` (default), `ats-plain` |
   | `data-page` | each page sheet | 1-based page number |
   | `data-brand-state` | each variant row (Variants tab) | `looking-up`, `logo` (logo-derived palette), `placeholder` (name-hash fallback) |
+  | `data-swatch` | each swatch radio (Design → Colors) | the swatch hex, or `auto` for Automatic / None |
   | `data-surface` | resume blocks | `page`, `raised`, `sunken`, `accent`; read its computed `background-color` to check theme colors |
 - Wait for a visible end state with `expect`: a live-region message (`data-testid="live-region"`, polite), the save status, or the preview (`data-testid="resume-preview"`, settled when `[data-pagination-state="settled"]`).
 - Treat quoted names literally. The curly apostrophe in "Company you’re applying to" is part of the label.
@@ -48,6 +49,7 @@ Each feature file starts with an H1 and one paragraph on the user-visible behavi
 - [Hide and show per variant](./hide-show.md) covers the per-variant eye toggle for sections and entries.
 - [Variants](./variants.md) covers creating, switching and deleting target-company variants.
 - [Brand pipeline](./brand.md) covers the logo lookup, its per-company cache and the placeholder fallback.
+- [Swatch picker](./swatches.md) covers choosing which logo colors drive the accent and secondary roles, the contrast note and reset.
 - [Autosave and restore](./autosave.md) covers the save status and persistence across a reload.
 - [Resume preview](./preview.md) covers the paginated pages, the "(continued)" heading on a split section, and the Design-tab theme picker.
 - [Export PDF](./export.md) covers printing the preview to a tagged PDF with the same pages, title and language.

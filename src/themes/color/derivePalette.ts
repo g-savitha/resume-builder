@@ -51,7 +51,7 @@ function byStrategy(swatches: readonly Swatch[], strategy: SwatchStrategy): Swat
 }
 
 /** An index into this snapshot's palette, or a strategy. A stale index falls back to the role's default strategy. */
-function pick(swatches: readonly Swatch[], choice: SwatchPick, fallback: SwatchStrategy): Oklch | undefined {
+export function pick(swatches: readonly Swatch[], choice: SwatchPick, fallback: SwatchStrategy): Oklch | undefined {
   const swatch = typeof choice === 'number' ? (swatches[choice] ?? byStrategy(swatches, fallback)) : byStrategy(swatches, choice);
   return swatch && normalize(swatch.color);
 }

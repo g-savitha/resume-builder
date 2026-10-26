@@ -57,8 +57,8 @@ const step = async (title, fn) => {
 };
 const evidence = {
   dir: out,
-  /** Full-window screenshot. */
-  shot: (file) => page.screenshot({ path: path.join(out, `${file}.png`) }),
+  /** Screenshot of the full window, or of one element when a locator is given. */
+  shot: (file, locator = page) => locator.screenshot({ path: path.join(out, `${file}.png`) }),
   /** Accessibility-tree snapshot (what a screen reader and getByRole see) of a region, default the whole page. */
   aria: async (file, locator = page.locator('body')) => fs.writeFileSync(path.join(out, `${file}.aria.yml`), await locator.ariaSnapshot()),
 };

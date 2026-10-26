@@ -10,6 +10,7 @@ export type {
   Surface,
   SurfaceName,
 } from './color';
+export { rolePreview, swatchOptions, type RoleColors, type RolePreview, type SwatchOption } from './color';
 export { resolveTheme, themeBaseFor } from './resolve';
 export { ARCHETYPES, type ImplementedArchetype } from './archetypes';
 export type { BlockStyles, ResolvedTheme, ThemeBase, TypeScale, TypographySpec, Vocab } from './types';

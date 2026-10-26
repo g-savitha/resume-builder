@@ -35,4 +35,4 @@ Preconditions:
 - Wait on `data-brand-state`, never on a sleep: lookups take 0.3–3 s on the real network.
 - Offline or behind a proxy, every company falls back (`placeholder`, "Couldn’t reach the logo service…"). That is the fallback path working, not a logo-path pass: report the logo steps as not verified.
 - e2e (`e2e/brand.spec.ts`) stubs `/api/brand` (`stubBrandApi` in `e2e/helpers.ts`) and every other e2e test gets a not-found stub from `openEditor`, so CI never touches the real services. Use the journey for the real ones.
-- Colors are picked by `derivePalette`'s `most-chromatic` strategy, so a multi-color logo (Microsoft, Google) gets its most saturated color as the accent, not necessarily the one people associate with the brand.
+- Colors are picked by `derivePalette`'s `most-chromatic` strategy, so a multi-color logo (Microsoft, Google) gets its most saturated color as the accent, not necessarily the one people associate with the brand. The user can pick another one in Design → Colors (`swatches.md`).
