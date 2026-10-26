@@ -1,9 +1,10 @@
 import { useId, useState } from 'react';
 import { Icon } from '@/icons';
 import { printVariant } from '@/render';
-import { useAnnounce, useDispatch, useResumeName, useVariant, useVariantOrder, useVariantView } from '@/store';
-import type { VariantId } from '@/domain';
+import { useAnnounce, useDispatch, useResumeActions, useResumeList, useResumeName, useVariant, useVariantOrder, useVariantView } from '@/store';
+import type { ResumeId, VariantId } from '@/domain';
 import { useEditorScope } from '../context';
+import { FileMenu } from './FileMenu';
 import { SaveIndicator } from './SaveIndicator';
 import { useUiTheme } from './uiTheme';
 
@@ -19,19 +20,56 @@ export function TopBar() {
         <h1>Resume builder</h1>
       </div>
       <nav className="crumbs" aria-label="Current resume">
-        <span>{name}</span>
+        <ResumeSelect resumeId={resumeId} name={name} />
         <span aria-hidden="true">/</span>
         <VariantSelect resumeId={resumeId} activeId={variantId} />
       </nav>
       <div className="spacer" />
       <SaveIndicator />
+      <a className="btn btn-ghost btn-sm preview-link" href="/preview">
+        <Icon name="info" /> Preview only
+      </a>
+      <FileMenu />
       <ThemeToggle />
       <ExportPdfButton />
     </header>
   );
 }
 
-function VariantSelect({ resumeId, activeId }: { readonly resumeId: Parameters<typeof useResumeName>[0]; readonly activeId: VariantId }) {
+/** The open resume: its name, or a picker once there is more than one (duplicate, import). */
+function ResumeSelect({ resumeId, name }: { readonly resumeId: ResumeId; readonly name: string }) {
+  const id = useId();
+  const list = useResumeList();
+  const { selectResume } = useResumeActions();
+  const announce = useAnnounce();
+  if (list.length < 2) return <span>{name}</span>;
+  return (
+    <span className="chip-select">
+      <label htmlFor={id} className="sr-only">
+        Resume
+      </label>
+      <select
+        id={id}
+        value={resumeId}
+        onChange={(e) => {
+          const next = list.find((r) => r.id === e.target.value);
+          if (!next) return;
+          selectResume(next.id);
+          announce(`Opened “${next.name}”.`);
+        }}
+      >
+        {list.map((r) => (
+          <option key={r.id} value={r.id}>
+            {r.name}
+          </option>
+        ))}
+      </select>
+      <Icon name="chevronDown" />
+    </span>
+  );
+}
+
+export function VariantSelect({ resumeId, activeId }: { readonly resumeId: Parameters<typeof useResumeName>[0]; readonly activeId: VariantId }) {
   const id = useId();
   const order = useVariantOrder(resumeId);
   const dispatch = useDispatch();
@@ -79,7 +117,7 @@ function ThemeToggle() {
  * Prints the preview (same DOM) through the browser's dialog, where "Save as PDF" makes the file.
  * The PDF is titled "<resume> – <variant>" and carries the resume's language.
  */
-function ExportPdfButton() {
+export function ExportPdfButton() {
   const { resumeId, variantId } = useEditorScope();
   const view = useVariantView({ resumeId, variantId });
   const announce = useAnnounce();

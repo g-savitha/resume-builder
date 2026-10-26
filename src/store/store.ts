@@ -9,7 +9,13 @@ export interface EditorState {
   /** Latest polite announcement; `seq` changes even when the text repeats. */
   readonly announcement: { readonly seq: number; readonly text: string };
   readonly save: SaveState;
+  /**
+   * Multi-tab guard (Web Locks): `active` while this tab holds the editor lock, `elsewhere` when another tab
+   * does (this tab must not edit), `unknown` before the lock is settled or where Web Locks are missing.
+   */
+  readonly tab: TabState;
 }
+export type TabState = 'unknown' | 'active' | 'elsewhere';
 
 const STORE = Symbol('editor-store');
 
@@ -27,6 +33,10 @@ export interface EditorStore {
   /** Called with each document whose identity changed (i.e. applyCommand changed it). */
   readonly subscribeDocuments: (listener: (changed: readonly ResumeDocument[]) => void) => () => void;
   readonly setSaveState: (state: SaveState) => void;
+  /** Adds a whole document (import, duplicate) and makes it the open resume. Autosave writes it. */
+  readonly addDocument: (doc: ResumeDocument) => void;
+  readonly selectResume: (id: ResumeId) => void;
+  readonly setTabState: (tab: TabState) => void;
   readonly announce: (text: string) => void;
 }
 
@@ -36,6 +46,7 @@ export function createEditorStore(initial?: { readonly docs: readonly ResumeDocu
     activeResume: initial?.active ?? initial?.docs[0]?.id ?? null,
     announcement: { seq: 0, text: '' },
     save: { kind: 'idle' },
+    tab: 'unknown',
   }));
 
   return {
@@ -60,6 +71,15 @@ export function createEditorStore(initial?: { readonly docs: readonly ResumeDocu
       }),
     setSaveState: (save) => {
       api.setState({ save });
+    },
+    addDocument: (doc) => {
+      api.setState((s) => ({ docs: { ...s.docs, [doc.id]: doc }, activeResume: doc.id }));
+    },
+    selectResume: (id) => {
+      if (api.getState().docs[id]) api.setState({ activeResume: id });
+    },
+    setTabState: (tab) => {
+      api.setState({ tab });
     },
     announce: (text) => {
       api.setState((s) => ({ announcement: { seq: s.announcement.seq + 1, text } }));

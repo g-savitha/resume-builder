@@ -20,7 +20,7 @@ export const ARCHITECTURE = {
   themes: ['domain', 'primitives', 'icons'],
   engine: ['domain'],
   render: ['engine', 'themes', 'primitives', 'domain', 'store', 'sections'],
-  editor: ['store', 'domain', 'sections', 'icons', 'brand', 'themes', 'render'],
+  editor: ['store', 'domain', 'sections', 'icons', 'brand', 'themes', 'render', 'io'],
   app: ['editor', 'store', 'storage', 'domain', 'sections', 'brand', 'render', 'icons'],
   // Shared test helpers (imported only from *.test.ts(x)).
   testing: ['domain', 'sections', 'store', 'brand'],

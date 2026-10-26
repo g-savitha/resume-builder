@@ -30,3 +30,20 @@ describe('useItemField', () => {
     expect(renders.b).toBe(before.b);
   });
 });
+
+describe('whole-document actions', () => {
+  it('addDocument opens the added resume; selectResume switches only to a known one', async () => {
+    const { createEditorStore } = await import('./store');
+    const { buildDocument } = await import('@/testing');
+    const { duplicateDocument } = await import('@/domain');
+    const { doc } = buildDocument();
+    const store = createEditorStore({ docs: [doc] });
+    const copy = duplicateDocument(doc, 'copy-id' as typeof doc.id, 'Copy');
+    store.addDocument(copy);
+    expect(store.getDocuments().map((d) => d.name)).toEqual([doc.name, 'Copy']);
+    expect(store.getDocument(copy.id)?.rev).toBe(0);
+    store.selectResume('missing' as typeof doc.id);
+    store.selectResume(doc.id);
+    store.setTabState('elsewhere');
+  });
+});

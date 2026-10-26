@@ -26,6 +26,8 @@ This directory is the maintained source for verifying the builder's user-facing 
   | `data-theme-base` | preview root | the archetype drawn: `classic` (default), `ats-plain`, `sidebar`, `app-ui`, or a preset id (`streaming`) |
   | `data-layout` | preview root | `single` or `columns` (sidebar, app-ui) |
   | `data-region` / `data-band` | inside each sheet | `main`, `side` columns; `left` / `right` side fill |
+  | `data-route` | preview-only root | `preview` on `/preview` |
+  | `data-testid="tab-guard"` | overlay | present while another tab holds the editor lock |
   | `data-icon` | resume icons | the icon name (contact, heading) |
   | `data-page` | each page sheet | 1-based page number |
   | `data-brand-state` | each variant row (Variants tab) | `looking-up`, `logo` (logo-derived palette), `placeholder` (name-hash fallback) |
@@ -59,6 +61,7 @@ Each feature file starts with an H1 and one paragraph on the user-visible behavi
 - [Autosave and restore](./autosave.md) covers the save status and persistence across a reload.
 - [Multi-column themes and Customize](./customize.md) covers the Sidebar and App UI archetypes, per-column pagination and the Customize card (fonts, spacing, page, icons, 7:1).
 - [Bespoke presets](./presets.md) covers the Streaming (Netflix-style) preset, `auto` preset matching and the theme × brand axe matrix.
+- [Files, duplicate, tabs and the preview route](./files.md) covers export/import (ours and JSON Resume), duplicate, the resume picker, the one-tab lock, `/preview` and the CSP.
 - [Resume preview](./preview.md) covers the paginated pages, the "(continued)" heading on a split section, and the Design-tab theme picker.
 - [Export PDF](./export.md) covers printing the preview to a tagged PDF with the same pages, title and language.
 - [Builder UI theme](./ui-theme.md) covers the dark default, the "Light theme" toggle and its persistence.
