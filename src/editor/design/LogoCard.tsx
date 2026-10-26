@@ -1,7 +1,7 @@
 import { useId, useRef, useState } from 'react';
 import { useAnnounce, useDispatch, useVariant } from '@/store';
 import { useEditorScope } from '../context';
-import { applyBrand, brandMessage } from '../variants/applyBrand';
+import { applyBrand, brandMessage, hasSwatchPicks, PICKS_RESET } from '../variants/applyBrand';
 
 /** Upload your own logo for the active variant. It replaces the fetched one, for this company from now on. */
 export function LogoCard() {
@@ -11,15 +11,20 @@ export function LogoCard() {
   const announce = useAnnounce();
   const inputId = useId();
   const input = useRef<HTMLInputElement>(null);
-  const [state, setState] = useState<{ readonly kind: 'idle' | 'reading' } | { readonly kind: 'error'; readonly message: string }>({ kind: 'idle' });
+  const [state, setState] = useState<
+    { readonly kind: 'idle' | 'reading'; readonly note?: string } | { readonly kind: 'error'; readonly message: string }
+  >({ kind: 'idle' });
   if (!variant) return null;
   const { logo, domain, palette } = variant.brand;
 
   const onFile = async (file: File | undefined) => {
     if (!file) return;
     setState({ kind: 'reading' });
-    const result = await applyBrand({ dispatch, announce }, resumeId, variantId, variantLabel, { name: variant.label, logoFile: file });
-    setState(result.ok ? { kind: 'idle' } : { kind: 'error', message: brandMessage(variantLabel, result) });
+    const picksReset = hasSwatchPicks(variant.roles);
+    const query = { name: variant.label, logoFile: file };
+    const result = await applyBrand({ dispatch, announce }, resumeId, variantId, variantLabel, query, { picksReset });
+    if (!result.ok) setState({ kind: 'error', message: brandMessage(variantLabel, result) });
+    else setState(picksReset ? { kind: 'idle', note: PICKS_RESET } : { kind: 'idle' });
     if (input.current) input.current.value = '';
   };
 
@@ -50,6 +55,11 @@ export function LogoCard() {
         <p id={`${inputId}-hint`} className="field-hint">
           PNG, SVG or JPG, up to 2 MB. It replaces the fetched logo for {variantLabel}, in this variant and in new ones.
         </p>
+        {state.kind !== 'error' && state.note ? (
+          <p className="field-hint" data-testid="picks-reset-note">
+            {state.note}
+          </p>
+        ) : null}
         {state.kind === 'error' ? (
           <p id={`${inputId}-error`} className="field-error">
             {state.message}

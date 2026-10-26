@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { announcements, openEditor, saveStatus, shot } from './helpers';
+import { announcements, openEditor, saveStatus, shot, solidPng } from './helpers';
 
 // Design → Colors: pick which logo swatch drives the accent. The logo is an uploaded four-square SVG
 // (#f25022 #7fba00 #00a4ef #ffb900), so the test owns its swatches and never touches the network.
@@ -52,4 +52,10 @@ test('pick the blue swatch as the accent: the banner turns blue on a white page,
   await expect(accentGroup(page).getByRole('radio', { name: 'Automatic' })).toBeChecked();
   await expect.poll(() => surfaceBg(page, 'accent')).toBe(automatic);
   await expect(page.getByTestId('contrast-note-accent')).toHaveCount(0);
+
+  // A new logo resets numeric picks (its swatches differ), and the Logo card says so.
+  await accentGroup(page).getByRole('radio', { name: /^blue #/ }).check();
+  await page.getByLabel('Upload a logo for Microsoft').setInputFiles({ name: 'logo.png', mimeType: 'image/png', buffer: Buffer.from(solidPng('#5c2d91'), 'base64') });
+  await expect(page.getByTestId('picks-reset-note')).toHaveText('Your color picks were reset to automatic, because the new logo has different colors.');
+  await expect(accentGroup(page).getByRole('radio', { name: 'Automatic' })).toBeChecked();
 });

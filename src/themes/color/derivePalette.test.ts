@@ -132,8 +132,8 @@ describe('derivePalette', () => {
     // Including tinted grounds, and the name-hash fallback palettes the seeded variants use.
     expect(derivePalette(FIXTURE_PALETTES['yellow-on-mid-grey'], DEFAULT_ROLES).surfaces.page.bg).toBe('#ffffff');
     for (const name of ['General', 'Microsoft', 'Experian']) expect(derivePalette(testBrand(name).palette, DEFAULT_ROLES).surfaces.page.bg).toBe('#ffffff');
-    // The brand stays in the accent fill.
-    expect(derivePalette(FIXTURE_PALETTES['microsoft-like'], DEFAULT_ROLES).surfaces.accent.bg).toBe('#f25022');
+    // The brand stays in the accent fill (a little darker, so its text can be white: deviation 59).
+    expect(derivePalette(FIXTURE_PALETTES['microsoft-like'], DEFAULT_ROLES).surfaces.accent.bg).toBe('#d93a00');
   });
 
   it('prints logo palettes (no ground swatch) on pure white paper, with the brand in the accent', () => {
@@ -172,10 +172,21 @@ describe('derivePalette', () => {
 
   it('fills the accent surface with the logo color when it already stands out from the page', () => {
     expect(derivePalette(FIXTURE_PALETTES['experian-like'], DEFAULT_ROLES).surfaces.accent.bg).toBe('#ba2f7d');
-    expect(derivePalette(FIXTURE_PALETTES['microsoft-like'], DEFAULT_ROLES).surfaces.accent.bg).toBe('#f25022');
     // Pure yellow is 1.07:1 on white, so the fill darkens until it shows (3:1) and keeps its hue.
     const yellow = hexToOklch(derivePalette(FIXTURE_PALETTES['pure-yellow'], DEFAULT_ROLES).surfaces.accent.bg);
     expect(hueDistance(yellow.h, 109.77)).toBeLessThan(3);
+  });
+
+  it('darkens a pale fill a little so its text can be white, when that keeps AA (deviation 59)', () => {
+    for (const accent of [1, 3]) {
+      const { accent: fill } = derivePalette(FIXTURE_PALETTES['microsoft-like'], { ...DEFAULT_ROLES, accent }).surfaces;
+      expect(contrastRatio(fill.text, fill.bg)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio('#ffffff', fill.bg)).toBeGreaterThan(contrastRatio('#000000', fill.bg));
+    }
+    // Microsoft blue #00a4ef → a darker blue with white text, not a light blue with dark text.
+    expect(derivePalette(FIXTURE_PALETTES['microsoft-like'], { ...DEFAULT_ROLES, accent: 3 }).surfaces.accent.bg).toBe('#007cb6');
+    // A neon green on a dark page is not darkened.
+    expect(derivePalette(FIXTURE_PALETTES.neon, DEFAULT_ROLES).surfaces.accent.bg).toBe('#ff00ff');
   });
 
   it('keeps the brand hue when it has to adjust a color', () => {
