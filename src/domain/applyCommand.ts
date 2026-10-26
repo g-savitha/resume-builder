@@ -152,6 +152,12 @@ function reduce(doc: ResumeDocument, cmd: Command): ResumeDocument {
       if (!variant || deepEqual(variant.themeBase, cmd.base)) return doc;
       return putVariant(doc, { ...variant, themeBase: cmd.base });
     }
+    case 'variant/setPersona': {
+      const variant = doc.variants[cmd.variantId];
+      if (!variant || deepEqual(variant.persona ?? null, cmd.persona)) return doc;
+      const { persona: _old, ...rest } = variant;
+      return putVariant(doc, cmd.persona ? { ...rest, persona: cmd.persona } : rest);
+    }
     case 'variant/delete': {
       if (!doc.variants[cmd.variantId] || doc.variantOrder.length <= 1) return doc;
       const variants: Record<VariantId, Variant> = { ...doc.variants };

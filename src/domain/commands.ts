@@ -1,4 +1,5 @@
 import type { BrandProfile, RoleChoice, ThemeBaseRef } from './brand';
+import type { CompanyPersona } from './persona';
 import type { Customization, FieldValue, ItemId, NodeId, Section, SectionId, SectionKind, VariantId } from './model';
 
 /** Every edit. All idempotent: carry target values/indices and client ids, never deltas. */
@@ -30,6 +31,7 @@ export type Command =
   | { readonly type: 'variant/customize'; readonly variantId: VariantId; readonly patch: Partial<Customization> }
   | { readonly type: 'variant/setRoles'; readonly variantId: VariantId; readonly roles: RoleChoice }
   | { readonly type: 'variant/setBase'; readonly variantId: VariantId; readonly base: ThemeBaseRef }
+  | { readonly type: 'variant/setPersona'; readonly variantId: VariantId; readonly persona: CompanyPersona | null }
   | { readonly type: 'variant/delete'; readonly variantId: VariantId };
 
 export type CommandType = Command['type'];

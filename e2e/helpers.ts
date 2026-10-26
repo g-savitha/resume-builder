@@ -32,6 +32,22 @@ export async function stubBrandApi(page: Page, answer: BrandStub): Promise<URL[]
   return calls;
 }
 
+/**
+ * Stubs GET /api/persona (api/persona.ts would fetch the company's real homepage). The default, installed by
+ * `openEditor`, answers nothing usable, so variants get no persona and keep the standard headings.
+ */
+const personaStubbed = new WeakSet<Page>();
+export async function stubPersonaApi(page: Page, persona: unknown): Promise<URL[]> {
+  const calls: URL[] = [];
+  personaStubbed.add(page);
+  await page.unroute('**/api/persona?*');
+  await page.route('**/api/persona?*', (route) => {
+    calls.push(new URL(route.request().url()));
+    return route.fulfill({ json: persona ? { v: 1, status: 'ok', persona } : { v: 1, status: 'bad-request', message: 'stub' } });
+  });
+  return calls;
+}
+
 /** A width×width PNG: a solid square of `hex` inset on a transparent background. Built by hand (zlib only). */
 export function solidPng(hex: string, width = 32, inset = 4): string {
   const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
@@ -77,6 +93,7 @@ const RECORD_ANNOUNCEMENTS = () => {
 /** Opens the builder with a fresh profile and waits until the saved (or seeded) resume has loaded. */
 export async function openEditor(page: Page) {
   if (!brandStubbed.has(page)) await stubBrandApi(page, NO_BRAND);
+  if (!personaStubbed.has(page)) await stubPersonaApi(page, null);
   await page.addInitScript(RECORD_ANNOUNCEMENTS);
   await page.goto('/');
   await expect(page.locator('[data-app-state="ready"]')).toBeVisible();

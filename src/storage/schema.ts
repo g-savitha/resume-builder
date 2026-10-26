@@ -3,6 +3,10 @@
 // Each branded id/value is cast only after the schema has validated the underlying primitive.
 import * as v from 'valibot';
 import {
+  CENTERPIECE_IDS,
+  INDUSTRY_IDS,
+  TONE_IDS,
+  VOCAB_SET_IDS,
   CONTACT_KINDS,
   parseDataUrl,
   parsePartialDate,
@@ -151,6 +155,15 @@ const variant: v.GenericSchema<unknown, Variant> = v.strictObject({
   roles,
   customization,
   hidden: v.array(id<NodeId>()),
+  persona: v.exactOptional(
+    v.strictObject({
+      industry: v.picklist(INDUSTRY_IDS),
+      tone: v.picklist(TONE_IDS),
+      vocab: v.picklist(VOCAB_SET_IDS),
+      centerpiece: v.picklist(CENTERPIECE_IDS),
+      source: v.picklist(['ai', 'rules']),
+    }),
+  ),
 });
 
 export const documentSchema: v.GenericSchema<unknown, ResumeDocument> = v.strictObject({

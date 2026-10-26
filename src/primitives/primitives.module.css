@@ -95,3 +95,32 @@
   list-style: none;
   font-size: var(--rs-small, 9pt);
 }
+
+/* ── centerpieces (persona, M4b) ── */
+.identityRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12pt;
+}
+.dial {
+  display: flex;
+  align-items: center;
+  gap: 6pt;
+  max-width: 45%;
+  flex: none;
+}
+.dialRing {
+  display: block;
+  flex: none;
+}
+.dialText {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--rs-small, 9pt);
+  line-height: 1.25;
+}
+.dialValue {
+  font-size: var(--rs-h2, 12pt);
+  color: var(--fg-heading);
+}

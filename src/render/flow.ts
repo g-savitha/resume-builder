@@ -3,6 +3,7 @@ import type { FlowBlock } from '@/engine';
 import type { BlockShapeProps } from '@/primitives';
 import { projectItem, sectionLabel, type Projected } from '@/sections';
 import type { ResolvedTheme } from '@/themes';
+import { strongestMetric } from './centerpiece';
 
 /** What BlockView needs to draw one section, minus the key and the atom range. */
 export type BlockData = BlockShapeProps & { readonly heading: string };
@@ -40,10 +41,22 @@ function toBlockData(projected: readonly Projected[], theme: ResolvedTheme, head
  * and the engine's reuse are keyed on it.
  */
 export function buildFlow(view: ResumeView, theme: ResolvedTheme): RenderBlock[] {
-  return view.sections.flatMap(({ section, items }) => {
+  const blocks = view.sections.flatMap(({ section, items }) => {
     const projected = items.flatMap((item) => projectItem(section, item) ?? []);
-    const data = toBlockData(projected, theme, sectionLabel(section));
-    if (!data) return [];
-    return [{ key: section.id, contentHash: hashString(JSON.stringify(data)), view: data }];
+    // A renamed section keeps its title; otherwise the persona's word for its kind, then the default label.
+    const heading = section.title?.trim() ? sectionLabel(section) : (theme.headings[section.kind] ?? sectionLabel(section));
+    const data = toBlockData(projected, theme, heading);
+    return data ? [{ key: section.id, data }] : [];
   });
+  const piece = theme.centerpiece === 'score-dial' ? scoreDial(blocks.map((b) => b.data)) : undefined;
+  return blocks.map(({ key, data }) => {
+    const view = piece && data.shape === 'identity' ? { ...data, centerpiece: piece } : data;
+    return { key, contentHash: hashString(JSON.stringify(view)), view };
+  });
+}
+
+/** The score dial, personalized with the candidate's strongest metric; none when they have no metric. */
+function scoreDial(blocks: readonly BlockData[]) {
+  const dial = strongestMetric(blocks.flatMap((b) => (b.shape === 'entries' ? b.content : [])));
+  return dial ? ({ kind: 'score-dial', dial } as const) : undefined;
 }

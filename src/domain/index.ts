@@ -1,6 +1,18 @@
 // domain: the normalized resume model, its commands and read model. Pure; no React, no storage.
 export type * from './brand';
 export type * from './model';
+export {
+  CENTERPIECE_IDS,
+  INDUSTRY_IDS,
+  parsePersona,
+  TONE_IDS,
+  VOCAB_SET_IDS,
+  type CenterpieceId,
+  type CompanyPersona,
+  type IndustryId,
+  type ToneId,
+  type VocabSetId,
+} from './persona';
 export { CONTACT_KINDS, DEFAULT_CUSTOMIZATION, DEFAULT_ROLES } from './model';
 export type { Command, CommandType } from './commands';
 export { applyCommand } from './applyCommand';
