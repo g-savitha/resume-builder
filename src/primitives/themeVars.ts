@@ -1,6 +1,8 @@
 /**
  * The type and spacing variables the block kit's CSS reads (primitives.module.css). A theme must set every one;
  * themes/ types its output as Record<ThemeVar, string>, and a test keeps this list equal to what the CSS uses.
+ * Optional, not listed: the multi-colour brand's `--brand-strip` / `--brand-strip-v` (set only when it is on) and
+ * the mark slots (`markVar`); `--fg-mark` is set by the blocks themselves.
  */
 export const THEME_VARS = [
   '--rs-font',

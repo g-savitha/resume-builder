@@ -138,6 +138,11 @@ export interface Customization {
     readonly bullets: boolean;
     readonly style: 'line' | 'badge';
   };
+  /**
+   * Multi-colour brand: every distinct logo color in decorative places (a strip, section rules, card edges).
+   * Absent = off; applyCommand never stores `false`, so existing resumes and exports are unchanged.
+   */
+  readonly multiColor?: true;
 }
 
 export const DEFAULT_CUSTOMIZATION: Customization = {

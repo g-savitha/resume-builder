@@ -30,5 +30,6 @@
   font-size: 22pt;
   font-weight: 800;
   line-height: 1;
-  color: var(--fg-accentText);
+  /* Multi-colour brand: each episode number in the next logo color (large decorative text, ≥ 3:1). */
+  color: var(--fg-mark, var(--fg-accentText));
 }

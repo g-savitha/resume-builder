@@ -1,5 +1,5 @@
 import fc from 'fast-check';
-import type { LogoPalette } from '@/domain';
+import { brandColors, type LogoPalette } from '@/domain';
 import { extractPalette, type Pixels } from './extractPalette';
 
 type Rgba = readonly [number, number, number, number];
@@ -89,5 +89,55 @@ describe('extractPalette', () => {
       }),
       { numRuns: 300 },
     );
+  });
+});
+
+describe('extractPalette → brandColors (multi-colour brand)', () => {
+  /** 50/50 sRGB mix: what an anti-aliased edge pixel between two colors looks like. */
+  const mix = (a: Rgba, b: Rgba): Rgba => [(a[0] + b[0]) >> 1, (a[1] + b[1]) >> 1, (a[2] + b[2]) >> 1, 255];
+  const near = (got: readonly number[], want: readonly number[]) =>
+    want.every((w) => got.some((h) => hueDistance(h, w) < 4)) && got.length === want.length;
+
+  it('a Microsoft-like 2×2 grid with a grey wordmark on white gives exactly its four colors', () => {
+    const squares = ['#f25022', '#7fba00', '#00a4ef', '#ffb900'] as const;
+    // Four 30px squares with a 2px white gap, every edge pixel blended with the white, and a grey wordmark bar.
+    const px = image(160, 70, (x, y) => {
+      if (x >= 72 && x < 156 && y >= 26 && y < 42) return hex('#737373');
+      const [gx, gy] = [x - 3, y - 3];
+      if (gx < 0 || gy < 0 || gx >= 62 || gy >= 62) return WHITE;
+      const [cx, cy] = [gx % 32, gy % 32];
+      if (cx >= 30 || cy >= 30) return WHITE;
+      const color = hex(squares[(gx < 32 ? 0 : 1) + (gy < 32 ? 0 : 2)] ?? '#000000');
+      return cx === 0 || cy === 0 || cx === 29 || cy === 29 ? mix(color, WHITE) : color;
+    });
+    const colors = brandColors(extractPalette(px));
+    expect(near(colors.map((c) => c.h), [35.6, 128.9, 239.6, 81]), JSON.stringify(colors)).toBe(true);
+  });
+
+  it('drops a blend seam between two touching colors', () => {
+    const [red, blue] = [hex('#ff0000'), hex('#0000ff')];
+    const px = image(41, 20, (x) => (x === 20 ? mix(red, blue) : x < 20 ? red : blue));
+    expect(brandColors(extractPalette(px))).toHaveLength(2);
+  });
+
+  it('a Google-like four-color ring on transparent gives four colors, largest arc first', () => {
+    const arcs = ['#ea4335', '#fbbc05', '#34a853', '#4285f4'] as const;
+    const px = image(64, 64, (x, y) => {
+      const r = Math.hypot(x - 32, y - 32);
+      if (r < 18 || r > 28) return TRANSPARENT;
+      const a = (Math.atan2(y - 32, x - 32) * 180) / Math.PI + 180; // 0..360
+      // Unequal arcs: blue 40%, then red, yellow, green.
+      return hex(a < 144 ? arcs[3] : a < 234 ? arcs[0] : a < 297 ? arcs[1] : arcs[2]);
+    });
+    const colors = brandColors(extractPalette(px));
+    expect(colors).toHaveLength(4);
+    expect(hueDistance(colors[0]?.h ?? 0, 259)).toBeLessThan(5); // blue, the largest arc
+  });
+
+  it('a one-color logo gives one color; a black-on-white logo gives none', () => {
+    const one = image(32, 32, (x, y) => (Math.hypot(x - 16, y - 16) < 10 ? hex('#e50914') : WHITE));
+    expect(brandColors(extractPalette(one))).toHaveLength(1);
+    const mono = image(32, 32, (x, y) => (Math.hypot(x - 16, y - 16) < 10 ? hex('#111111') : WHITE));
+    expect(brandColors(extractPalette(mono))).toEqual([]);
   });
 });

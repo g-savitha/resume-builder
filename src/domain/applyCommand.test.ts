@@ -119,6 +119,18 @@ describe('applyCommand', () => {
     expect(reset.variants[variantA]?.customization).not.toHaveProperty('fontPair');
     expect(run(reset, { type: 'variant/customize', variantId: variantA, patch: { fontPair: null } })).toBe(reset);
   });
+
+  it('multi-colour brand is stored only while on, so turning it off restores the exact customization', () => {
+    const before = doc.variants[variantA]?.customization;
+    const on = run(doc, { type: 'variant/customize', variantId: variantA, patch: { multiColor: true } });
+    expect(on.variants[variantA]?.customization.multiColor).toBe(true);
+    const kept = run(on, { type: 'variant/customize', variantId: variantA, patch: { fontScale: 1.05 } });
+    expect(kept.variants[variantA]?.customization.multiColor).toBe(true);
+    const off = run(on, { type: 'variant/customize', variantId: variantA, patch: { multiColor: false } });
+    expect(off.variants[variantA]?.customization).toEqual(before);
+    expect(off.variants[variantA]?.customization).not.toHaveProperty('multiColor');
+    expect(run(doc, { type: 'variant/customize', variantId: variantA, patch: { multiColor: false } })).toBe(doc);
+  });
 });
 
 /* ── properties over random command sequences ── */

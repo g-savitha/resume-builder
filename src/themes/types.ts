@@ -56,6 +56,8 @@ export interface ThemeBase {
   readonly roleHints: RoleChoice;
   /** Presets only: their bespoke identity / entry-head components (primitives' escape hatch). */
   readonly bespoke?: BespokeBlocks;
+  /** `ignore`: the theme stays plain when the variant turns on the multi-colour brand (ATS plain). */
+  readonly multiColor?: 'ignore';
 }
 
 /** Everything a renderer needs. Derived, never stored. */
@@ -75,4 +77,6 @@ export interface ResolvedTheme {
   readonly headings: Readonly<Record<string, string>>;
   /** The persona's centerpiece, drawn in the identity block. */
   readonly centerpiece: CenterpieceId;
+  /** How many logo colors the multi-colour brand draws; 0 when it is off (or the theme ignores it). */
+  readonly brandColorCount: number;
 }

@@ -78,4 +78,14 @@ describe('buildFlow', () => {
     const off = applyCommand(doc, { type: 'variant/customize', variantId: v, patch: { icons: { contact: false, headings: false, bullets: false, style: 'line' } } });
     expect(flowOf(off, v).every((b) => b.view.icons === undefined)).toBe(true);
   });
+
+  it('multi-colour brand: off adds nothing; on gives each section the next logo color slot', () => {
+    const { doc, ids } = buildDocument();
+    expect(flowOf(doc).every((b) => b.view.brand === undefined)).toBe(true);
+    const on = applyCommand(doc, { type: 'variant/customize', variantId: ids.variants[0], patch: { multiColor: true } });
+    const flow = flowOf(on);
+    const count = flow[0]!.view.brand?.count ?? 0;
+    expect(count).toBeGreaterThan(0);
+    expect(flow.map((b) => b.view.brand?.start)).toEqual(flow.map((_, i) => i % count));
+  });
 });

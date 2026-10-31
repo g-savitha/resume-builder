@@ -1,5 +1,6 @@
 // themes/color: the contrast core. derivePalette is the sole minter of AccessiblePalette; ensureContrast
 // (the sole minter of ContrastSafe) stays private to this folder and is deliberately not exported here.
+export { brandDecor, type BrandDecor } from './brandDecor';
 export { derivePalette } from './derivePalette';
 export { colorName, rolePreview, swatchOptions, type RoleColors, type RolePreview, type SwatchOption } from './swatches';
 export {

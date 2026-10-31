@@ -14,4 +14,6 @@ export const atsPlain: ThemeBase = {
     headingCase: 'none',
   },
   roleHints: DEFAULT_ROLES,
+  // Parsers read this theme; decoration adds nothing for them (features/multicolor.md).
+  multiColor: 'ignore',
 };

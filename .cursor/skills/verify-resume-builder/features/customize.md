@@ -10,6 +10,7 @@ Two more archetypes, **Sidebar** (name, contacts, skills, certifications and edu
 - `customize-type`: Font (Theme default, Serif, Sans, System UI, Humanist), Text size, Line spacing, Section spacing.
 - `customize-page`: Page size and Margins re-paginate the preview.
 - `customize-icons`: Contact icons (on by default), Section heading icons, Brand-colored bullets, Icon style (line / badge). Icons carry `data-icon="<name>"`.
+- `customize-multicolor`: "Multi-colour brand" (see [multicolor.md](./multicolor.md)).
 - `customize-boost`: "Extra-high text contrast (7:1)" stores `roles.boost = 1`; body text targets 7:1 where the surface allows.
 
 ## How to get to it (user POV)
