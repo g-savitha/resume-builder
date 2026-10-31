@@ -146,6 +146,7 @@ const customization: v.GenericSchema<unknown, Customization> = v.strictObject({
   marginsMm: v.picklist([10, 15, 20, 25]),
   showLogo: v.boolean(),
   icons: v.strictObject({ contact: v.boolean(), headings: v.boolean(), bullets: v.boolean(), style: v.picklist(['line', 'badge']) }),
+  multiColor: v.exactOptional(v.literal(true)),
 });
 const variant: v.GenericSchema<unknown, Variant> = v.strictObject({
   id: id<VariantId>(),

@@ -52,8 +52,12 @@ export function buildFlow(view: ResumeView, theme: ResolvedTheme): RenderBlock[]
     return data ? [{ key: section.id, region, data: withIcons(data, section, theme.customization.icons) }] : [];
   });
   const piece = theme.centerpiece === 'score-dial' ? scoreDial(blocks.map((b) => b.data)) : undefined;
+  const count = theme.brandColorCount;
+  let slot = 0;
   return blocks.map(({ key, region, data }) => {
-    const view = piece && data.shape === 'identity' ? { ...data, centerpiece: piece } : data;
+    const withPiece = piece && data.shape === 'identity' ? { ...data, centerpiece: piece } : data;
+    // Multi-colour brand: each section takes the next logo color, so its rule differs from its neighbours'.
+    const view: BlockData = count > 0 ? { ...withPiece, brand: { count, start: data.shape === 'identity' ? 0 : slot++ % count } } : withPiece;
     return { key, region, contentHash: hashString(JSON.stringify(view)), view };
   });
 }

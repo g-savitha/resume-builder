@@ -3,7 +3,10 @@ import type { CompanyPersona } from './persona';
 import type { Customization, FieldValue, FontPairId, ItemId, NodeId, Section, SectionId, SectionKind, VariantId } from './model';
 
 /** A partial customization; `fontPair: null` goes back to the theme's own font. */
-export type CustomizationPatch = Partial<Omit<Customization, 'fontPair'>> & { readonly fontPair?: FontPairId | null };
+export type CustomizationPatch = Partial<Omit<Customization, 'fontPair' | 'multiColor'>> & {
+  readonly fontPair?: FontPairId | null;
+  readonly multiColor?: boolean;
+};
 
 /** Every edit. All idempotent: carry target values/indices and client ids, never deltas. */
 export type Command =

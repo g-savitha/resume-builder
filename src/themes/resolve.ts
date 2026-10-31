@@ -1,7 +1,7 @@
 import { FOREGROUND_ROLES, hashString, SURFACE_NAMES, type Customization, type ThemeBaseRef, type Variant } from '@/domain';
-import { surfaceVar, type ThemeVar } from '@/primitives';
+import { markVar, surfaceVar, type ThemeVar } from '@/primitives';
 import { ARCHETYPES, FALLBACK_ARCHETYPE, type ImplementedArchetype } from './archetypes';
-import { derivePalette, type AccessiblePalette } from './color';
+import { brandDecor, derivePalette, type AccessiblePalette, type BrandDecor } from './color';
 import type { ResolvedTheme, ThemeBase } from './types';
 import { personaChoices } from './vocab';
 import { fontStack } from './fonts';
@@ -57,6 +57,23 @@ function colorVars(p: AccessiblePalette): Record<`--${string}`, string> {
   return vars;
 }
 
+/** Hard-stop gradient: one equal segment per color, in order. */
+function segments(direction: 'right' | 'bottom', colors: readonly string[]): string {
+  const n = colors.length;
+  const stops = colors.map((c, i) => `${c} ${pct(i / n)} ${pct((i + 1) / n)}`);
+  return `linear-gradient(to ${direction}, ${stops.join(', ')})`;
+}
+const pct = (x: number) => `${String(Math.round(x * 10000) / 100)}%`;
+
+/** The multi-colour brand's variables: the strips (horizontal and vertical) and every surface's mark slots. */
+function decorVars(d: BrandDecor): Record<`--${string}`, string> {
+  const vars: Record<`--${string}`, string> = { '--rs-strip': segments('right', d.strip), '--rs-strip-v': segments('bottom', d.strip) };
+  for (const surface of SURFACE_NAMES) {
+    for (const [k, mark] of d.marks[surface].entries()) vars[markVar(surface, k)] = mark;
+  }
+  return vars;
+}
+
 /**
  * The one way to get a theme for a variant: its archetype + the palette derived from its pinned brand snapshot
  * and role choice. Pure and synchronous (M3 archetypes use system fonts; presets lazy-load in M6).
@@ -66,9 +83,12 @@ export function resolveTheme(variant: Variant): ResolvedTheme {
   const c = variant.customization;
   const palette = derivePalette(variant.brand.palette, variant.roles);
   const geometry = geometryVars(base, c);
-  const cssVars = { ...colorVars(palette), ...geometry };
+  const decor = c.multiColor && base.multiColor !== 'ignore' ? brandDecor(variant.brand.palette, variant.roles, palette) : undefined;
+  const brandColorCount = decor?.strip.length ?? 0;
+  const cssVars = { ...colorVars(palette), ...(decor ? decorVars(decor) : {}), ...geometry };
   // Page size and margins are not here: the engine compares them itself, and the measurer keys on width.
-  const styleHash = hashString(JSON.stringify([base.id, base.blocks, base.sideBlocks, base.layout, c.icons, geometry]));
+  // The multi-colour strip and thicker rules change heights, so whether it is on is geometry too.
+  const styleHash = hashString(JSON.stringify([base.id, base.blocks, base.sideBlocks, base.layout, c.icons, brandColorCount > 0, geometry]));
   const sectionGapPt = SECTION_GAP[c.sectionGap];
   const { headings, centerpiece } = personaChoices(variant);
   return {
@@ -81,5 +101,6 @@ export function resolveTheme(variant: Variant): ResolvedTheme {
     sectionGapPt,
     headings,
     centerpiece,
+    brandColorCount,
   };
 }

@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import type { EntryContent, IdentityContent, RichText, ShapeName, SurfaceName, TagGroupContent } from '@/domain';
 import { Icon, type IconName } from '@/icons';
 import { useBespoke } from './bespoke';
@@ -5,7 +6,7 @@ import { Atom, inRange, type AtomRange } from './Atom';
 import { Centerpiece, type CenterpieceData } from './centerpieces';
 import { formatDateRange } from './dates';
 import { richAtomCount, RichTextView } from './RichTextView';
-import { OnSurface } from './surface';
+import { fgMarkVar, OnSurface } from './surface';
 import { Heading, HeadingLevel, Text } from './text';
 import styles from './primitives.module.css';
 
@@ -34,6 +35,20 @@ export interface BlockIcons {
   readonly bullets?: boolean;
 }
 
+/**
+ * Multi-colour brand (resolved by render when the variant turns it on): the block draws its section rule, entry
+ * edges and the identity's strip in the logo's colors. Mark `k` cycles through `count` colors from `start`.
+ */
+export interface BrandMarks {
+  readonly count: number;
+  /** This block's color slot (its position among the resume's sections). */
+  readonly start: number;
+}
+
+/** `--rs-mark` for slot `k`: the brand color the decoration reads, already contrast-solved for its surface. */
+const markStyle = (brand: BrandMarks | undefined, offset = 0): CSSProperties | undefined =>
+  brand ? ({ '--rs-mark': `var(${fgMarkVar((brand.start + offset) % Math.max(1, brand.count))})` } as CSSProperties) : undefined;
+
 /** What a block of each shape renders: entries and tags are one per item; prose and identity are one per section. */
 export type BlockContent<S extends ShapeName> = S extends 'entries' ? readonly EntryContent[]
   : S extends 'tags' ? readonly TagGroupContent[]
@@ -48,6 +63,7 @@ export type BlockShapeProps = {
     /** Identity only: the persona's centerpiece, drawn beside the name. */
     readonly centerpiece?: CenterpieceData;
     readonly icons?: BlockIcons;
+    readonly brand?: BrandMarks;
   };
 }[ShapeName];
 
@@ -85,9 +101,9 @@ export function BlockView(props: BlockViewProps) {
         'data-keep-together': props.shape === 'identity' ? '' : undefined,
       }}
     >
-      <div className={styles.block} data-bullets={props.icons?.bullets ? 'accent' : undefined}>
+      <div className={styles.block} data-bullets={props.icons?.bullets ? 'accent' : undefined} data-multicolor={props.brand ? String(props.brand.count) : undefined}>
         {showHeading ? (
-          <div className={styles.sectionHead} data-block-chrome="">
+          <div className={styles.sectionHead} data-block-chrome="" style={markStyle(props.brand)}>
             <Heading>
               {props.icons?.heading ? <ResumeIcon name={props.icons.heading} style={props.icons.style} /> : null}
               {range.continued ? continuedHeading(heading) : heading}
@@ -103,7 +119,7 @@ export function BlockView(props: BlockViewProps) {
 function ShapeBody(props: BlockViewProps) {
   switch (props.shape) {
     case 'entries':
-      return <Entries entries={props.content} style={props.style} range={props.range} />;
+      return <Entries entries={props.content} style={props.style} range={props.range} brand={props.brand} />;
     case 'tags':
       return props.content.map((group, i) => (inRange(i, props.range) ? <TagLine key={i} i={i} group={group} chips={props.style === 'chips'} /> : null));
     case 'prose':
@@ -140,11 +156,12 @@ interface EntriesProps {
   readonly entries: readonly EntryContent[];
   readonly style: BlockVariants['entries'];
   readonly range: AtomRange;
+  readonly brand?: BrandMarks | undefined;
 }
-function Entries({ entries, style, range }: EntriesProps) {
+function Entries({ entries, style, range, brand }: EntriesProps) {
   return numberEntries(entries).map(({ entry, first, count }, k) =>
     first + count <= range.from || first >= range.to ? null : (
-      <Entry key={k} entry={entry} index={k} style={style} base={first} range={range} />
+      <Entry key={k} entry={entry} index={k} style={style} base={first} range={range} brand={brand} />
     ),
   );
 }
@@ -156,8 +173,9 @@ interface EntryProps {
   /** Index of the entry's header atom in the block. */
   readonly base: number;
   readonly range: AtomRange;
+  readonly brand?: BrandMarks | undefined;
 }
-function Entry({ entry, index, style, base, range }: EntryProps) {
+function Entry({ entry, index, style, base, range, brand }: EntryProps) {
   const Bespoke = useBespoke().entryHead;
   const bodyAtoms = richAtomCount(entry.body);
   const tagAtom = base + 1 + bodyAtoms;
@@ -171,7 +189,7 @@ function Entry({ entry, index, style, base, range }: EntryProps) {
     entry.title
   );
   return (
-    <div className={style === 'card' ? `${styles.entry} ${styles.entryCard}` : styles.entry}>
+    <div className={style === 'card' ? `${styles.entry} ${styles.entryCard}` : styles.entry} style={markStyle(brand, index)}>
       {inRange(base, range) ? (
         <Atom
           i={base}

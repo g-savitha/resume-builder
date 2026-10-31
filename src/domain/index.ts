@@ -24,3 +24,4 @@ export { formatRichText, isRichTextEmpty, parseRichText, richTextToPlain } from 
 export { deepEqual } from './equal';
 export { FOREGROUND_ROLES, SURFACE_NAMES, type ForegroundRole, type SurfaceName } from './surface';
 export { hashString } from './hash';
+export { brandColors, MAX_BRAND_COLORS } from './brandColors';

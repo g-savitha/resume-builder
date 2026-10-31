@@ -139,10 +139,12 @@ function reduce(doc: ResumeDocument, cmd: Command): ResumeDocument {
     case 'variant/customize': {
       const variant = doc.variants[cmd.variantId];
       if (!variant) return doc;
-      const { fontPair, ...rest } = cmd.patch;
-      const { fontPair: oldPair, ...kept } = { ...variant.customization, ...rest };
+      const { fontPair, multiColor, ...rest } = cmd.patch;
+      const { fontPair: oldPair, multiColor: oldMulti, ...kept } = { ...variant.customization, ...rest };
       const pair = fontPair === null ? undefined : (fontPair ?? oldPair);
-      const customization: Customization = pair === undefined ? kept : { ...kept, fontPair: pair };
+      // Off is stored as absent, so a resume that never turned it on keeps its exact shape.
+      const multi = (multiColor ?? oldMulti === true) ? ({ multiColor: true } as const) : {};
+      const customization: Customization = { ...kept, ...(pair === undefined ? {} : { fontPair: pair }), ...multi };
       if (deepEqual(customization, variant.customization)) return doc;
       return putVariant(doc, { ...variant, customization });
     }

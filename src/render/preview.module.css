@@ -74,3 +74,18 @@
   bottom: 0;
   background: var(--bg);
 }
+/* Multi-colour brand: a vertical strip of the logo colors on the band's inner edge (transparent when it is off). */
+.band::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4pt;
+  background: var(--rs-strip-v, transparent);
+}
+.band[data-band='left']::after {
+  right: 0;
+}
+.band[data-band='right']::after {
+  left: 0;
+}

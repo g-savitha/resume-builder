@@ -84,6 +84,12 @@ export function CustomizeCard() {
         <Select label="Icon style" value={c.icons.style} options={ICON_STYLES} onPick={(v) => { icons({ style: v }, 'Icon style'); }} />
       </fieldset>
       <Check
+        label="Multi-colour brand"
+        hint="Every logo color in the strip, section rules and accents. Text keeps its contrast-safe color; ATS plain stays plain."
+        checked={c.multiColor === true}
+        onToggle={(on) => { patch({ multiColor: on }, 'Multi-colour brand'); }}
+      />
+      <Check
         label="Extra-high text contrast (7:1)"
         hint="Darkens body text to WCAG AAA where the background allows."
         checked={variant.roles.boost === 1}

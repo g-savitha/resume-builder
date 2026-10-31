@@ -135,7 +135,7 @@
 
 /* ── M5 variants: card entries, chips, rounded identity, icons ── */
 .entryCard {
-  border-left: 3px solid var(--fg-icon);
+  border-left: 3px solid var(--rs-mark, var(--fg-icon));
   padding-left: 8pt;
 }
 .chipLabel {
@@ -180,4 +180,17 @@
 .iconBadge svg {
   width: 0.8em;
   height: 0.8em;
+}
+
+/* ── multi-colour brand: decoration in every logo color (rules and edges ≥ 3:1; the strip is pure decoration) ── */
+.block[data-multicolor] .sectionHead {
+  border-bottom: 2px solid var(--rs-mark, var(--fg-rule));
+}
+/* The strip under the identity: one equal segment per logo color, from --rs-strip (set by the theme). */
+.block[data-multicolor] .identity::after {
+  content: '';
+  display: block;
+  height: 4pt;
+  padding-top: 4pt;
+  background: var(--rs-strip, var(--fg-rule)) content-box;
 }
