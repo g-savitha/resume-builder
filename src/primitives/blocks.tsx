@@ -45,9 +45,9 @@ export interface BrandMarks {
   readonly start: number;
 }
 
-/** `--rs-mark` for slot `k`: the brand color the decoration reads, already contrast-solved for its surface. */
+/** `--fg-mark` for slot `k`: the brand color the decoration reads, already contrast-solved for its surface. */
 const markStyle = (brand: BrandMarks | undefined, offset = 0): CSSProperties | undefined =>
-  brand ? ({ '--rs-mark': `var(${fgMarkVar((brand.start + offset) % Math.max(1, brand.count))})` } as CSSProperties) : undefined;
+  brand ? ({ '--fg-mark': `var(${fgMarkVar((brand.start + offset) % Math.max(1, brand.count))})` } as CSSProperties) : undefined;
 
 /** What a block of each shape renders: entries and tags are one per item; prose and identity are one per section. */
 export type BlockContent<S extends ShapeName> = S extends 'entries' ? readonly EntryContent[]

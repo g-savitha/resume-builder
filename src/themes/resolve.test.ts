@@ -1,5 +1,5 @@
 import { DEFAULT_CUSTOMIZATION, DEFAULT_ROLES, FOREGROUND_ROLES, SURFACE_NAMES, type Variant, type VariantId } from '@/domain';
-import { surfaceVar, THEME_VARS } from '@/primitives';
+import { markVar, surfaceVar, THEME_VARS } from '@/primitives';
 import { FIXTURE_PALETTES, testBrand } from '@/testing';
 import { derivePalette } from './color';
 import { resolveTheme, themeBaseFor } from './resolve';
@@ -80,5 +80,26 @@ describe('themeBaseFor', () => {
       expect(themeBaseFor(ref).id, JSON.stringify(ref)).toBe('classic');
     }
     for (const id of ['ats-plain', 'classic', 'sidebar', 'app-ui'] as const) expect(themeBaseFor({ kind: 'archetype', id }).id).toBe(id);
+  });
+
+  it('multi-colour brand: off sets no strip; on sets the strip and mark slots; ATS plain ignores it', () => {
+    const on = { ...DEFAULT_CUSTOMIZATION, multiColor: true as const };
+    const off = resolveTheme(variant());
+    expect(off.brandColorCount).toBe(0);
+    expect(off.cssVars['--brand-strip']).toBeUndefined();
+    const classic = resolveTheme(variant({ customization: on }));
+    expect(classic.brandColorCount).toBe(4);
+    expect(classic.cssVars['--brand-strip']).toMatch(/^linear-gradient\(to right, #/);
+    expect(classic.cssVars[markVar('page', 3)]).toEqual(expect.any(String));
+    expect(classic.styleHash).not.toBe(off.styleHash);
+    // Text colors are untouched: the option is decoration only.
+    for (const surface of SURFACE_NAMES) expect(classic.palette.surfaces[surface]).toEqual(off.palette.surfaces[surface]);
+    const ats = resolveTheme(variant({ customization: on, themeBase: { kind: 'archetype', id: 'ats-plain' } }));
+    expect(ats.brandColorCount).toBe(0);
+    expect(ats.cssVars['--brand-strip']).toBeUndefined();
+    for (const id of ['sidebar', 'app-ui'] as const) {
+      expect(resolveTheme(variant({ customization: on, themeBase: { kind: 'archetype', id } })).brandColorCount, id).toBe(4);
+    }
+    expect(resolveTheme(variant({ customization: on, themeBase: { kind: 'preset', id: 'streaming' } })).brandColorCount).toBe(4);
   });
 });

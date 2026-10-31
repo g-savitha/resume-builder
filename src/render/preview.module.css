@@ -81,7 +81,7 @@
   top: 0;
   bottom: 0;
   width: 4pt;
-  background: var(--rs-strip-v, transparent);
+  background: var(--brand-strip-v, transparent);
 }
 .band[data-band='left']::after {
   right: 0;

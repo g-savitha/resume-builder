@@ -67,7 +67,7 @@ const pct = (x: number) => `${String(Math.round(x * 10000) / 100)}%`;
 
 /** The multi-colour brand's variables: the strips (horizontal and vertical) and every surface's mark slots. */
 function decorVars(d: BrandDecor): Record<`--${string}`, string> {
-  const vars: Record<`--${string}`, string> = { '--rs-strip': segments('right', d.strip), '--rs-strip-v': segments('bottom', d.strip) };
+  const vars: Record<`--${string}`, string> = { '--brand-strip': segments('right', d.strip), '--brand-strip-v': segments('bottom', d.strip) };
   for (const surface of SURFACE_NAMES) {
     for (const [k, mark] of d.marks[surface].entries()) vars[markVar(surface, k)] = mark;
   }
