@@ -190,6 +190,7 @@
 .block[data-multicolor] .identity::after {
   content: '';
   display: block;
+  box-sizing: content-box;
   height: 4pt;
   padding-top: 4pt;
   background: var(--brand-strip, var(--fg-rule)) content-box;

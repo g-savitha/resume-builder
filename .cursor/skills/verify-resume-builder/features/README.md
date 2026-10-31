@@ -28,6 +28,7 @@ This directory is the maintained source for verifying the builder's user-facing 
   | `data-region` / `data-band` | inside each sheet | `main`, `side` columns; `left` / `right` side fill |
   | `data-route` | preview-only root | `preview` on `/preview` |
   | `data-testid="tab-guard"` | overlay | present while another tab holds the editor lock |
+  | `data-multicolor` | resume blocks | number of logo colors drawn, when Multi-colour brand is on |
   | `data-icon` | resume icons | the icon name (contact, heading) |
   | `data-page` | each page sheet | 1-based page number |
   | `data-brand-state` | each variant row (Variants tab) | `looking-up`, `logo` (logo-derived palette), `placeholder` (name-hash fallback) |
@@ -60,6 +61,7 @@ Each feature file starts with an H1 and one paragraph on the user-visible behavi
 - [Swatch picker](./swatches.md) covers choosing which logo colors drive the accent and secondary roles, the contrast note and reset.
 - [Autosave and restore](./autosave.md) covers the save status and persistence across a reload.
 - [Multi-column themes and Customize](./customize.md) covers the Sidebar and App UI archetypes, per-column pagination and the Customize card (fonts, spacing, page, icons, 7:1).
+- [Multi-colour brand](./multicolor.md) covers the Customize toggle that draws every logo color in the strip, section rules, card edges and side band (ATS plain stays plain).
 - [Bespoke presets](./presets.md) covers the Streaming (Netflix-style) preset, `auto` preset matching and the theme × brand axe matrix.
 - [Files, duplicate, tabs and the preview route](./files.md) covers export/import (ours and JSON Resume), duplicate, the resume picker, the one-tab lock, `/preview` and the CSP.
 - [Resume preview](./preview.md) covers the paginated pages, the "(continued)" heading on a split section, and the Design-tab theme picker.
