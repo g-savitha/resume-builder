@@ -16,7 +16,6 @@ export default async ({ page, step, evidence, expect }) => {
     await page.goto('/');
     await page.getByRole('tab', { name: 'Design' }).click();
     await page.getByLabel('Upload a logo for Microsoft').setInputFiles({ name: 'logo.svg', mimeType: 'image/svg+xml', buffer: Buffer.from(svg) });
-    await expect(page.getByTestId('live-region')).toContainText(/uploaded logo|Logo/i, { timeout: 5000 }).catch(() => {});
     await page.getByTestId('customize-card').getByLabel(/^Multi-colour brand/).check();
     await settled();
     await expect(preview.locator('[data-multicolor="4"]').first()).toBeVisible();
