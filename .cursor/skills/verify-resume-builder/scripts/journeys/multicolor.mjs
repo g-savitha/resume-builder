@@ -1,4 +1,5 @@
 // Feature: multi-colour brand (features/multicolor.md).
+/* global getComputedStyle -- runs inside evaluate, in the browser */
 const FOUR = ['#f25022', '#7fba00', '#00a4ef', '#ffb900'];
 const svg =
   '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" fill="#ffffff"/>' +
